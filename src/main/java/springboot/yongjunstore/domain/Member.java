@@ -2,6 +2,7 @@ package springboot.yongjunstore.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +21,16 @@ public class Member {
     private String password;
 
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Builder
+    public Member(String email, String password, String name, Role role) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.role = role;
+    }
+
 }
