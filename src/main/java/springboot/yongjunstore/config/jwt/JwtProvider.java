@@ -15,7 +15,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import springboot.yongjunstore.config.UserPrincipal;
+import springboot.yongjunstore.domain.Member;
+import springboot.yongjunstore.repository.MemberRepository;
 
 import javax.crypto.SecretKey;
 import java.util.Arrays;
@@ -26,7 +31,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
+
+    private final MemberRepository memberRepository;
 
     public static final long ACCESS_TIME = 3600000L;       // accessToken 1시간
     public static final long REFRESH_TIME = 2592000000L;   // refreshToken 30일
@@ -84,14 +92,21 @@ public class JwtProvider {
             throw new RuntimeException("권한 정보가 없습니다.");
         }
 
-        // 정보 가져오기
+        // 권한 정보 저장
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get("role").toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
+        Member member = memberRepository.findByEmail((String) claims.get("sub"))
+                .orElseThrow(() -> new UsernameNotFoundException("해당 계정을 찾을 수 없습니다."));
+
+        log.info(member.toString());
+
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        //UserDetails principal = new User(claims.getSubject(), "", authorities);
+
+        UserDetails principal = new UserPrincipal(member);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 

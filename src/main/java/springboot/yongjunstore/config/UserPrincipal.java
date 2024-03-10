@@ -13,7 +13,7 @@ public class UserPrincipal extends User {
 
     public UserPrincipal(Member member){
         super(member.getEmail(), member.getPassword(), List.of(
-                new SimpleGrantedAuthority(member.getRole().name())
+                new SimpleGrantedAuthority("ROLE_"+member.getRole())
                 //, new SimpleGrantedAuthority("WRITE") // DB에 값 넣는 걸로 변경 필요
         ));
     }

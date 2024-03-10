@@ -15,7 +15,7 @@ import springboot.yongjunstore.config.jwt.JwtProvider;
 
 import java.io.IOException;
 
-@RequiredArgsConstructor
+ @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtProvider jwtTokenProvider;

@@ -25,7 +25,7 @@ public class MemberController {
         memberService.signup(signUpDto);
     }
 
-    @PostMapping("/member/admin")
+    @PostMapping("/admin")
     public String adminLoginTest(){
         return "정상적으로 로그인 됨.";
     }
