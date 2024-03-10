@@ -101,11 +101,7 @@ public class JwtProvider {
         Member member = memberRepository.findByEmail((String) claims.get("sub"))
                 .orElseThrow(() -> new UsernameNotFoundException("해당 계정을 찾을 수 없습니다."));
 
-        log.info(member.toString());
-
         // UserDetails 객체를 만들어서 Authentication 리턴
-        //UserDetails principal = new User(claims.getSubject(), "", authorities);
-
         UserDetails principal = new UserPrincipal(member);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
