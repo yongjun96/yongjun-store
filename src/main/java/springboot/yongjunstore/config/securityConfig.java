@@ -49,7 +49,6 @@ public class securityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         //.requestMatchers("/member/admin").access(new WebExpressionAuthorizationManager("hasRole('ROLE_ADMIN')"))
                         .requestMatchers("/member/admin").hasRole("ADMIN")
-                        .requestMatchers("/member/login").permitAll()
                         .anyRequest().permitAll()
                 )
 
