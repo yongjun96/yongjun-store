@@ -1,14 +1,13 @@
 package springboot.yongjunstore.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Data
+@Getter
 public class Member {
 
     @Id
@@ -16,12 +15,17 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @NotNull
+    @Size(min = 3, max = 50)
     private String email;
 
     private String password;
 
+    @NotNull
+    @Size(min = 1, max = 30)
     private String name;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Role role;
 

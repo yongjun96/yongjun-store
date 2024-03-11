@@ -33,6 +33,7 @@ import static org.springframework.boot.autoconfigure.security.servlet.PathReques
 public class securityConfig {
 
     private final JwtProvider jwtProvider;
+    private final MemberRepository memberRepository;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
@@ -77,5 +78,14 @@ public class securityConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService(memberRepository));
+        provider.setPasswordEncoder(passwordEncoder());
+
+        return new ProviderManager(provider);
     }
 }
