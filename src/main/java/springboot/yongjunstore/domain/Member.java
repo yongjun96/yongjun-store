@@ -1,8 +1,7 @@
 package springboot.yongjunstore.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Entity
@@ -15,13 +14,15 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @NotNull
+    @NotBlank(message = "email은 필수값 입니다.")
     @Size(min = 3, max = 50)
+    @Email
     private String email;
 
+    @NotBlank
     private String password;
 
-    @NotNull
+    @NotBlank(message = "사용자 이름은 필수값 입니다.")
     @Size(min = 1, max = 30)
     private String name;
 

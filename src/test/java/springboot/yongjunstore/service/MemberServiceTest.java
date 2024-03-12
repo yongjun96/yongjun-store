@@ -76,13 +76,13 @@ class MemberServiceTest {
                 .build();
 
         //when
-        Member member = memberService.signup(signUpDto);
+        SignUpDto signup = memberService.signup(signUpDto);
 
         //then
-        Assertions.assertThat(signUpDto.getEmail()).isEqualTo(member.getEmail());
-        passwordEncoder.matches(signUpDto.getPassword(), member.getPassword());
-        Assertions.assertThat(signUpDto.getRole()).isEqualTo(member.getRole());
-        Assertions.assertThat(signUpDto.getName()).isEqualTo(member.getName());
+        Assertions.assertThat(signUpDto.getEmail()).isEqualTo(signup.getEmail());
+        passwordEncoder.matches(signUpDto.getPassword(), signup.getPassword());
+        Assertions.assertThat(signUpDto.getRole()).isEqualTo(signup.getRole());
+        Assertions.assertThat(signUpDto.getName()).isEqualTo(signup.getName());
     }
 
 }

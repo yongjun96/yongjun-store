@@ -1,5 +1,9 @@
 package springboot.yongjunstore.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import springboot.yongjunstore.domain.Role;
 
@@ -8,9 +12,9 @@ import springboot.yongjunstore.domain.Role;
 @ToString
 public class SignUpDto {
 
-    private String name;
-    private String password;
     private String email;
+    private String password;
+    private String name;
     private Role role;
 
     @Builder

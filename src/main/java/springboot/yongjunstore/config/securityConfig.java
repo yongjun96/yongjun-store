@@ -20,6 +20,8 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import springboot.yongjunstore.config.filter.JwtAuthenticationFilter;
+import springboot.yongjunstore.config.handler.Http401Handler;
+import springboot.yongjunstore.config.handler.Http403Handler;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
@@ -34,7 +36,7 @@ public class securityConfig {
 
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
-
+    private final ObjectMapper objectMapper;
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return web -> web.ignoring()
@@ -54,11 +56,6 @@ public class securityConfig {
 
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 
-                .exceptionHandling(e -> {
-
-                    // 세션 정보, 쿠키 정보 관련 핸들러
-                })
-
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
@@ -75,13 +72,14 @@ public class securityConfig {
         };
     }
 
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
+    public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService(memberRepository));
         provider.setPasswordEncoder(passwordEncoder());
