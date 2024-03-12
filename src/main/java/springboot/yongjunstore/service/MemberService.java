@@ -53,7 +53,7 @@ public class MemberService {
         Optional<Member> optionalUser = memberRepository.findByEmail(signUpDto.getEmail());
 
         if(optionalUser.isPresent()){
-            throw new GlobalException(ErrorCode.MEMBER_EMAIL_ALREAD_EXISTS);
+            throw new GlobalException(ErrorCode.MEMBER_EMAIL_EXISTS);
         }
 
         String password = passwordEncoder.encode(signUpDto.getPassword());

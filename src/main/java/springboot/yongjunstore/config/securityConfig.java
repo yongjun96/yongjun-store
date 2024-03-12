@@ -18,8 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import springboot.yongjunstore.config.filter.JwtAuthenticationFilter;
+import springboot.yongjunstore.config.filter.JwtExceptionFilter;
 import springboot.yongjunstore.config.handler.Http401Handler;
 import springboot.yongjunstore.config.handler.Http403Handler;
 import springboot.yongjunstore.config.jwt.JwtProvider;
@@ -54,7 +54,13 @@ public class securityConfig {
                         .anyRequest().permitAll()
                 )
 
+                .exceptionHandling(exception -> {
+                    exception.accessDeniedHandler(new Http403Handler());
+                    exception.authenticationEntryPoint(new Http401Handler());
+                })
+
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class)
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();

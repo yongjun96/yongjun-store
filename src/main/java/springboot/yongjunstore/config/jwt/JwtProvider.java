@@ -1,24 +1,19 @@
 package springboot.yongjunstore.config.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.UserPrincipal;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
@@ -112,8 +107,26 @@ public class JwtProvider {
         try {
             Jwts.parserBuilder().setSigningKey(jwtSecretKey()).build().parseClaimsJws(jwtToken);
             return true;
-        } catch (Exception e) {
-            return false;
+        }
+
+        catch (SignatureException e) {
+            log.info("SignatureException : 검증에 실패한 변조된 토큰입니다.");
+            throw new JwtException(ErrorCode.JWT_SIGNATURE_EXCEPTION.getMessage());
+        }
+
+        catch (MalformedJwtException e) {
+            log.info("MalformedJwtException : 잘못된 구조의 지원되지 않는 토큰입니다.");
+            throw new JwtException(ErrorCode.JWT_MALFORMED_JWT_EXCEPTION.getMessage());
+        }
+
+        catch (ExpiredJwtException e) {
+            log.info("ExpiredJwtException : 만료된 토큰입니다.");
+            throw new JwtException(ErrorCode.JWT_EXPIRED_JWT_EXCEPTION.getMessage());
+        }
+
+        catch (UnsupportedJwtException e) {
+            log.info("UnsupportedJwtException : 원하는 토큰과 다른 형식의 토큰입니다.");
+            throw new JwtException(ErrorCode.JWT_UNSUPPORTED_JWT_EXCEPTION.getMessage());
         }
     }
 
