@@ -48,7 +48,7 @@ public class MemberService {
         return tokenDto;
     }
 
-    public SignUpDto signup(SignUpDto signUpDto) {
+    public void signup(SignUpDto signUpDto) {
 
         Optional<Member> optionalUser = memberRepository.findByEmail(signUpDto.getEmail());
 
@@ -65,10 +65,6 @@ public class MemberService {
                 .role(signUpDto.getRole())
                 .build();
 
-        Member findMember = memberRepository.save(member);
-
-        return SignUpDto.builder()
-                .name(findMember.getName())
-                .build();
+        memberRepository.save(member);
     }
 }

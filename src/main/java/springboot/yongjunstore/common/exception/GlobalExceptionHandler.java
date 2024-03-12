@@ -25,6 +25,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ecr.getStatus()).body(ecr);
     }
 
+    //valid 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException e){
 

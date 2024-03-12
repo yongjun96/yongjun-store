@@ -30,9 +30,9 @@ public class MemberController {
     @PostMapping("/signup")
     public ResponseEntity signup(@Valid @RequestBody SignUpDto signUpDto) {
 
-        SignUpDto signup = memberService.signup(signUpDto);
+        memberService.signup(signUpDto);
 
-       return ResponseEntity.status(HttpStatus.OK).body(signup.getEmail());
+       return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/admin")

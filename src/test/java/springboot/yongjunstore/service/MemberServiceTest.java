@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithUserDetails;
+import springboot.yongjunstore.common.exception.GlobalException;
+import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
@@ -76,13 +78,16 @@ class MemberServiceTest {
                 .build();
 
         //when
-        SignUpDto signup = memberService.signup(signUpDto);
+        memberService.signup(signUpDto);
+
+        Member findMember = memberRepository.findByEmail("yongjun@gmail.com")
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
 
         //then
-        Assertions.assertThat(signUpDto.getEmail()).isEqualTo(signup.getEmail());
-        passwordEncoder.matches(signUpDto.getPassword(), signup.getPassword());
-        Assertions.assertThat(signUpDto.getRole()).isEqualTo(signup.getRole());
-        Assertions.assertThat(signUpDto.getName()).isEqualTo(signup.getName());
+        Assertions.assertThat(signUpDto.getEmail()).isEqualTo(findMember.getEmail());
+        passwordEncoder.matches(signUpDto.getPassword(), findMember.getPassword());
+        Assertions.assertThat(signUpDto.getRole()).isEqualTo(findMember.getRole());
+        Assertions.assertThat(signUpDto.getName()).isEqualTo(findMember.getName());
     }
 
 }

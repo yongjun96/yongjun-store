@@ -1,9 +1,6 @@
 package springboot.yongjunstore.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import springboot.yongjunstore.domain.Role;
 
@@ -12,9 +9,13 @@ import springboot.yongjunstore.domain.Role;
 @ToString
 public class SignUpDto {
 
+    @NotBlank(message = "email은 필수값 입니다.")
     private String email;
+    @NotBlank(message = "password는 필수값 입니다.")
     private String password;
+    @NotBlank(message = "사용자 이름은 필수값 입니다.")
     private String name;
+    @NotNull
     private Role role;
 
     @Builder

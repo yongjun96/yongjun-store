@@ -14,15 +14,13 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @NotBlank(message = "email은 필수값 입니다.")
     @Size(min = 3, max = 50)
     @Email
     private String email;
 
-    @NotBlank
+    @NotNull
     private String password;
 
-    @NotBlank(message = "사용자 이름은 필수값 입니다.")
     @Size(min = 1, max = 30)
     private String name;
 
