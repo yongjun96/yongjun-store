@@ -36,7 +36,7 @@ class MemberServiceTest {
 
 
     @Test
-    @DisplayName("로그인 jwt 발급 성공 테스트")
+    @DisplayName("로그인 성공 : jwt 발급")
     void loginSuccess() {
 
         //given
@@ -66,8 +66,54 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("로그인 실패 : 존재하지 않는 email")
+    void emailLoginFail() {
+
+        //given
+        MemberService memberService = new MemberService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
+
+        MemberLoginDto loginDto = MemberLoginDto.builder()
+                .email("yongjun@gmail.com")
+                .password("1234")
+                .build();
+
+        // expected
+        Assertions.assertThatThrownBy(() -> memberService.login(loginDto))
+                .isInstanceOf(GlobalException.class)
+                .hasMessageContaining(ErrorCode.MEMBER_EMAIL_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("로그인 실패 : 비밀번호 오류")
+    void passwordLoginFail() {
+
+        //given
+        Member member = Member.builder()
+                .email("yongjun@gmail.com")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.ADMIN)
+                .name("김용준")
+                .build();
+
+        memberRepository.save(member);
+
+        MemberService memberService = new MemberService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
+
+        MemberLoginDto loginDto = MemberLoginDto.builder()
+                .email("yongjun@gmail.com")
+                .password("12345")
+                .build();
+
+        // expected
+        Assertions.assertThatThrownBy(() -> memberService.login(loginDto))
+                .isInstanceOf(GlobalException.class)
+                .hasMessageContaining(ErrorCode.MEMBER_PASSWORD_ERROR.getMessage());
+    }
+
+
+    @Test
     @DisplayName("회원가입 성공")
-    void signupSuccess() throws Exception {
+    void signupSuccess() {
 
         //given
         SignUpDto signUpDto = SignUpDto.builder()

@@ -18,6 +18,7 @@ import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.MemberLoginDto;
 import springboot.yongjunstore.request.SignUpDto;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,15 +35,22 @@ public class MemberService {
 
     @Transactional
     public JwtDto login(MemberLoginDto memberLoginDto) {
-        // 1. Login ID/PW 로 Authentication 객체 생성
-        // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
+
+        Member member = memberRepository.findByEmail(memberLoginDto.getEmail())
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_EMAIL_NOT_FOUND));
+
+        if(passwordEncoder.matches(memberLoginDto.getPassword(), member.getPassword()) == false){
+            throw new GlobalException(ErrorCode.MEMBER_PASSWORD_ERROR);
+        }
+
+        // Login ID/PW 로 Authentication 객체 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberLoginDto.getEmail(), memberLoginDto.getPassword());
 
-        // 2. password 체크를 하고 권한 정보 확인
+        // password 체크를 하고 권한 정보 확인
         // authenticate 매서드가 실행될 때 userDetailsService 에서 UserPrincipal 반환
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-        // 3. 인증 정보로 JWT 토큰 생성
+        // 인증 정보로 JWT 토큰 생성
         JwtDto tokenDto = jwtProvider.generateToken(authentication);
 
         return tokenDto;
