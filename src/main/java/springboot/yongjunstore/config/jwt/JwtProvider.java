@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.UserPrincipal;
 import springboot.yongjunstore.domain.Member;
+import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
 
 import javax.crypto.SecretKey;
@@ -61,6 +62,34 @@ public class JwtProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("role", authorities)
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(jwtSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        // RefreshToken
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + REFRESH_TIME))
+                .signWith(jwtSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        return JwtDto.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
+    public JwtDto googleLoginGenerateToken(String email, String role) {
+
+        long now = (new Date()).getTime();
+
+        // AccessToken
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TIME);
+
+        String accessToken = Jwts.builder()
+                .setSubject(String.valueOf(email))
+                .claim("role", role)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(jwtSecretKey(), SignatureAlgorithm.HS256)
                 .compact();

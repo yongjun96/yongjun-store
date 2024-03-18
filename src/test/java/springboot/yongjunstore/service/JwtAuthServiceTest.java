@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.test.context.support.WithUserDetails;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
+import springboot.yongjunstore.config.authservice.JwtAuthService;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
@@ -20,10 +20,10 @@ import springboot.yongjunstore.request.MemberLoginDto;
 import springboot.yongjunstore.request.SignUpDto;
 
 @SpringBootTest
-class MemberServiceTest {
+class JwtAuthServiceTest {
 
     @Autowired private MemberRepository memberRepository;
-    @Autowired private MemberService memberService;
+    @Autowired private JwtAuthService jwtAuthService;
 
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private JwtProvider jwtProvider;
@@ -49,7 +49,7 @@ class MemberServiceTest {
 
         memberRepository.save(member);
 
-        MemberService memberService = new MemberService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
+        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
 
         MemberLoginDto loginDto = MemberLoginDto.builder()
                 .email("yongjun@gmail.com")
@@ -57,7 +57,7 @@ class MemberServiceTest {
                 .build();
 
         //when
-        JwtDto result = memberService.login(loginDto);
+        JwtDto result = jwtAuthService.login(loginDto);
 
         //then
         Assertions.assertThat(result.getAccessToken()).isNotNull();
@@ -70,7 +70,7 @@ class MemberServiceTest {
     void emailLoginFail() {
 
         //given
-        MemberService memberService = new MemberService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
+        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
 
         MemberLoginDto loginDto = MemberLoginDto.builder()
                 .email("yongjun@gmail.com")
@@ -78,7 +78,7 @@ class MemberServiceTest {
                 .build();
 
         // expected
-        Assertions.assertThatThrownBy(() -> memberService.login(loginDto))
+        Assertions.assertThatThrownBy(() -> jwtAuthService.login(loginDto))
                 .isInstanceOf(GlobalException.class)
                 .hasMessageContaining(ErrorCode.MEMBER_EMAIL_NOT_FOUND.getMessage());
     }
@@ -97,7 +97,7 @@ class MemberServiceTest {
 
         memberRepository.save(member);
 
-        MemberService memberService = new MemberService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
+        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
 
         MemberLoginDto loginDto = MemberLoginDto.builder()
                 .email("yongjun@gmail.com")
@@ -105,7 +105,7 @@ class MemberServiceTest {
                 .build();
 
         // expected
-        Assertions.assertThatThrownBy(() -> memberService.login(loginDto))
+        Assertions.assertThatThrownBy(() -> jwtAuthService.login(loginDto))
                 .isInstanceOf(GlobalException.class)
                 .hasMessageContaining(ErrorCode.MEMBER_PASSWORD_ERROR.getMessage());
     }
@@ -124,7 +124,7 @@ class MemberServiceTest {
                 .build();
 
         //when
-        memberService.signup(signUpDto);
+        jwtAuthService.signup(signUpDto);
 
         Member findMember = memberRepository.findByEmail("yongjun@gmail.com")
                 .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));

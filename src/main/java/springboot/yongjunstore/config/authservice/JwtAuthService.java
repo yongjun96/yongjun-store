@@ -1,12 +1,10 @@
-package springboot.yongjunstore.service;
+package springboot.yongjunstore.config.authservice;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import springboot.yongjunstore.common.exception.GlobalException;
@@ -18,15 +16,11 @@ import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.MemberLoginDto;
 import springboot.yongjunstore.request.SignUpDto;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class JwtAuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;

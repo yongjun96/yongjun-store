@@ -19,7 +19,6 @@ public class Member extends BaseTimeEntity {
     @Email
     private String email;
 
-    @NotNull
     private String password;
 
     @Size(min = 1, max = 30)
@@ -29,12 +28,19 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // googleLogin
+    private String provider;
+
+    private String providerId;
+
     @Builder
-    public Member(String email, String password, String name, Role role) {
+    public Member(String email, String password, String name, Role role, String provider, String providerId) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.role = role;
+        this.provider = provider;
+        this.providerId = providerId;
     }
 
 }

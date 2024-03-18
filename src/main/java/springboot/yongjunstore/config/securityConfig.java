@@ -18,10 +18,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import springboot.yongjunstore.config.authservice.CustomOAuth2UserService;
 import springboot.yongjunstore.config.filter.JwtAuthenticationFilter;
 import springboot.yongjunstore.config.filter.JwtExceptionFilter;
 import springboot.yongjunstore.config.handler.Http401Handler;
 import springboot.yongjunstore.config.handler.Http403Handler;
+import springboot.yongjunstore.config.handler.MyAuthenticationFailureHandler;
+import springboot.yongjunstore.config.handler.MyAuthenticationSuccessHandler;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
@@ -36,7 +42,7 @@ public class securityConfig {
 
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
-    private final ObjectMapper objectMapper;
+    private final CustomOAuth2UserService customOAuth2UserService;
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return web -> web.ignoring()
@@ -50,7 +56,7 @@ public class securityConfig {
 
         return http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/member/admin").access(new WebExpressionAuthorizationManager("hasRole('ROLE_ADMIN')"))
+                        .requestMatchers("/member/admin").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
                         .anyRequest().permitAll()
                 )
 
@@ -58,6 +64,15 @@ public class securityConfig {
                     exception.accessDeniedHandler(new Http403Handler());
                     exception.authenticationEntryPoint(new Http401Handler());
                 })
+
+                .oauth2Login(oauth2 ->
+                        oauth2.userInfoEndpoint(userInfoEndpoint ->
+                                    userInfoEndpoint.userService(new CustomOAuth2UserService(memberRepository))
+                    )
+                    .failureHandler(new MyAuthenticationFailureHandler())
+                    .successHandler(new MyAuthenticationSuccessHandler(jwtProvider, customOAuth2UserService))
+                )
+
 
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class)
@@ -92,4 +107,17 @@ public class securityConfig {
 
         return new ProviderManager(provider);
     }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
 }
+
