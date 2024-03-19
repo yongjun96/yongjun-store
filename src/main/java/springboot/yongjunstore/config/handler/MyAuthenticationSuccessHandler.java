@@ -11,17 +11,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
-import springboot.yongjunstore.common.exception.GlobalException;
-import springboot.yongjunstore.common.exceptioncode.ErrorCode;
-import springboot.yongjunstore.common.exceptioncode.ErrorCodeResponse;
 import springboot.yongjunstore.config.authservice.CustomOAuth2UserService;
-import springboot.yongjunstore.config.authservice.JwtAuthService;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Component
 @Slf4j

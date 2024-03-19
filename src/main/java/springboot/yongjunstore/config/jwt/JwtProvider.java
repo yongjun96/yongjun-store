@@ -16,9 +16,7 @@ import org.springframework.stereotype.Component;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.UserPrincipal;
 import springboot.yongjunstore.domain.Member;
-import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
-
 import javax.crypto.SecretKey;
 import java.util.Arrays;
 import java.util.Base64;
