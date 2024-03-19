@@ -38,10 +38,6 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         // 사용자 이메일을 가져온다.
         String email = oAuth2User.getAttribute("email");
-        // 서비스 제공 플랫폼이 어디인지 가져온다.
-        String provider = oAuth2User.getAttribute("provider");
-
-        String providerId = oAuth2User.getAttribute("providerId");
 
         // CustomOAuth2UserService에서 로그인한 회원 존재 여부를 가져온다.
         boolean isExist = oAuth2User.getAttribute("exist");

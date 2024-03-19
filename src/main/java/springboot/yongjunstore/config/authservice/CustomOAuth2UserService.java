@@ -15,11 +15,8 @@ import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
-import springboot.yongjunstore.request.OAuth2Dto;
-import springboot.yongjunstore.request.SignUpDto;
-
+import springboot.yongjunstore.request.CustomOAuth2User;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -37,45 +34,33 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // OAuth2UserService를 사용하여 OAuth2User 정보를 가져온다.
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
-        // 클라이언트 등록 ID(google, naver, kakao)와 사용자 이름 속성을 가져온다.
-        // registrationId : google
-        String registrationId = userRequest
-                .getClientRegistration()
-                .getRegistrationId();
+        // ex). provider = google
+        String provider = userRequest.getClientRegistration().getRegistrationId();
 
-        String userNameAttributeName = userRequest
-                .getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUserNameAttributeName();
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(oAuth2User);
 
+        // CustomOAuth2User Attributes -> provider 추가
+        customOAuth2User.addAttribute("provider", provider);
 
-        // OAuth2UserService를 사용하여 가져온 OAuth2User 정보로 OAuth2Attribute 객체를 만든다.
-        OAuth2Dto oAuth2Dto = OAuth2Dto.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-
-        // OAuth2Attribute의 속성값들을 Map으로 반환 받는다.
-        Map<String, Object> memberAttribute = oAuth2Dto.convertToMap();
-
-        // 사용자 email(또는 id) 정보를 가져온다.
-        String email = (String) memberAttribute.get("email");
         // 이메일로 가입된 회원인지 조회한다.
-        Optional<Member> findMember = memberRepository.findByEmail(email);
+        Optional<Member> findMember = memberRepository.findByEmail((String) customOAuth2User.getAttributes().get("email"));
+
 
         if (findMember.isEmpty()) {
-            // 회원이 존재하지 않을경우, memberAttribute의 exist 값을 false로 넣어준다.
-            memberAttribute.put("exist", false);
-            // 회원의 권한(회원이 존재하지 않으므로 기본권한인 ROLE_USER를 넣어준다), 회원속성, 속성이름을 이용해 DefaultOAuth2User 객체를 생성해 반환한다.
+            // 회원이 존재하지 않을 경우
+            customOAuth2User.addAttribute("exist", false);
+
             return new DefaultOAuth2User(
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_MEMBER")),
-                    memberAttribute, "email");
+                    customOAuth2User.getAttributes(), "email");
         }
 
-        // 회원이 존재할경우, memberAttribute의 exist 값을 true로 넣어준다.
-        memberAttribute.put("exist", true);
-        // 회원의 권한과, 회원속성, 속성이름을 이용해 DefaultOAuth2User 객체를 생성해 반환한다.
+        //회원이 존재할 경우
+        customOAuth2User.addAttribute("exist", true);
+
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_"+findMember.get().getRole())),
-                memberAttribute, "email");
+                customOAuth2User.getAttributes(), "email");
     }
 
     public void googleSignup(OAuth2User oAuth2User) {
@@ -97,7 +82,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .name(oAuth2User.getAttribute("name"))
                 .email(oAuth2User.getAttribute("email"))
                 .provider(oAuth2User.getAttribute("provider")) // ex). google
-                .providerId(oAuth2User.getAttribute("providerId"))
+                .providerId(oAuth2User.getAttribute("sub"))
                 .role(Role.valueOf(role))
                 .build();
 
