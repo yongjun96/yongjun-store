@@ -26,6 +26,7 @@ public class JwtAuthService {
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public JwtDto login(MemberLoginDto memberLoginDto) {
@@ -46,6 +47,9 @@ public class JwtAuthService {
 
         // 인증 정보로 JWT 토큰 생성
         JwtDto tokenDto = jwtProvider.generateToken(authentication);
+
+        // 발급한 RT 저장
+        refreshTokenService.saveRefreshToken(tokenDto);
 
         return tokenDto;
     }

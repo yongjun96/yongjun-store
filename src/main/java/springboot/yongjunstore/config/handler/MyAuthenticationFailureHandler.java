@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -21,10 +22,13 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.info("[인증실패] 인증에 실패했습니다.");
 
-        response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(ErrorCode.MEMBER_NOT_FOUND.getStatusCode());
+        if (ErrorCode.OAUTH_EMAIL_EXISTS.getMessage().equals(exception.getMessage())) {
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(response.getWriter(), new ErrorCodeResponse(ErrorCode.MEMBER_NOT_FOUND));
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(ErrorCode.OAUTH_EMAIL_EXISTS.getStatusCode());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(response.getWriter(), new ErrorCodeResponse(ErrorCode.OAUTH_EMAIL_EXISTS));
+        }
     }
 }

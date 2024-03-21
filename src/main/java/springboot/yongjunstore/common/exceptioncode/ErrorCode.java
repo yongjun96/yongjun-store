@@ -22,7 +22,11 @@ public enum ErrorCode {
     JWT_UNSUPPORTED_JWT_EXCEPTION(401, HttpStatus.BAD_REQUEST, "T001", "원하는 토큰과 다른 형식의 토큰입니다."),
     JWT_MALFORMED_JWT_EXCEPTION(402, HttpStatus.BAD_REQUEST, "T002", "잘못된 구조의 지원되지 않는 토큰입니다."),
     JWT_EXPIRED_JWT_EXCEPTION(403, HttpStatus.BAD_REQUEST, "T003", "만료된 토큰입니다."),
-    JWT_SIGNATURE_EXCEPTION(404, HttpStatus.NOT_FOUND, "T004", "검증에 실패한 변조된 토큰입니다.");
+    JWT_SIGNATURE_EXCEPTION(404, HttpStatus.NOT_FOUND, "T004", "검증에 실패한 변조된 토큰입니다."),
+    JWT_REFRESH_EXPIRED_JWT_EXCEPTION(403, HttpStatus.NOT_FOUND, "T005", "만료된 refreshToken입니다."),
+
+    // OAuth2.0
+    OAUTH_EMAIL_EXISTS(400, HttpStatus.BAD_REQUEST, "O001", "이미 일반 회원으로 등록된 이메일입니다.");
 
     private final int statusCode;
     private final HttpStatus status;

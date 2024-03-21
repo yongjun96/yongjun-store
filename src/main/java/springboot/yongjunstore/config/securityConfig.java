@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import springboot.yongjunstore.config.authservice.CustomOAuth2UserService;
+import springboot.yongjunstore.config.authservice.RefreshTokenService;
 import springboot.yongjunstore.config.filter.JwtAuthenticationFilter;
 import springboot.yongjunstore.config.filter.JwtExceptionFilter;
 import springboot.yongjunstore.config.handler.Http401Handler;
@@ -42,6 +43,8 @@ public class securityConfig {
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final RefreshTokenService refreshTokenService;
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return web -> web.ignoring()
@@ -69,12 +72,12 @@ public class securityConfig {
                                     userInfoEndpoint.userService(new CustomOAuth2UserService(memberRepository))
                     )
                     .failureHandler(new MyAuthenticationFailureHandler())
-                    .successHandler(new MyAuthenticationSuccessHandler(jwtProvider, customOAuth2UserService))
+                    .successHandler(new MyAuthenticationSuccessHandler(jwtProvider, customOAuth2UserService, refreshTokenService))
                 )
 
 
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(jwtProvider, refreshTokenService), JwtAuthenticationFilter.class)
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();

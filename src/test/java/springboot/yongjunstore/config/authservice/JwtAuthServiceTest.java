@@ -1,4 +1,4 @@
-package springboot.yongjunstore.service;
+package springboot.yongjunstore.config.authservice;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
-import springboot.yongjunstore.config.authservice.JwtAuthService;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
@@ -19,15 +18,15 @@ import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.MemberLoginDto;
 import springboot.yongjunstore.request.SignUpDto;
 
+
 @SpringBootTest
 class JwtAuthServiceTest {
 
     @Autowired private MemberRepository memberRepository;
-    @Autowired private JwtAuthService jwtAuthService;
-
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private JwtProvider jwtProvider;
     @Autowired private BCryptPasswordEncoder passwordEncoder;
+    @Autowired private RefreshTokenService refreshTokenService;
 
     @AfterEach
     public void afterEach() {
@@ -49,7 +48,7 @@ class JwtAuthServiceTest {
 
         memberRepository.save(member);
 
-        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
+        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
         MemberLoginDto loginDto = MemberLoginDto.builder()
                 .email("yongjun@gmail.com")
@@ -70,7 +69,7 @@ class JwtAuthServiceTest {
     void emailLoginFail() {
 
         //given
-        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
+        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
         MemberLoginDto loginDto = MemberLoginDto.builder()
                 .email("yongjun@gmail.com")
@@ -97,7 +96,7 @@ class JwtAuthServiceTest {
 
         memberRepository.save(member);
 
-        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder);
+        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
         MemberLoginDto loginDto = MemberLoginDto.builder()
                 .email("yongjun@gmail.com")
@@ -124,6 +123,7 @@ class JwtAuthServiceTest {
                 .build();
 
         //when
+        JwtAuthService jwtAuthService = new JwtAuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
         jwtAuthService.signup(signUpDto);
 
         Member findMember = memberRepository.findByEmail("yongjun@gmail.com")

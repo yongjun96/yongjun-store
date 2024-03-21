@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import springboot.yongjunstore.config.authservice.CustomOAuth2UserService;
+import springboot.yongjunstore.config.authservice.RefreshTokenService;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 
@@ -24,6 +25,7 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
 
     private final JwtProvider jwtProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -44,8 +46,10 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
 
 
         // jwt token 발행을 시작한다.
-        JwtDto token = jwtProvider.googleLoginGenerateToken(email, role);
+        JwtDto token = jwtProvider.googleLoginGenerateToken(email, role, oAuth2User);
         log.info("jwtToken = {}", token.getAccessToken());
+
+        refreshTokenService.saveGoogleRefreshToken(token, email);
 
         // 회원이 존재할 경우
         if (isExist) {

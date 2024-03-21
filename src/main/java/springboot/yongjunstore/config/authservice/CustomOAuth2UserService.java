@@ -2,6 +2,7 @@ package springboot.yongjunstore.config.authservice;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -53,14 +54,21 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             return new DefaultOAuth2User(
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_MEMBER")),
                     customOAuth2User.getAttributes(), "email");
+        }else{
+            //회원이 존재할 경우
+
+            // Oauth2.0 가입 회원이 아닌 경우
+            if(findMember.get().getProvider() == null && findMember.get().getProviderId() == null){
+                throw new BadCredentialsException(ErrorCode.OAUTH_EMAIL_EXISTS.getMessage());
+            }
+
+            customOAuth2User.addAttribute("exist", true);
+
+            return new DefaultOAuth2User(
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_"+findMember.get().getRole())),
+                    customOAuth2User.getAttributes(), "email");
+
         }
-
-        //회원이 존재할 경우
-        customOAuth2User.addAttribute("exist", true);
-
-        return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_"+findMember.get().getRole())),
-                customOAuth2User.getAttributes(), "email");
     }
 
     public void googleSignup(OAuth2User oAuth2User) {
@@ -88,5 +96,4 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         memberRepository.save(member);
     }
-
 }

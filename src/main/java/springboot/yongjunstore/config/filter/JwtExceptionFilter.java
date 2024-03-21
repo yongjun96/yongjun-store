@@ -6,12 +6,22 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.common.exceptioncode.ErrorCodeResponse;
+import springboot.yongjunstore.config.authservice.RefreshTokenService;
+import springboot.yongjunstore.config.jwt.JwtDto;
+import springboot.yongjunstore.config.jwt.JwtProvider;
+
 import java.io.IOException;
 
+@RequiredArgsConstructor
 public class JwtExceptionFilter extends OncePerRequestFilter {
+
+    private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -33,7 +43,11 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
             // 만료된 토큰
             else if(ErrorCode.JWT_EXPIRED_JWT_EXCEPTION.getMessage().equals(message)) {
-                setResponse(response, ErrorCode.JWT_EXPIRED_JWT_EXCEPTION);
+
+                String accessToken = jwtProvider.resolveToken(request);
+
+                // 만료된 AT를 RT를 이용해서 재발급
+                reissueAccessToken(response, accessToken);
             }
 
             // 검증에 실패한 변조된 토큰
@@ -51,4 +65,27 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         objectMapper.writeValue(response.getWriter(), new ErrorCodeResponse(errorCode));
     }
 
+
+
+    private void reissueAccessToken(HttpServletResponse response, String accessToken) throws RuntimeException, IOException {
+
+        JwtDto jwtDto = refreshTokenService.reissueAccessToken(accessToken);
+
+        response.setContentType("application/json;charset=UTF-8");
+
+        if(jwtDto == null){
+
+            response.setStatus(ErrorCode.JWT_REFRESH_EXPIRED_JWT_EXCEPTION.getStatusCode());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(response.getWriter(), new ErrorCodeResponse(ErrorCode.JWT_REFRESH_EXPIRED_JWT_EXCEPTION));
+
+        }else {
+
+            response.setStatus(HttpStatus.OK.value());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(response.getWriter(), jwtDto);
+        }
+    }
 }
