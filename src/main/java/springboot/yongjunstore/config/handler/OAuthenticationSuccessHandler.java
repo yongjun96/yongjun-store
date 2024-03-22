@@ -49,7 +49,7 @@ public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucces
         JwtDto token = jwtProvider.googleLoginGenerateToken(email, role);
         log.info("jwtToken = {}", token.getAccessToken());
 
-        refreshTokenService.saveRefreshToken(token);
+        refreshTokenService.saveGoogleRefreshToken(token, email);
 
         // 회원이 존재할 경우
         if (isExist) {
