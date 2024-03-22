@@ -1,26 +1,25 @@
 package springboot.yongjunstore.config.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import springboot.yongjunstore.repository.MemberRepository;
 
 //@SpringBootTest
 @ExtendWith(MockitoExtension.class)
-class OAuth2UserServiceTest {
+class CustomOAuth2UserServiceTest {
 
     @Mock
-    private ClientRegistrationRepository clientRegistrationRepository;
+    private MemberRepository memberRepository;
 
     @InjectMocks
-    private OAuth2UserService OAuth2UserService;
+    private CustomOAuth2UserService CustomOAuth2UserService;
 
     @Test
+    @DisplayName("로그인 성공 : OAuth2.0")
     void testLoadUser() {
 
     }

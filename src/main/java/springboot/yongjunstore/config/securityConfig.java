@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import springboot.yongjunstore.config.service.OAuth2UserService;
 import springboot.yongjunstore.config.filter.JwtAuthenticationFilter;
 import springboot.yongjunstore.config.filter.JwtExceptionFilter;
 import springboot.yongjunstore.config.handler.Http401Handler;
@@ -28,6 +27,7 @@ import springboot.yongjunstore.config.handler.Http403Handler;
 import springboot.yongjunstore.config.handler.OAuthenticationFailureHandler;
 import springboot.yongjunstore.config.handler.OAuthenticationSuccessHandler;
 import springboot.yongjunstore.config.jwt.JwtProvider;
+import springboot.yongjunstore.config.service.CustomOAuth2UserService;
 import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
@@ -40,7 +40,7 @@ public class securityConfig {
 
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
-    private final OAuth2UserService OAuth2UserService;
+    private final CustomOAuth2UserService CustomOAuth2UserService;
     private final RefreshTokenService refreshTokenService;
 
     @Bean
@@ -67,10 +67,10 @@ public class securityConfig {
 
                 .oauth2Login(oauth2 ->
                         oauth2.userInfoEndpoint(userInfoEndpoint ->
-                                    userInfoEndpoint.userService(new OAuth2UserService(memberRepository))
+                                    userInfoEndpoint.userService(new CustomOAuth2UserService(memberRepository))
                     )
                     .failureHandler(new OAuthenticationFailureHandler())
-                    .successHandler(new OAuthenticationSuccessHandler(jwtProvider, OAuth2UserService, refreshTokenService))
+                    .successHandler(new OAuthenticationSuccessHandler(jwtProvider, CustomOAuth2UserService, refreshTokenService))
                 )
 
 
