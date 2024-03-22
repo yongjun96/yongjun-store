@@ -36,6 +36,9 @@ public class RefreshTokenService {
                     .build();
 
             refreshTokenRepository.save(refreshToken);
+        }else {
+            // RT 존재하는 경우
+            refreshTokenRepository.updateRefreshToken(jwtDto.getRefreshToken(), email);
         }
     }
 
@@ -54,6 +57,9 @@ public class RefreshTokenService {
                     .build();
 
             refreshTokenRepository.save(refreshToken);
+        }else {
+            // RT 존재하는 경우
+            refreshTokenRepository.updateRefreshToken(jwtDto.getRefreshToken(), email);
         }
     }
 

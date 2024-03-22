@@ -12,7 +12,6 @@ import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
-import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
@@ -27,7 +26,8 @@ class AuthServiceTest {
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private JwtProvider jwtProvider;
     @Autowired private BCryptPasswordEncoder passwordEncoder;
-    @Autowired private  RefreshTokenService refreshTokenService;
+    @Autowired private RefreshTokenService refreshTokenService;
+
 
     @AfterEach
     public void afterEach() {

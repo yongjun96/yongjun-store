@@ -21,7 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import springboot.yongjunstore.config.service.OAuth2UserService;
-import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.config.filter.JwtAuthenticationFilter;
 import springboot.yongjunstore.config.filter.JwtExceptionFilter;
 import springboot.yongjunstore.config.handler.Http401Handler;
@@ -29,6 +28,7 @@ import springboot.yongjunstore.config.handler.Http403Handler;
 import springboot.yongjunstore.config.handler.OAuthenticationFailureHandler;
 import springboot.yongjunstore.config.handler.OAuthenticationSuccessHandler;
 import springboot.yongjunstore.config.jwt.JwtProvider;
+import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
 
