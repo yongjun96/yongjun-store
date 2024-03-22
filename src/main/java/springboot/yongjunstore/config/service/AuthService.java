@@ -1,12 +1,12 @@
-package springboot.yongjunstore.config.authservice;
+package springboot.yongjunstore.config.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.jwt.JwtDto;
@@ -20,7 +20,8 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class JwtAuthService {
+@Transactional(readOnly = true)
+public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
@@ -54,6 +55,7 @@ public class JwtAuthService {
         return tokenDto;
     }
 
+    @Transactional
     public void signup(SignUpDto signUpDto) {
 
         Optional<Member> optionalUser = memberRepository.findByEmail(signUpDto.getEmail());

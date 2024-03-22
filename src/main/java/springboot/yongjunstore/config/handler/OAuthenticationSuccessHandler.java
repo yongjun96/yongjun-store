@@ -11,8 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import springboot.yongjunstore.config.authservice.CustomOAuth2UserService;
-import springboot.yongjunstore.config.authservice.RefreshTokenService;
+import springboot.yongjunstore.config.service.OAuth2UserService;
+import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 
@@ -21,10 +21,10 @@ import java.io.IOException;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2UserService OAuth2UserService;
     private final RefreshTokenService refreshTokenService;
 
     @Override
@@ -46,10 +46,10 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
 
 
         // jwt token 발행을 시작한다.
-        JwtDto token = jwtProvider.googleLoginGenerateToken(email, role, oAuth2User);
+        JwtDto token = jwtProvider.googleLoginGenerateToken(email, role);
         log.info("jwtToken = {}", token.getAccessToken());
 
-        refreshTokenService.saveGoogleRefreshToken(token, email);
+        refreshTokenService.saveRefreshToken(token);
 
         // 회원이 존재할 경우
         if (isExist) {
@@ -63,7 +63,7 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
         //회원이 존재하지 않을 경우 DB에 회원가입 시키고 토큰 발급
         } else {
 
-            customOAuth2UserService.googleSignup(oAuth2User);
+            OAuth2UserService.googleSignup(oAuth2User);
 
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpStatus.OK.value());

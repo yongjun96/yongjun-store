@@ -20,19 +20,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import springboot.yongjunstore.config.authservice.CustomOAuth2UserService;
-import springboot.yongjunstore.config.authservice.RefreshTokenService;
+import springboot.yongjunstore.config.service.OAuth2UserService;
+import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.config.filter.JwtAuthenticationFilter;
 import springboot.yongjunstore.config.filter.JwtExceptionFilter;
 import springboot.yongjunstore.config.handler.Http401Handler;
 import springboot.yongjunstore.config.handler.Http403Handler;
-import springboot.yongjunstore.config.handler.MyAuthenticationFailureHandler;
-import springboot.yongjunstore.config.handler.MyAuthenticationSuccessHandler;
+import springboot.yongjunstore.config.handler.OAuthenticationFailureHandler;
+import springboot.yongjunstore.config.handler.OAuthenticationSuccessHandler;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
-
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 @Slf4j
 @Configuration
@@ -42,15 +40,15 @@ public class securityConfig {
 
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2UserService OAuth2UserService;
     private final RefreshTokenService refreshTokenService;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return web -> web.ignoring()
                 .requestMatchers("/favicon.ico")
-                .requestMatchers("/error")
-                .requestMatchers(toH2Console());
+                .requestMatchers("/error");
+                //.requestMatchers(toH2Console());
     }
 
     @Bean
@@ -69,10 +67,10 @@ public class securityConfig {
 
                 .oauth2Login(oauth2 ->
                         oauth2.userInfoEndpoint(userInfoEndpoint ->
-                                    userInfoEndpoint.userService(new CustomOAuth2UserService(memberRepository))
+                                    userInfoEndpoint.userService(new OAuth2UserService(memberRepository))
                     )
-                    .failureHandler(new MyAuthenticationFailureHandler())
-                    .successHandler(new MyAuthenticationSuccessHandler(jwtProvider, customOAuth2UserService, refreshTokenService))
+                    .failureHandler(new OAuthenticationFailureHandler())
+                    .successHandler(new OAuthenticationSuccessHandler(jwtProvider, OAuth2UserService, refreshTokenService))
                 )
 
 

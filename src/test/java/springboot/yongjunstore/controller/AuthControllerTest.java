@@ -7,6 +7,8 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,7 @@ import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
+import springboot.yongjunstore.repository.RefreshTokenRepository;
 import springboot.yongjunstore.request.MemberLoginDto;
 import springboot.yongjunstore.request.SignUpDto;
 
@@ -34,12 +37,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
-class MemberControllerTest {
+class AuthControllerTest {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private MemberRepository memberRepository;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private BCryptPasswordEncoder passwordEncoder;
+    @Autowired private RefreshTokenRepository refreshTokenRepository;
 
     @BeforeEach
     void delete(){
@@ -133,9 +137,10 @@ class MemberControllerTest {
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken", Matchers.notNullValue()))
-                .andExpect(jsonPath("$.refreshToken", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.grantType", Matchers.notNullValue()))
                 .andDo(print());
+
+        assertThat(refreshTokenRepository.findByEmail(member.getEmail()).get().getRefreshToken()).isNotNull();
     }
 
 }

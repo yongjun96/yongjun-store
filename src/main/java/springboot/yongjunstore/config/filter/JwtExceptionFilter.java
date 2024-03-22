@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.common.exceptioncode.ErrorCodeResponse;
-import springboot.yongjunstore.config.authservice.RefreshTokenService;
+import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 

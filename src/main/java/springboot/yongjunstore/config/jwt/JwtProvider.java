@@ -83,7 +83,7 @@ public class JwtProvider {
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public JwtDto googleLoginGenerateToken(String email, String role, OAuth2User oAuth2User) {
+    public JwtDto googleLoginGenerateToken(String email, String role) {
 
         long now = (new Date()).getTime();
 
