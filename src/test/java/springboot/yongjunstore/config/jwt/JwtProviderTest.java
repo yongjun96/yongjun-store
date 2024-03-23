@@ -5,9 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.repository.MemberRepository;
@@ -27,6 +29,8 @@ class JwtProviderTest {
 
     @Mock private MemberRepository memberRepository;
 
+    @Autowired JwtProvider getJwtProvider;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this); // 목 객체 주입
@@ -35,8 +39,6 @@ class JwtProviderTest {
     @Test
     @DisplayName("secretKeyPlain Base64 변환")
     void jwtSecretKey(){
-
-        JwtProvider getJwtProvider = new JwtProvider(memberRepository);
 
         SecretKey secretKey = getJwtProvider.jwtSecretKey();
 
@@ -48,7 +50,6 @@ class JwtProviderTest {
     void validateToken(){
         // given
         String token = "정상 토큰입니다";
-
 
         when(jwtProvider.validateToken(token)).thenReturn(true);
 
@@ -63,7 +64,6 @@ class JwtProviderTest {
         // given
         String token = "변조된 토큰입니다";
 
-        JwtProvider jwtProvider = mock(JwtProvider.class);
         when(jwtProvider.validateToken(token)).thenThrow(new JwtException(ErrorCode.JWT_SIGNATURE_EXCEPTION.getMessage()));
 
         assertThatThrownBy(() -> jwtProvider.validateToken(token))
@@ -77,7 +77,6 @@ class JwtProviderTest {
         // given
         String token = "잘못된 구조의 지원되지 않는 토큰입니다";
 
-        JwtProvider jwtProvider = mock(JwtProvider.class);
         when(jwtProvider.validateToken(token)).thenThrow(new JwtException(ErrorCode.JWT_MALFORMED_JWT_EXCEPTION.getMessage()));
 
         assertThatThrownBy(() -> jwtProvider.validateToken(token))
@@ -91,7 +90,6 @@ class JwtProviderTest {
         // given
         String token = "만료된 토큰입니다";
 
-        JwtProvider jwtProvider = mock(JwtProvider.class);
         when(jwtProvider.validateToken(token)).thenThrow(new JwtException(ErrorCode.JWT_EXPIRED_JWT_EXCEPTION.getMessage()));
 
         assertThatThrownBy(() -> jwtProvider.validateToken(token))
@@ -105,7 +103,6 @@ class JwtProviderTest {
         // given
         String token = "다른 형식의 토큰입니다";
 
-        JwtProvider jwtProvider = mock(JwtProvider.class);
         when(jwtProvider.validateToken(token)).thenThrow(new JwtException(ErrorCode.JWT_UNSUPPORTED_JWT_EXCEPTION.getMessage()));
 
         assertThatThrownBy(() -> jwtProvider.validateToken(token))
