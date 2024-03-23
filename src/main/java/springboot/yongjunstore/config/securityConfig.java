@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -31,6 +32,7 @@ import springboot.yongjunstore.config.service.CustomOAuth2UserService;
 import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
+import springboot.yongjunstore.service.MemberService;
 
 @Slf4j
 @Configuration
@@ -40,7 +42,7 @@ public class securityConfig {
 
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
-    private final CustomOAuth2UserService CustomOAuth2UserService;
+    private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
 
     @Bean
@@ -67,10 +69,10 @@ public class securityConfig {
 
                 .oauth2Login(oauth2 ->
                         oauth2.userInfoEndpoint(userInfoEndpoint ->
-                                    userInfoEndpoint.userService(new CustomOAuth2UserService(memberRepository))
+                                    userInfoEndpoint.userService(new CustomOAuth2UserService(memberRepository, defaultOAuth2UserService()))
                     )
                     .failureHandler(new OAuthenticationFailureHandler())
-                    .successHandler(new OAuthenticationSuccessHandler(jwtProvider, CustomOAuth2UserService, refreshTokenService))
+                    .successHandler(new OAuthenticationSuccessHandler(jwtProvider, memberService, refreshTokenService))
                 )
 
 
@@ -93,6 +95,10 @@ public class securityConfig {
         };
     }
 
+    @Bean
+    public DefaultOAuth2UserService defaultOAuth2UserService(){
+        return new DefaultOAuth2UserService();
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){

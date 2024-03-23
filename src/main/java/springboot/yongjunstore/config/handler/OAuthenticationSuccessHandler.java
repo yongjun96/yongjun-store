@@ -15,6 +15,7 @@ import springboot.yongjunstore.config.service.CustomOAuth2UserService;
 import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
+import springboot.yongjunstore.service.MemberService;
 
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ import java.io.IOException;
 public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
-    private final CustomOAuth2UserService CustomOAuth2UserService;
+    private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
 
     @Override
@@ -63,7 +64,7 @@ public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucces
         //회원이 존재하지 않을 경우 DB에 회원가입 시키고 토큰 발급
         } else {
 
-            CustomOAuth2UserService.googleSignup(oAuth2User);
+            memberService.googleSignup(oAuth2User);
 
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpStatus.OK.value());

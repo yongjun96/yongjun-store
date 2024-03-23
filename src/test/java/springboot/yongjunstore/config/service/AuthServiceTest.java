@@ -137,4 +137,33 @@ class AuthServiceTest {
         Assertions.assertThat(signUpDto.getName()).isEqualTo(findMember.getName());
     }
 
+    @Test
+    @DisplayName("회원가입 실패 : 이미 존재하는 이메일입니다.")
+    void signupFail() {
+
+        //given
+        Member member = Member.builder()
+                .email("yongjun@gmail.com")
+                .password("1234")
+                .role(Role.ADMIN)
+                .name("김용준")
+                .build();
+
+        memberRepository.save(member);
+
+        SignUpDto signUpDto = SignUpDto.builder()
+                .email("yongjun@gmail.com")
+                .password("1234")
+                .role(Role.ADMIN)
+                .name("김용준")
+                .build();
+
+        //when
+        AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
+
+        Assertions.assertThatThrownBy( () -> authService.signup(signUpDto))
+                .isInstanceOf(GlobalException.class)
+                .hasMessageContaining(ErrorCode.MEMBER_EMAIL_EXISTS.getMessage());
+    }
+
 }

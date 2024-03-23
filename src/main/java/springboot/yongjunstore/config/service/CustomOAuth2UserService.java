@@ -28,14 +28,13 @@ import java.util.Optional;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
+    private final DefaultOAuth2UserService defaultOAuth2UserService; // 기존의 Super Class
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        // 기본 OAuth2UserService 객체 생성
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
 
         // OAuth2UserService를 사용하여 OAuth2User 정보를 가져온다.
-        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
+        OAuth2User oAuth2User = defaultOAuth2UserService.loadUser(userRequest);
 
         // ex). provider = google
         String provider = userRequest.getClientRegistration().getRegistrationId();
@@ -70,32 +69,5 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_"+findMember.get().getRole())),
                     customOAuth2User.getAttributes(), "email");
         }
-    }
-
-    @Transactional
-    public void googleSignup(OAuth2User oAuth2User) {
-
-        // ex). MEMBER
-        String role = oAuth2User.getAuthorities().stream().
-                findFirst() // 첫번째 Role을 찾아온다.
-                .orElseThrow(IllegalAccessError::new) // 존재하지 않을 시 예외를 던진다.
-                .toString().substring(5).trim(); // ROLE_ 부분 자르고 가져온다.
-
-
-        Optional<Member> optionalUser = memberRepository.findByEmail(oAuth2User.getAttribute("email"));
-
-        if(optionalUser.isPresent()){
-            throw new GlobalException(ErrorCode.MEMBER_EMAIL_EXISTS);
-        }
-
-        Member member = Member.builder()
-                .name(oAuth2User.getAttribute("name"))
-                .email(oAuth2User.getAttribute("email"))
-                .provider(oAuth2User.getAttribute("provider")) // ex). google
-                .providerId(oAuth2User.getAttribute("sub"))
-                .role(Role.valueOf(role))
-                .build();
-
-        memberRepository.save(member);
     }
 }
