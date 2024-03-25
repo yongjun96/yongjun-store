@@ -22,6 +22,7 @@ public class RefreshTokenService {
     @Transactional
     public void saveRefreshToken(JwtDto jwtDto) {
 
+        // 계정 존재 유무 getAuthentication에서 체크함
         Authentication authentication = jwtProvider.getAuthentication(jwtDto.getAccessToken());
         String email = authentication.getName();
 

@@ -1,9 +1,6 @@
 package springboot.yongjunstore.config.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -328,6 +326,89 @@ class JwtProviderTest {
         assertThatThrownBy(() -> mockJwtProvider.validateToken(token))
                 .isInstanceOf(JwtException.class)
                 .hasMessageContaining(ErrorCode.JWT_UNSUPPORTED_JWT_EXCEPTION.getMessage());
+    }
+
+    @Test
+    @DisplayName("토큰 정보 확인 성공 : Request Header 에서 토큰 정보 추출")
+    void resolveToken() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        String tokenValue = "testToken";
+        request.addHeader("Authorization", "Bearer " + tokenValue);
+
+        // When
+        String resolvedToken = getJwtProvider.resolveToken(request);
+
+        // Then
+        assertThat(tokenValue).isEqualTo(resolvedToken);
+    }
+
+    @Test
+    @DisplayName("토큰 정보 확인 실패 : Bearer가 아닌 잘 못된 값인 경우 null 리턴")
+    void resolveTokenNull() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        String tokenValue = "testToken";
+        request.addHeader("Authorization", "잘못된 값 " + tokenValue);
+
+        // When
+        String resolvedToken = getJwtProvider.resolveToken(request);
+
+        // Then
+        assertThat(resolvedToken).isNull();
+    }
+
+    @Test
+    @DisplayName("RefreshToken 만료되지 않은 토큰 성공")
+    void validateRefreshToken() {
+
+        // given
+        Long refreshTime = 3000000L;
+
+        Long now = (new Date()).getTime();
+
+        // RefreshToken
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + refreshTime))
+                .signWith(getJwtProvider.jwtSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        JwtDto jwtDto = JwtDto.builder()
+                .refreshToken(refreshToken)
+                .build();
+
+        // when
+        boolean result = getJwtProvider.validateRefreshToken(jwtDto.getRefreshToken());
+
+        // then
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    @DisplayName("RefreshToken 만료된 토큰 false 리턴")
+    void validateRefreshTokenFail() throws InterruptedException {
+
+        // given
+        Long refreshTime = 10L;
+
+        Long now = (new Date()).getTime();
+
+        // RefreshToken
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + refreshTime))
+                .signWith(getJwtProvider.jwtSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        JwtDto jwtDto = JwtDto.builder()
+                .refreshToken(refreshToken)
+                .build();
+
+        Thread.sleep(1);
+
+        // when
+        boolean result = getJwtProvider.validateRefreshToken(jwtDto.getRefreshToken());
+
+        assertThat(result).isFalse();
     }
 
 }
