@@ -50,7 +50,6 @@ public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucces
         JwtDto token = jwtProvider.googleLoginGenerateToken(email, role);
         log.info("jwtToken = {}", token.getAccessToken());
 
-        refreshTokenService.saveGoogleRefreshToken(token, email);
 
         // 회원이 존재할 경우
         if (isExist) {
@@ -73,6 +72,9 @@ public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucces
             objectMapper.writeValue(response.getWriter(), token);
 
         }
+
+        // refreshToken 저장
+        refreshTokenService.saveRefreshToken(token);
     }
 
 }

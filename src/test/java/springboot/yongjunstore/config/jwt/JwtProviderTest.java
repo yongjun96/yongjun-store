@@ -109,7 +109,7 @@ class JwtProviderTest {
     void getAuthentication() {
 
         // given
-        Long accessTime = 3000000L;       // accessToken 1시간
+        Long accessTime = 3000000L;
 
         Long now = (new Date()).getTime();
 
@@ -152,7 +152,7 @@ class JwtProviderTest {
     void getAuthenticationMemberNotFound() {
 
         // given
-        Long accessTime = 3000000L;       // accessToken 1시간
+        Long accessTime = 3000000L;
 
         Long now = (new Date()).getTime();
 
@@ -188,7 +188,7 @@ class JwtProviderTest {
     void getAuthenticationClaimsNotFound() {
 
         // given
-        Long accessTime = 3000000L;       // accessToken 1시간
+        Long accessTime = 3000000L;
 
         Long now = (new Date()).getTime();
 
@@ -225,7 +225,7 @@ class JwtProviderTest {
     void getAuthenticationGoogle() {
 
         // given
-        Long accessTime = 3000000L;       // accessToken 1시간
+        Long accessTime = 3000000L;
 
         Long now = (new Date()).getTime();
 
@@ -389,7 +389,7 @@ class JwtProviderTest {
     void validateRefreshTokenFail() throws InterruptedException {
 
         // given
-        Long refreshTime = 10L;
+        Long refreshTime = 1L;
 
         Long now = (new Date()).getTime();
 
@@ -402,8 +402,6 @@ class JwtProviderTest {
         JwtDto jwtDto = JwtDto.builder()
                 .refreshToken(refreshToken)
                 .build();
-
-        Thread.sleep(1);
 
         // when
         boolean result = getJwtProvider.validateRefreshToken(jwtDto.getRefreshToken());

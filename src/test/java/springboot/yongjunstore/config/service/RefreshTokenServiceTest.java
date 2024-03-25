@@ -18,11 +18,9 @@ import springboot.yongjunstore.domain.RefreshToken;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.repository.RefreshTokenRepository;
-
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class RefreshTokenServiceTest {
@@ -40,8 +38,8 @@ class RefreshTokenServiceTest {
 
     JwtDto beforeJwt(Member member){
 
-        Long accessTime = 3000000L;       // accessToken 1시간
-        Long refreshTime = 6000000L;   // refreshToken 30일
+        Long accessTime = 3000000L;
+        Long refreshTime = 6000000L;
 
         long now = (new Date()).getTime();
 
@@ -146,6 +144,124 @@ class RefreshTokenServiceTest {
         assertThatThrownBy(() -> refreshTokenService.saveRefreshToken(jwtDto))
                 .isInstanceOf(UsernameNotFoundException.class)
                 .hasMessageContaining("해당 계정을 찾을 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 성공 : accessToken이 만료되면 refreshToken을 확인해서 만료 전이라면 accessToken과 refreshToken을 재발급")
+    void reissueAccessToken(){
+
+        // given
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .password("1234")
+                .role(Role.MEMBER)
+                .provider("google")
+                .build();
+
+        memberRepository.save(member);
+
+        Long accessTime = 3000000L;
+        Long refreshTime = 6000000L;
+
+        long now = (new Date()).getTime();
+
+        // AccessToken
+        // 현재 시간에서 accessTime을 빼서 과거 시간을 설정
+        Date accessTokenExpiresIn = new Date(now - accessTime);
+
+        String accessToken = Jwts.builder()
+                .setSubject(String.valueOf(member.getEmail()))
+                .claim("role", member.getRole())
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(jwtProvider.jwtSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        // RefreshToken
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + refreshTime))
+                .signWith(jwtProvider.jwtSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        JwtDto createJwtDto = JwtDto.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+
+        RefreshToken saveRefreshToken = RefreshToken.builder()
+                .refreshToken(createJwtDto.getRefreshToken())
+                .email(member.getEmail())
+                .build();
+
+        refreshTokenRepository.save(saveRefreshToken);
+
+        // when
+        JwtDto updateJwtDto = refreshTokenService.reissueAccessToken(createJwtDto.getAccessToken());
+
+        // then
+        // accessTime 만료로 JwtDto을 새로 발급해서 기본 토큰과 업데이트 된 토큰이 달라야 함.
+        assertThat(updateJwtDto.getGrantType()).isEqualTo(createJwtDto.getGrantType());
+        assertThat(updateJwtDto.getAccessToken()).isNotEqualTo(createJwtDto.getAccessToken());
+        assertThat(updateJwtDto.getRefreshToken()).isNotEqualTo(createJwtDto.getRefreshToken());
+    }
+
+
+    @Test
+    @DisplayName("토큰 재발급 실패 : accessToken과 refreshToken 모두 만료로 RefreshToken Entity 정보 삭제")
+    void reissueAccessTokenExpiredJwtException() {
+
+        // given
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .password("1234")
+                .role(Role.MEMBER)
+                .provider("google")
+                .build();
+
+        memberRepository.save(member);
+
+        Long accessTime = 1L;
+        Long refreshTime = 1L;
+
+        long now = (new Date()).getTime();
+
+        // AccessToken
+        Date accessTokenExpiresIn = new Date(now - accessTime);
+
+        String accessToken = Jwts.builder()
+                .setSubject(String.valueOf(member.getEmail()))
+                .claim("role", member.getRole())
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(jwtProvider.jwtSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        // RefreshToken
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now - refreshTime))
+                .signWith(jwtProvider.jwtSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        JwtDto createJwtDto = JwtDto.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+
+
+        RefreshToken saveRefreshToken = RefreshToken.builder()
+                .refreshToken(createJwtDto.getRefreshToken())
+                .email(member.getEmail())
+                .build();
+
+        refreshTokenRepository.save(saveRefreshToken);
+
+        // when
+        refreshTokenService.reissueAccessToken(createJwtDto.getAccessToken());
+
+        RefreshToken findRefreshToken = refreshTokenRepository.findByRefreshToken(saveRefreshToken.getRefreshToken());
+
+        //then
+        assertThat(findRefreshToken).isNull();
     }
 
 

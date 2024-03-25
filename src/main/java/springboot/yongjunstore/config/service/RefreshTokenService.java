@@ -43,28 +43,6 @@ public class RefreshTokenService {
         }
     }
 
-
-    @Transactional
-    public void saveGoogleRefreshToken(JwtDto jwtDto, String email) {
-
-        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByEmail(email);
-
-        //RT 존재하지 않을 경우
-        if (optionalRefreshToken.isEmpty()) {
-
-            RefreshToken refreshToken = RefreshToken.builder()
-                    .refreshToken(jwtDto.getRefreshToken())
-                    .email(email)
-                    .build();
-
-            refreshTokenRepository.save(refreshToken);
-        }else {
-            // RT 존재하는 경우
-            refreshTokenRepository.updateRefreshToken(jwtDto.getRefreshToken(), email);
-        }
-    }
-
-
     @Transactional
     public JwtDto reissueAccessToken(String accessToken){
 

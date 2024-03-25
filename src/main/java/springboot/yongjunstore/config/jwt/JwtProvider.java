@@ -33,11 +33,11 @@ public class JwtProvider {
 
     private final MemberRepository memberRepository;
 
-    //public static final long ACCESS_TIME = 3600000L;       // accessToken 1시간
-    //public static final long REFRESH_TIME = 2592000000L;   // refreshToken 30일
+    public static final long ACCESS_TIME = 3600000L;       // accessToken 1시간
+    public static final long REFRESH_TIME = 2592000000L;   // refreshToken 30일
 
-    public static final long ACCESS_TIME = 3000000L;       // accessToken 1시간
-    public static final long REFRESH_TIME = 6000000L;   // refreshToken 30일
+    //public static final long ACCESS_TIME = 3000000L;
+    //public static final long REFRESH_TIME = 6000000L;
 
     // application custom secretKey
     @Value("${custom.jwt.secretKey}")
