@@ -57,7 +57,7 @@ class AuthControllerTest {
         //given
         SignUpDto signUpDto = SignUpDto.builder()
                 .name("김용준")
-                .password("1234")
+                .password("qwer!1234")
                 .role(Role.ADMIN)
                 .email("yongjun@gmail.com")
                 .build();
@@ -86,7 +86,7 @@ class AuthControllerTest {
 
         Member member = Member.builder()
                 .name("김용준")
-                .password(passwordEncoder.encode("1234"))
+                .password(passwordEncoder.encode("qwer!1234"))
                 .role(Role.ADMIN)
                 .email("yongjun@gmail.com")
                 .build();
@@ -95,7 +95,7 @@ class AuthControllerTest {
 
         SignUpDto signUpDto = SignUpDto.builder()
                 .name("김용준")
-                .password("1234")
+                .password("qwer!1234")
                 .role(Role.ADMIN)
                 .email("yongjun@gmail.com")
                 .build();
@@ -118,7 +118,7 @@ class AuthControllerTest {
         //given
         Member member = Member.builder()
                 .name("김용준")
-                .password(passwordEncoder.encode("1234"))
+                .password(passwordEncoder.encode("qwer!1234"))
                 .role(Role.ADMIN)
                 .email("yongjun@gmail.com")
                 .build();
@@ -127,7 +127,7 @@ class AuthControllerTest {
 
         MemberLoginDto memberLoginDto = MemberLoginDto.builder()
                 .email(member.getEmail())
-                .password("1234")
+                .password("qwer!1234")
                 .build();
 
         //expected

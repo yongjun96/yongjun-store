@@ -3,6 +3,7 @@ package springboot.yongjunstore.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.springframework.validation.annotation.Validated;
 import springboot.yongjunstore.domain.base.BaseTimeEntity;
 
 @Entity

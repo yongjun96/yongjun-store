@@ -1,6 +1,9 @@
 package springboot.yongjunstore.common.exception;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,6 +34,18 @@ public class GlobalExceptionHandler {
 
         e.getBindingResult().getAllErrors()
                 .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
+
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(ConstraintViolationException e){
+
+        Map<String, String> errors = new HashMap<>();
+
+        e.getConstraintViolations().forEach(
+                c -> errors.put(c.getPropertyPath().toString(), c.getMessage()));
 
         return ResponseEntity.badRequest().body(errors);
     }

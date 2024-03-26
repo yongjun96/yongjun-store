@@ -73,7 +73,7 @@ class RefreshTokenServiceTest {
         // given
         Member member = Member.builder()
                 .email("test@gmail.com")
-                .password("1234")
+                .password("qwer!1234")
                 .role(Role.MEMBER)
                 .provider("google")
                 .build();
@@ -99,7 +99,7 @@ class RefreshTokenServiceTest {
         // given
         Member member = Member.builder()
                 .email("test@gmail.com")
-                .password("1234")
+                .password("qwer!1234")
                 .role(Role.MEMBER)
                 .provider("google")
                 .build();
@@ -153,7 +153,7 @@ class RefreshTokenServiceTest {
         // given
         Member member = Member.builder()
                 .email("test@gmail.com")
-                .password("1234")
+                .password("qwer!1234")
                 .role(Role.MEMBER)
                 .provider("google")
                 .build();
@@ -213,7 +213,7 @@ class RefreshTokenServiceTest {
         // given
         Member member = Member.builder()
                 .email("test@gmail.com")
-                .password("1234")
+                .password("qwer!1234")
                 .role(Role.MEMBER)
                 .provider("google")
                 .build();

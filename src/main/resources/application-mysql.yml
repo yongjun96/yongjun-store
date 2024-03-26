@@ -5,12 +5,20 @@ spring:
         one-indexed-parameters: true # 페이지를 1부터 시작 (default 0)
         default-page-size: 5 # 한 페이지 당 표시할 데이터 수
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 941574435155-jipror8aqrh727oa6tuikqsbmaeij5i6.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            scope: profile,email
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://yongjun-rds-mysql8.cpowku6g4wpx.ap-northeast-2.rds.amazonaws.com:3306/yongjun-store
-    username: admin
-    password: admin!1234
+    url: jdbc:mysql://127.0.0.1:3306/yongjun-store
+    username: yongjun
+    password: root
 
 
   jpa:

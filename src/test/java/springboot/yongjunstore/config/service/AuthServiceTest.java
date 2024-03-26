@@ -42,7 +42,7 @@ class AuthServiceTest {
         //given
         Member member = Member.builder()
                 .email("yongjun@gmail.com")
-                .password(passwordEncoder.encode("1234"))
+                .password(passwordEncoder.encode("qwer!1234"))
                 .role(Role.ADMIN)
                 .name("김용준")
                 .build();
@@ -53,7 +53,7 @@ class AuthServiceTest {
 
         MemberLoginDto loginDto = MemberLoginDto.builder()
                 .email("yongjun@gmail.com")
-                .password("1234")
+                .password("qwer!1234")
                 .build();
 
         //when
@@ -90,7 +90,7 @@ class AuthServiceTest {
         //given
         Member member = Member.builder()
                 .email("yongjun@gmail.com")
-                .password(passwordEncoder.encode("1234"))
+                .password(passwordEncoder.encode("qwer!1234"))
                 .role(Role.ADMIN)
                 .name("김용준")
                 .build();
@@ -118,7 +118,7 @@ class AuthServiceTest {
         //given
         SignUpDto signUpDto = SignUpDto.builder()
                 .email("yongjun@gmail.com")
-                .password("1234")
+                .password("qwer!1234")
                 .role(Role.ADMIN)
                 .name("김용준")
                 .build();
@@ -144,7 +144,7 @@ class AuthServiceTest {
         //given
         Member member = Member.builder()
                 .email("yongjun@gmail.com")
-                .password("1234")
+                .password("qwer!1234")
                 .role(Role.ADMIN)
                 .name("김용준")
                 .build();
