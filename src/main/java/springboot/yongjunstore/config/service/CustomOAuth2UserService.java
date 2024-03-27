@@ -12,12 +12,11 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
-import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.CustomOAuth2User;
+
 import java.util.Collections;
 import java.util.Optional;
 

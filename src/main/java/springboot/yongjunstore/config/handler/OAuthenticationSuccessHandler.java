@@ -11,10 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import springboot.yongjunstore.config.service.CustomOAuth2UserService;
-import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
+import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.service.MemberService;
 
 import java.io.IOException;
@@ -33,6 +32,7 @@ public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucces
 
         // OAuth2User로 캐스팅하여 인증된 사용자 정보를 가져온다.
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+
         // 사용자 이메일을 가져온다.
         String email = oAuth2User.getAttribute("email");
 
@@ -50,31 +50,24 @@ public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucces
         JwtDto token = jwtProvider.googleLoginGenerateToken(email, role);
         log.info("jwtToken = {}", token.getAccessToken());
 
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpStatus.OK.value());
+        //response.addHeader("grantType", token.getGrantType());
+        //response.addHeader("accessToken", token.getAccessToken());
 
-        // 회원이 존재할 경우
-        if (isExist) {
-
-            response.setContentType("application/json;charset=UTF-8");
-            response.setStatus(HttpStatus.OK.value());
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(response.getWriter(), token);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.writeValue(response.getWriter(), token);
 
         //회원이 존재하지 않을 경우 DB에 회원가입 시키고 토큰 발급
-        } else {
-
+        if (!isExist) {
             memberService.googleSignup(oAuth2User);
-
-            response.setContentType("application/json;charset=UTF-8");
-            response.setStatus(HttpStatus.OK.value());
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(response.getWriter(), token);
-
         }
 
         // refreshToken 저장
         refreshTokenService.saveRefreshToken(token);
+
+        // 클라이언트로 리디렉션하여 토큰 정보를 전달합니다.
+        response.sendRedirect("http://localhost:5173?accessToken=" + token.getAccessToken());
     }
 
 }

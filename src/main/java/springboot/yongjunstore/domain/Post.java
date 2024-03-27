@@ -2,9 +2,11 @@ package springboot.yongjunstore.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import springboot.yongjunstore.domain.itme.Item;
+import springboot.yongjunstore.domain.room.Room;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,27 +15,26 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "orders")
-public class Order {
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
+    @Column(name = "post_id")
     private Long id;
+
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    //주문 날짜
-    private LocalDateTime orderDate;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Room> Rooms = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<Item> items = new ArrayList<>();
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems;
+    @Builder
+    public Post(String content, Member member, List<Room> rooms) {
+        this.content = content;
+        this.member = member;
+        Rooms = rooms;
+    }
 }

@@ -1,10 +1,15 @@
 package springboot.yongjunstore.config.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springboot.yongjunstore.common.exception.GlobalException;
@@ -15,11 +20,14 @@ import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.MemberLoginDto;
 import springboot.yongjunstore.request.SignUpDto;
+import springboot.yongjunstore.service.MemberService;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class AuthService {
 

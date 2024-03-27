@@ -32,6 +32,7 @@ public class Member extends BaseTimeEntity {
     // googleLogin
     private String provider;
 
+    // googleLogin
     private String providerId;
 
     @Builder
