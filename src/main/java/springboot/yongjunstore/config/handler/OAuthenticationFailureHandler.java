@@ -25,8 +25,7 @@ public class OAuthenticationFailureHandler implements org.springframework.securi
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(ErrorCode.OAUTH_EMAIL_EXISTS.getStatusCode());
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(response.getWriter(), new ErrorCodeResponse(ErrorCode.OAUTH_EMAIL_EXISTS));
+            response.sendRedirect("http://localhost:5173?errorMessage=OAUTH_EMAIL_EXISTS");
         }
     }
 }

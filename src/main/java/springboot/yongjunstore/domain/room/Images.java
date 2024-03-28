@@ -19,12 +19,12 @@ public class Images {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private Room room;
+    @JoinColumn(name = "room_post_id")
+    private RoomPost roomPost;
 
     @Builder
-    public Images(String name, Room room) {
+    public Images(String name, RoomPost roomPost) {
         this.name = name;
-        this.room = room;
+        this.roomPost = roomPost;
     }
 }

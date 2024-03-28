@@ -13,7 +13,7 @@ import springboot.yongjunstore.config.service.AuthService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;

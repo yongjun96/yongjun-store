@@ -1,5 +1,5 @@
 package springboot.yongjunstore.domain.room;
 
 public enum RoomStatus {
-    ORDER, CANCELLED
+    매매, 임대, 종료
 }

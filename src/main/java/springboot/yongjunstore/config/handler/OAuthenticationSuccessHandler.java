@@ -52,11 +52,6 @@ public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucces
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpStatus.OK.value());
-        //response.addHeader("grantType", token.getGrantType());
-        //response.addHeader("accessToken", token.getAccessToken());
-
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.writeValue(response.getWriter(), token);
 
         //회원이 존재하지 않을 경우 DB에 회원가입 시키고 토큰 발급
         if (!isExist) {

@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
@@ -18,6 +19,7 @@ import springboot.yongjunstore.config.jwt.JwtProvider;
 import java.io.IOException;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
@@ -86,6 +88,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.writeValue(response.getWriter(), jwtDto);
+            log.info("만료된 accessToken이 refreshToken의 의해 재발급 되었습니다.");
+            log.info("accessToken : "+jwtDto.getAccessToken());
         }
     }
 }
