@@ -67,4 +67,8 @@ public class RoomPost {
         this.roomStatus = roomStatus;
         this.member = member;
     }
+
+    public void addMember(Member member){
+        this.member = member;
+    }
 }

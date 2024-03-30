@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.yongjunstore.request.RoomPostRequest;
+import springboot.yongjunstore.response.RoomPostResponse;
 import springboot.yongjunstore.service.RoomPostService;
 import java.util.List;
 
@@ -19,13 +20,23 @@ public class RoomPostController {
 
     private final RoomPostService roomPostService;
 
+
     @PostMapping(value = "/create")
-    public ResponseEntity roomCreate(@Valid @ModelAttribute RoomPostRequest roomPostRequest,
+    public ResponseEntity roomPostCreate(@Valid @ModelAttribute RoomPostRequest roomPostRequest,
                                             @RequestPart(value = "uploadImages") List<MultipartFile> uploadImages){
 
         roomPostService.createRoom(roomPostRequest, uploadImages);
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    @GetMapping("/posts/{roomPostId}")
+    public ResponseEntity getRoomPost(@PathVariable("roomPostId") Long roomPostId){
+
+       RoomPostResponse roomPostResponse = roomPostService.getRoomPost(roomPostId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(roomPostResponse);
     }
 }
 
