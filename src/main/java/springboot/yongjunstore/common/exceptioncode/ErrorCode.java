@@ -26,7 +26,14 @@ public enum ErrorCode {
     JWT_REFRESH_EXPIRED_JWT_EXCEPTION(403, HttpStatus.NOT_FOUND, "T005", "만료된 refreshToken입니다."),
 
     // OAuth2.0
-    OAUTH_EMAIL_EXISTS(400, HttpStatus.BAD_REQUEST, "O001", "이미 일반 회원으로 등록된 이메일입니다.");
+    OAUTH_EMAIL_EXISTS(400, HttpStatus.BAD_REQUEST, "O001", "이미 일반 회원으로 등록된 이메일입니다."),
+
+    // fileUpload
+    IMAGE_FILE_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F001", "이미지 파일이 아닙니다."),
+    IMAGE_FILE_NOT_UPLOAD(401, HttpStatus.BAD_REQUEST, "F002", "이미지 파일이 업로드되지 못했습니다."),
+
+    // RoomPost
+    ROOM_POST_NOT_FOUND(404, HttpStatus.NOT_FOUND, "R001", "RoomPost를 찾을 수 없습니다.");
 
     private final int statusCode;
     private final HttpStatus status;

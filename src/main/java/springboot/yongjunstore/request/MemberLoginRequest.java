@@ -4,13 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class MemberLoginDto {
+public class MemberLoginRequest {
 
     private String email;
     private String password;
 
     @Builder
-    public MemberLoginDto(String email, String password) {
+    public MemberLoginRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }

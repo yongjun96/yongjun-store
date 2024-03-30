@@ -4,11 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.yongjunstore.config.jwt.JwtDto;
-import springboot.yongjunstore.request.MemberLoginDto;
-import springboot.yongjunstore.request.SignUpDto;
+import springboot.yongjunstore.request.MemberLoginRequest;
+import springboot.yongjunstore.request.SignUpRequest;
 import springboot.yongjunstore.config.service.AuthService;
 
 @RestController
@@ -19,15 +18,15 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public JwtDto login(@RequestBody MemberLoginDto memberLoginDto) {
+    public JwtDto login(@RequestBody MemberLoginRequest memberLoginDto) {
         JwtDto jwtDto = authService.login(memberLoginDto);
         return jwtDto;
     }
 
     @PostMapping("/signup")
-    public ResponseEntity signup(@Valid @RequestBody SignUpDto signUpDto) {
+    public ResponseEntity signup(@Valid @RequestBody SignUpRequest signUpRequest) {
 
-        authService.signup(signUpDto);
+        authService.signup(signUpRequest);
 
        return ResponseEntity.status(HttpStatus.OK).build();
     }

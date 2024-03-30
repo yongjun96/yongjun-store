@@ -15,8 +15,8 @@ import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
-import springboot.yongjunstore.request.MemberLoginDto;
-import springboot.yongjunstore.request.SignUpDto;
+import springboot.yongjunstore.request.MemberLoginRequest;
+import springboot.yongjunstore.request.SignUpRequest;
 
 
 @SpringBootTest
@@ -51,7 +51,7 @@ class AuthServiceTest {
 
         AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
-        MemberLoginDto loginDto = MemberLoginDto.builder()
+        MemberLoginRequest loginDto = MemberLoginRequest.builder()
                 .email("yongjun@gmail.com")
                 .password("qwer!1234")
                 .build();
@@ -72,7 +72,7 @@ class AuthServiceTest {
         //given
         AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
-        MemberLoginDto loginDto = MemberLoginDto.builder()
+        MemberLoginRequest loginDto = MemberLoginRequest.builder()
                 .email("yongjun@gmail.com")
                 .password("1234")
                 .build();
@@ -99,7 +99,7 @@ class AuthServiceTest {
 
         AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
-        MemberLoginDto loginDto = MemberLoginDto.builder()
+        MemberLoginRequest loginDto = MemberLoginRequest.builder()
                 .email("yongjun@gmail.com")
                 .password("12345")
                 .build();
@@ -116,7 +116,7 @@ class AuthServiceTest {
     void signupSuccess() {
 
         //given
-        SignUpDto signUpDto = SignUpDto.builder()
+        SignUpRequest signUpRequest = SignUpRequest.builder()
                 .email("yongjun@gmail.com")
                 .password("qwer!1234")
                 .role(Role.ADMIN)
@@ -125,16 +125,16 @@ class AuthServiceTest {
 
         //when
         AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
-        authService.signup(signUpDto);
+        authService.signup(signUpRequest);
 
         Member findMember = memberRepository.findByEmail("yongjun@gmail.com")
                 .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
 
         //then
-        Assertions.assertThat(signUpDto.getEmail()).isEqualTo(findMember.getEmail());
-        passwordEncoder.matches(signUpDto.getPassword(), findMember.getPassword());
-        Assertions.assertThat(signUpDto.getRole()).isEqualTo(findMember.getRole());
-        Assertions.assertThat(signUpDto.getName()).isEqualTo(findMember.getName());
+        Assertions.assertThat(signUpRequest.getEmail()).isEqualTo(findMember.getEmail());
+        passwordEncoder.matches(signUpRequest.getPassword(), findMember.getPassword());
+        Assertions.assertThat(signUpRequest.getRole()).isEqualTo(findMember.getRole());
+        Assertions.assertThat(signUpRequest.getName()).isEqualTo(findMember.getName());
     }
 
     @Test
@@ -151,7 +151,7 @@ class AuthServiceTest {
 
         memberRepository.save(member);
 
-        SignUpDto signUpDto = SignUpDto.builder()
+        SignUpRequest signUpRequest = SignUpRequest.builder()
                 .email("yongjun@gmail.com")
                 .password("1234")
                 .role(Role.ADMIN)
@@ -161,7 +161,7 @@ class AuthServiceTest {
         //when
         AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
-        Assertions.assertThatThrownBy( () -> authService.signup(signUpDto))
+        Assertions.assertThatThrownBy( () -> authService.signup(signUpRequest))
                 .isInstanceOf(GlobalException.class)
                 .hasMessageContaining(ErrorCode.MEMBER_EMAIL_EXISTS.getMessage());
     }

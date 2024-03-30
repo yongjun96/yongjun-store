@@ -9,7 +9,7 @@ import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
-import springboot.yongjunstore.response.MemberDto;
+import springboot.yongjunstore.response.MemberResponse;
 
 import java.util.Optional;
 
@@ -47,12 +47,12 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public MemberDto findMember(String email){
+    public MemberResponse findMember(String email){
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
 
-        return MemberDto.builder()
+        return MemberResponse.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .name(member.getName())

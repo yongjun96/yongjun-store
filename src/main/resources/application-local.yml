@@ -33,3 +33,8 @@ spring:
 custom:
   jwt:
     secretKey: javaSpringBootProjectProtectedKimYongJunStoreJsonWebTokenSecretKey
+
+fileUpload:
+  upload:
+    local:
+      path: 'src/main/resources/static'

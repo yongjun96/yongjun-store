@@ -1,15 +1,11 @@
 package springboot.yongjunstore.config.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springboot.yongjunstore.common.exception.GlobalException;
@@ -18,11 +14,9 @@ import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
-import springboot.yongjunstore.request.MemberLoginDto;
-import springboot.yongjunstore.request.SignUpDto;
-import springboot.yongjunstore.service.MemberService;
+import springboot.yongjunstore.request.MemberLoginRequest;
+import springboot.yongjunstore.request.SignUpRequest;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -38,7 +32,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
     @Transactional
-    public JwtDto login(MemberLoginDto memberLoginDto) {
+    public JwtDto login(MemberLoginRequest memberLoginDto) {
 
         Member member = memberRepository.findByEmail(memberLoginDto.getEmail())
                 .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_EMAIL_NOT_FOUND));
@@ -64,21 +58,21 @@ public class AuthService {
     }
 
     @Transactional
-    public void signup(SignUpDto signUpDto) {
+    public void signup(SignUpRequest signUpRequest) {
 
-        Optional<Member> optionalUser = memberRepository.findByEmail(signUpDto.getEmail());
+        Optional<Member> optionalUser = memberRepository.findByEmail(signUpRequest.getEmail());
 
         if(optionalUser.isPresent()){
             throw new GlobalException(ErrorCode.MEMBER_EMAIL_EXISTS);
         }
 
-        String password = passwordEncoder.encode(signUpDto.getPassword());
+        String password = passwordEncoder.encode(signUpRequest.getPassword());
 
         Member member = Member.builder()
-                .name(signUpDto.getName())
+                .name(signUpRequest.getName())
                 .password(password)
-                .email(signUpDto.getEmail())
-                .role(signUpDto.getRole())
+                .email(signUpRequest.getEmail())
+                .role(signUpRequest.getRole())
                 .build();
 
         memberRepository.save(member);

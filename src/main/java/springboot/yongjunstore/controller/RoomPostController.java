@@ -6,23 +6,27 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springboot.yongjunstore.domain.room.RoomStatus;
-import springboot.yongjunstore.request.RoomPostDto;
+import org.springframework.web.multipart.MultipartFile;
+import springboot.yongjunstore.request.RoomPostRequest;
 import springboot.yongjunstore.service.RoomPostService;
+import java.util.List;
 
 @RestController
-@Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/room-post")
+@Slf4j
+@RequestMapping("/roomPost")
 public class RoomPostController {
 
     private final RoomPostService roomPostService;
 
-    @GetMapping("/create")
-    public ResponseEntity roomCreate(@RequestBody @Valid RoomPostDto roomPostDto){
+    @PostMapping(value = "/create")
+    public ResponseEntity roomCreate(@Valid @ModelAttribute RoomPostRequest roomPostRequest,
+                                            @RequestPart(value = "uploadImages") List<MultipartFile> uploadImages){
 
-        RoomPostDto returnRoomDto = roomPostService.createRoom(roomPostDto);
+        roomPostService.createRoom(roomPostRequest, uploadImages);
 
-        return ResponseEntity.status(HttpStatus.OK).body(returnRoomDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
+
+

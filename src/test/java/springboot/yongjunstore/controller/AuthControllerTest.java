@@ -17,8 +17,8 @@ import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.repository.RefreshTokenRepository;
-import springboot.yongjunstore.request.MemberLoginDto;
-import springboot.yongjunstore.request.SignUpDto;
+import springboot.yongjunstore.request.MemberLoginRequest;
+import springboot.yongjunstore.request.SignUpRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -46,7 +46,7 @@ class AuthControllerTest {
     void signupSuccess() throws Exception {
 
         //given
-        SignUpDto signUpDto = SignUpDto.builder()
+        SignUpRequest signUpRequest = SignUpRequest.builder()
                 .name("김용준")
                 .password("qwer!1234")
                 .role(Role.ADMIN)
@@ -56,17 +56,17 @@ class AuthControllerTest {
         //expected
         mockMvc.perform(post("/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signUpDto))
+                .content(objectMapper.writeValueAsString(signUpRequest))
         )
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        Member member = memberRepository.findByEmail(signUpDto.getEmail())
+        Member member = memberRepository.findByEmail(signUpRequest.getEmail())
                 .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
 
-        assertThat(member.getEmail()).isEqualTo(signUpDto.getEmail());
-        assertThat(member.getName()).isEqualTo(signUpDto.getName());
-        passwordEncoder.matches(signUpDto.getPassword(), member.getPassword());
+        assertThat(member.getEmail()).isEqualTo(signUpRequest.getEmail());
+        assertThat(member.getName()).isEqualTo(signUpRequest.getName());
+        passwordEncoder.matches(signUpRequest.getPassword(), member.getPassword());
     }
 
     @Test
@@ -84,7 +84,7 @@ class AuthControllerTest {
 
         Member saveMember = memberRepository.save(member);
 
-        SignUpDto signUpDto = SignUpDto.builder()
+        SignUpRequest signUpRequest = SignUpRequest.builder()
                 .name("김용준")
                 .password("qwer!1234")
                 .role(Role.ADMIN)
@@ -94,12 +94,12 @@ class AuthControllerTest {
         //expected
         mockMvc.perform(post("/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(signUpDto))
+                        .content(objectMapper.writeValueAsString(signUpRequest))
                 )
                 .andExpect(status().isBadRequest())
                 .andDo(print());
 
-        assertThat(saveMember.getEmail()).isEqualTo(signUpDto.getEmail());
+        assertThat(saveMember.getEmail()).isEqualTo(signUpRequest.getEmail());
     }
 
     @Test
@@ -116,7 +116,7 @@ class AuthControllerTest {
 
         memberRepository.save(member);
 
-        MemberLoginDto memberLoginDto = MemberLoginDto.builder()
+        MemberLoginRequest memberLoginDto = MemberLoginRequest.builder()
                 .email(member.getEmail())
                 .password("qwer!1234")
                 .build();

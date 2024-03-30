@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import springboot.yongjunstore.domain.Member;
+import springboot.yongjunstore.request.RoomPostRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,6 @@ public class RoomPost {
 
     private String description; // 방 설명
 
-    private String mainPhoto; // 방 메인 사진
-
     private String roomOwner; // 방 주인
 
     private String detail; // 방 세부 사항
@@ -46,31 +45,25 @@ public class RoomPost {
     @Enumerated(EnumType.STRING)
     private RoomStatus roomStatus; // 방 상태
 
-    @OneToMany(mappedBy = "roomPost", fetch = FetchType.LAZY)
-    private List<Images> images = new ArrayList<>(); // 글 사진들
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member; // 방주인 정보
 
     @Builder
     public RoomPost(String name, String monthlyPrice, Deposit deposit,
-                    String depositPrice, String description, String mainPhoto,
-                    String roomOwner, String detail, String squareFootage,
-                    String content, String address, List<Images> images,
-                    RoomStatus roomStatus, Member member) {
+                    String depositPrice, String description, String roomOwner,
+                    String detail, String squareFootage, String content,
+                    String address, RoomStatus roomStatus, Member member) {
         this.name = name;
         this.monthlyPrice = monthlyPrice;
         this.deposit = deposit;
         this.description = description;
         this.depositPrice = depositPrice;
-        this.mainPhoto = mainPhoto;
         this.roomOwner = roomOwner;
         this.detail = detail;
         this.squareFootage = squareFootage;
         this.content = content;
         this.address = address;
-        this.images = images;
         this.roomStatus = roomStatus;
         this.member = member;
     }

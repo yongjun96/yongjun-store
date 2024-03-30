@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import springboot.yongjunstore.response.MemberDto;
+import springboot.yongjunstore.response.MemberResponse;
 import springboot.yongjunstore.service.MemberService;
 
 @RestController
@@ -22,7 +22,7 @@ public class MemberController {
     @GetMapping("/find/{email}")
     public ResponseEntity findMember(@PathVariable("email") String email){
 
-        MemberDto findMember = memberService.findMember(email);
+        MemberResponse findMember = memberService.findMember(email);
 
         return ResponseEntity.status(HttpStatus.OK).body(findMember);
     }

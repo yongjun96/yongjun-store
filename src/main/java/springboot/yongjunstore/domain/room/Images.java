@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.nio.file.Path;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,13 +20,16 @@ public class Images {
 
     private String name;
 
+    private String path;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_post_id")
     private RoomPost roomPost;
 
     @Builder
-    public Images(String name, RoomPost roomPost) {
+    public Images(String name, RoomPost roomPost, String path) {
         this.name = name;
         this.roomPost = roomPost;
+        this.path = path;
     }
 }
