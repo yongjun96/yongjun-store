@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
@@ -42,16 +43,28 @@ public class FileService {
 
             // 이미지 파일만 업로드
             if (!Objects.requireNonNull(uploadFile.getContentType()).startsWith("image")) {
-                log.warn("this file is not image type");
+                log.warn("이미지 파일이 아닙니다.");
                 throw new GlobalException(ErrorCode.IMAGE_FILE_NOT_FOUND);
             }
 
             // 실제 파일 이름 IE나 Edge는 전체 경로가 들어오므로 => 바뀐 듯 ..
-            String orginalName = uploadFile.getOriginalFilename();
+            // cleanPath()를 통해서 ../ 내부 점들에 대해서 사용을 억제
+            String orginalName = StringUtils.cleanPath(uploadFile.getOriginalFilename());
             String fileName = orginalName.substring(orginalName.lastIndexOf("\\") + 1);
 
             log.info("orginalName: " + orginalName);
             log.info("fileName: " + fileName);
+
+            //확장자
+            String extension = "";
+
+            int lastIndex = fileName.lastIndexOf(".");
+            if (lastIndex != -1) {
+                extension = "."+fileName.substring(lastIndex + 1);
+                System.out.println("확장자: " + extension);
+            } else {
+                System.out.println("확장자를 찾을 수 없습니다.");
+            }
 
             // 날짜 폴더 생성
             String folderPath = makeFolder();
@@ -60,17 +73,28 @@ public class FileService {
             String uuid = UUID.randomUUID().toString();
 
             // 저장할 파일 이름 중간에 "_"를 이용해서 구현
-            String saveName = uploadPath + File.separator + folderPath + File.separator + uuid + "_" + fileName;
+            //String pathSaveName = folderPath + File.separator + uuid + "_" + fileName;
+
+            //파일 name 빼고 uuid만 사용해서 만들기
+            String pathSaveName = uuid + extension;
+
+            String saveFileName = pathSaveName.replaceAll("\\s+", "");
+
+
+
+            //저장할 때 필요한 전체 경로
+            String saveName = uploadPath + File.separator + folderPath + File.separator + saveFileName;
 
             Path savePath = Paths.get(saveName);
+
 
             try {
                 // 경로에 이미지 저장 완료
                 uploadFile.transferTo(savePath);
 
                  Images images = Images.builder()
-                        .name(saveName)
-                        .path(uploadPath)
+                        .name(saveFileName)
+                        .path(folderPath)
                         .roomPost(roomPost)
                         .build();
 
@@ -87,7 +111,7 @@ public class FileService {
     /*날짜 폴더 생성*/
     private String makeFolder() {
 
-        String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM"));
 
         String folderPath = str.replace("/", File.separator);
 

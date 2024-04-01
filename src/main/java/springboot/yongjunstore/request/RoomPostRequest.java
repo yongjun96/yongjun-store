@@ -18,8 +18,11 @@ public class RoomPostRequest {
 
     private Long id;
 
+    @NotBlank(message = "제목은 필수값입니다.")
+    private String title;
+
     @NotBlank(message = "방 이름은 필수값 입니다.")
-    private String name; // 방 이름
+    private String roomName; // 방 이름
 
     @Pattern(regexp = "^[0-9]+$", message = "숫자만 입력가능합니다. 1만원 단위")
     private String monthlyPrice; // 방 윌세

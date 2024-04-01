@@ -26,4 +26,5 @@ public class ImagesResponse {
         this.name = images.getName();
         this.path = images.getPath();
     }
+
 }

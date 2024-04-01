@@ -2,8 +2,8 @@ spring:
   data:
     web:
       pageable:
-        one-indexed-parameters: true # 페이지를 1부터 시작 (default 0)
-        default-page-size: 5 # 한 페이지 당 표시할 데이터 수
+        default-page-size: 10 # 한 페이지의 값 개수
+        max-page-size: 2000 # 최대 페이지 개수
 
   security:
     oauth2:
@@ -25,6 +25,20 @@ spring:
     hibernate:
       ddl-auto: create
     database: mysql
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000 # 메모리에서 작업 --> in(1, 2, 3 ...) 처리
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
 
 server:
   servlet:

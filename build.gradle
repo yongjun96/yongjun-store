@@ -33,6 +33,9 @@ dependencies {
     implementation 'org.springframework.security:spring-security-crypto'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 
+    // spring-boot-devtools 프로젝트 자동 갱신
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
     //JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'

@@ -19,7 +19,9 @@ public class RoomPostResponse {
 
     private Long id;
 
-    private String name; // 방 이름
+    private String title; // 제목
+
+    private String roomName; // 방 이름
 
     private String monthlyPrice; // 방 월세
 
@@ -48,7 +50,8 @@ public class RoomPostResponse {
     @Builder
     public RoomPostResponse(RoomPost roomPost, List<ImagesResponse> imagesResponseList) {
         this.id = roomPost.getId();
-        this.name = roomPost.getName();
+        this.title = roomPost.getTitle();
+        this.roomName = roomPost.getRoomName();
         this.monthlyPrice = roomPost.getMonthlyPrice();
         this.deposit = roomPost.getDeposit();
         this.depositPrice = roomPost.getDepositPrice();
@@ -62,4 +65,6 @@ public class RoomPostResponse {
         this.member = new MemberResponse(roomPost.getMember());
         this.imagesList = imagesResponseList;
     }
+
+
 }
