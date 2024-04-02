@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springboot.yongjunstore.response.MemberResponse;
+import springboot.yongjunstore.response.MyProfileResponse;
 import springboot.yongjunstore.service.MemberService;
 
 @RestController
@@ -23,6 +24,15 @@ public class MemberController {
     public ResponseEntity findMember(@PathVariable("email") String email){
 
         MemberResponse findMember = memberService.findMember(email);
+
+        return ResponseEntity.status(HttpStatus.OK).body(findMember);
+    }
+
+
+    @GetMapping("/find/myProfile/{email}")
+    public ResponseEntity myProfileFindMember(@PathVariable("email") String email){
+
+        MyProfileResponse findMember = memberService.myProfileFindMember(email);
 
         return ResponseEntity.status(HttpStatus.OK).body(findMember);
     }

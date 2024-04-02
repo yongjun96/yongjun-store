@@ -2,8 +2,12 @@ spring:
   data:
     web:
       pageable:
-        default-page-size: 10 # 한 페이지의 값 개수
+        # default-page-size: 4 # 한 페이지의 값 개수
         max-page-size: 2000 # 최대 페이지 개수
+
+  devtools:
+    restart:
+      enabled: false
 
   security:
     oauth2:
@@ -23,7 +27,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database: mysql
     properties:
       hibernate:

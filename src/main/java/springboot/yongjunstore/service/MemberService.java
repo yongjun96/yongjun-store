@@ -10,6 +10,7 @@ import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.response.MemberResponse;
+import springboot.yongjunstore.response.MyProfileResponse;
 
 import java.util.Optional;
 
@@ -57,6 +58,14 @@ public class MemberService {
                 .email(member.getEmail())
                 .name(member.getName())
                 .build();
+    }
+
+    public MyProfileResponse myProfileFindMember(String email){
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
+        return new MyProfileResponse(member);
     }
 
 }

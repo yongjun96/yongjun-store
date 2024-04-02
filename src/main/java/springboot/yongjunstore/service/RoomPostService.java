@@ -80,7 +80,6 @@ public class RoomPostService {
     }
 
 
-    @Transactional
     public Page<RoomPostResponse> searchRoomPostList(String searchOption, String searchContent , Pageable pageable) {
 
         Page<RoomPost> roomPostList = roomPostRepository.searchRoomPostList(searchOption, searchContent, pageable);
