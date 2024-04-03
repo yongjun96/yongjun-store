@@ -68,4 +68,18 @@ public class MemberService {
         return new MyProfileResponse(member);
     }
 
+    @Transactional
+    public void deleteMemberAndRoomPostAndImages(String email) {
+
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
+        try {
+            memberRepository.delete(findMember);
+        }catch (Exception e){
+
+            e.printStackTrace();
+            throw new GlobalException(ErrorCode.MEMBER_DELETE_FAIL);
+        }
+    }
 }

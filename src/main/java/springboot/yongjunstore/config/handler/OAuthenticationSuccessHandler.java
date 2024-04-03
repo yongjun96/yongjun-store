@@ -1,11 +1,10 @@
 package springboot.yongjunstore.config.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -20,12 +19,23 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
     private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
+    private final String frontEndUrl;
+
+    public OAuthenticationSuccessHandler(@Value("${custom.url.frontend-url}") String frontEndUrl,
+                                         JwtProvider jwtProvider,
+                                         MemberService memberService,
+                                         RefreshTokenService refreshTokenService) {
+        this.frontEndUrl = frontEndUrl;
+        this.jwtProvider = jwtProvider;
+        this.memberService = memberService;
+        this.refreshTokenService = refreshTokenService;
+    }
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -62,7 +72,7 @@ public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucces
         refreshTokenService.saveRefreshToken(token);
 
         // 클라이언트로 리디렉션하여 토큰 정보를 전달합니다.
-        response.sendRedirect("http://localhost:5173?accessToken=" + token.getAccessToken());
+        response.sendRedirect(frontEndUrl+"?accessToken=" + token.getAccessToken());
     }
 
 }

@@ -5,6 +5,10 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 import springboot.yongjunstore.domain.base.BaseTimeEntity;
+import springboot.yongjunstore.domain.room.RoomPost;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,14 +39,23 @@ public class Member extends BaseTimeEntity {
     // googleLogin
     private String providerId;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<RoomPost> roomPosts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
+
     @Builder
-    public Member(String email, String password, String name, Role role, String provider, String providerId) {
+    public Member(String email, String password, String name, Role role, String provider, String providerId,
+                  List<RefreshToken> refreshTokens, List<RoomPost> roomPosts) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.role = role;
         this.provider = provider;
         this.providerId = providerId;
+        this.roomPosts = roomPosts;
+        this.refreshTokens = refreshTokens;
     }
 
 }

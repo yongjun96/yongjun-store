@@ -18,12 +18,13 @@ public class RefreshToken {
 
     private String refreshToken;
 
-    private String email;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Builder
-    public RefreshToken(String refreshToken, String email) {
+    public RefreshToken(String refreshToken, Member member) {
         this.refreshToken = refreshToken;
-        this.email = email;
+        this.member = member;
     }
 }

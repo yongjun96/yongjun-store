@@ -4,9 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import springboot.yongjunstore.common.exception.GlobalException;
+import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
+import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.RefreshToken;
+import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.repository.RefreshTokenRepository;
 
 import java.util.Optional;
@@ -17,6 +21,7 @@ import java.util.Optional;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
 
     @Transactional
@@ -26,20 +31,23 @@ public class RefreshTokenService {
         Authentication authentication = jwtProvider.getAuthentication(jwtDto.getAccessToken());
         String email = authentication.getName();
 
-        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByEmail(email);
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByMember(findMember);
 
         //RT 존재하지 않을 경우
         if (optionalRefreshToken.isEmpty()) {
 
             RefreshToken refreshToken = RefreshToken.builder()
                     .refreshToken(jwtDto.getRefreshToken())
-                    .email(email)
+                    .member(findMember)
                     .build();
 
             refreshTokenRepository.save(refreshToken);
         }else {
             // RT 존재하는 경우
-            refreshTokenRepository.updateRefreshToken(jwtDto.getRefreshToken(), email);
+            refreshTokenRepository.updateRefreshToken(jwtDto.getRefreshToken(), findMember.getId());
         }
     }
 
@@ -49,15 +57,18 @@ public class RefreshTokenService {
         Authentication authentication = jwtProvider.getAuthentication(accessToken);
         String email = authentication.getName();
 
-        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByEmail(email);
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
 
-        //
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByMember(findMember);
+
+
         if(jwtProvider.validateRefreshToken(optionalRefreshToken.get().getRefreshToken())) {
 
             JwtDto jwtDto = jwtProvider.generateToken(authentication);
 
             //해당 이메일의 새로 발급 받은 RT로 update 해준다.
-            refreshTokenRepository.updateRefreshToken(jwtDto.getRefreshToken(), email);
+            refreshTokenRepository.updateRefreshToken(jwtDto.getRefreshToken(), findMember.getId());
 
             return jwtDto;
 

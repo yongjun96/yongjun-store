@@ -31,3 +31,5 @@ server:
       enabled: true
       force: true
 
+backend-url: ${PROD_BACKEND_URL}
+frontend-url: ${PROD_FRONTEND_URL}

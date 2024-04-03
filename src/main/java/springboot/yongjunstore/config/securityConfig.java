@@ -2,6 +2,7 @@ package springboot.yongjunstore.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,6 +46,9 @@ public class securityConfig {
     private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
 
+    @Value("${custom.url.frontend-url}")
+    private String frontEndUrl;
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return web -> web.ignoring()
@@ -71,8 +75,8 @@ public class securityConfig {
                         oauth2.userInfoEndpoint(userInfoEndpoint ->
                                     userInfoEndpoint.userService(new CustomOAuth2UserService(memberRepository, defaultOAuth2UserService()))
                     )
-                    .failureHandler(new OAuthenticationFailureHandler())
-                    .successHandler(new OAuthenticationSuccessHandler(jwtProvider, memberService, refreshTokenService))
+                    .failureHandler(new OAuthenticationFailureHandler(frontEndUrl))
+                    .successHandler(new OAuthenticationSuccessHandler(frontEndUrl, jwtProvider, memberService, refreshTokenService))
                 )
 
 
@@ -118,7 +122,7 @@ public class securityConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin(frontEndUrl);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

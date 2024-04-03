@@ -22,12 +22,12 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${LOCAL_URL}:3306/yongjun-store
-    username: ${USER_NAME}
-    password: ${PASSWORD}
+    username: ${LOCAL_USER_NAME}
+    password: ${LOCAL_PASSWORD}
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     database: mysql
     properties:
       hibernate:
@@ -57,3 +57,8 @@ fileUpload:
   upload:
     local:
       path: 'src/main/resources/static'
+
+custom:
+  url:
+    backend-url: ${LOCAL_BACKEND_URL}
+    frontend-url: http://localhost:5173

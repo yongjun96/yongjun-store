@@ -1,20 +1,27 @@
 package springboot.yongjunstore.config.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
-import springboot.yongjunstore.common.exceptioncode.ErrorCodeResponse;
 
 import java.io.IOException;
 
 @Component
 @Slf4j
-public class OAuthenticationFailureHandler implements org.springframework.security.web.authentication.AuthenticationFailureHandler {
+public class OAuthenticationFailureHandler implements AuthenticationFailureHandler {
+
+    private final String frontEndUrl;
+
+    public OAuthenticationFailureHandler(@Value("${custom.url.frontend-url}") String frontEndUrl) {
+        this.frontEndUrl = frontEndUrl;
+    }
+
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
@@ -25,7 +32,7 @@ public class OAuthenticationFailureHandler implements org.springframework.securi
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(ErrorCode.OAUTH_EMAIL_EXISTS.getStatusCode());
 
-            response.sendRedirect("http://localhost:5173?errorMessage=OAUTH_EMAIL_EXISTS");
+            response.sendRedirect(frontEndUrl+"?errorMessage=OAUTH_EMAIL_EXISTS");
         }
     }
 }

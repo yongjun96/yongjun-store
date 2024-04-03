@@ -33,7 +33,6 @@ public class FileService {
     @Value("${fileUpload.upload.local.path}")
     private String uploadPath;
 
-    private final RoomPostRepository roomPostRepository;
     private final ImagesRepository imagesRepository;
 
     @Transactional
@@ -72,14 +71,10 @@ public class FileService {
             // UUID
             String uuid = UUID.randomUUID().toString();
 
-            // 저장할 파일 이름 중간에 "_"를 이용해서 구현
-            //String pathSaveName = folderPath + File.separator + uuid + "_" + fileName;
-
             //파일 name 빼고 uuid만 사용해서 만들기
             String pathSaveName = uuid + extension;
 
             String saveFileName = pathSaveName.replaceAll("\\s+", "");
-
 
 
             //저장할 때 필요한 전체 경로
