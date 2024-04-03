@@ -36,6 +36,12 @@ dependencies {
     // spring-boot-devtools 프로젝트 자동 갱신
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    // email 인증
+    implementation 'javax.mail:mail:1.4.7'
+    // Spring Context Support
+    implementation 'org.springframework:spring-context-support:5.3.9'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
+
     //JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
@@ -50,6 +56,9 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // env를 사용하기 위한 dotenv
+    implementation 'io.github.cdimascio:dotenv-java:2.2.0'
 
     // mysql
     runtimeOnly 'com.mysql:mysql-connector-j'

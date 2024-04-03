@@ -1,0 +1,40 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 941574435155-jipror8aqrh727oa6tuikqsbmaeij5i6.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            scope: profile,email
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true # 페이지를 1부터 시작 (default 0)
+        default-page-size: 5 # 한 페이지 당 표시할 데이터 수
+
+  datasource:
+    url: jdbc:h2:mem:yongJunStore
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
+
+custom:
+  jwt:
+    secretKey: javaSpringBootProjectProtectedKimYongJunStoreJsonWebTokenSecretKey
+
+fileUpload:
+  upload:
+    local:
+      path: 'src/main/resources/static'
