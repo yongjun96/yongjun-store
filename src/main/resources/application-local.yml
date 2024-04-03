@@ -1,18 +1,14 @@
 spring:
+  spring:
+    config:
+      activate:
+        on-profile: local
+
   h2:
     console:
       enabled: true
       path: /h2-console
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 941574435155-jipror8aqrh727oa6tuikqsbmaeij5i6.apps.googleusercontent.com
-            client-secret: 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
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
-            scope: profile,email
   data:
     web:
       pageable:
@@ -30,9 +26,6 @@ spring:
       ddl-auto: create
     defer-datasource-initialization: true
 
-custom:
-  jwt:
-    secretKey: javaSpringBootProjectProtectedKimYongJunStoreJsonWebTokenSecretKey
 
 fileUpload:
   upload:

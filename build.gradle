@@ -36,6 +36,9 @@ dependencies {
     // spring-boot-devtools 프로젝트 자동 갱신
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     // email 인증
     implementation 'javax.mail:mail:1.4.7'
     // Spring Context Support

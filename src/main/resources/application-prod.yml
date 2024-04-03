@@ -1,4 +1,10 @@
 spring:
+  spring:
+    config:
+      activate:
+        on-profile: prod
+
+
   data:
     web:
       pageable:
@@ -25,6 +31,3 @@ server:
       enabled: true
       force: true
 
-custom:
-  jwt:
-    secretKey: javaSpringBootProjectProtectedKimYongJunStoreJsonWebTokenSecretKey

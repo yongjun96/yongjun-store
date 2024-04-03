@@ -1,30 +1,29 @@
 spring:
+  config:
+    activate:
+      on-profile: mysql
+
   data:
     web:
       pageable:
         default-page-size: 4 # 한 페이지의 값 개수
         max-page-size: 2000 # 최대 페이지 개수
 
+
+    redis:
+      host: ${LOCAL_URL}
+      port: 6379
+
   devtools:
     restart:
       enabled: false
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${CLIENT_ID}
-            client-secret: ${CLIENT_SECRET}
-            redirect-uri: ${REDIRECT_URI}
-            scope: ${SCOPE}
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_URL}/yongjun-store
+    url: jdbc:mysql://${LOCAL_URL}:3306/yongjun-store
     username: ${USER_NAME}
     password: ${PASSWORD}
-
 
   jpa:
     hibernate:
@@ -51,22 +50,8 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+  port: 8080
 
-
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    properties:
-      mail:
-        debug: true
-        smtp.auth: true
-        smtp.timeout: 50000 # SMTP 서버에 연결을 시도하고 응답을 기다리는 최대 시간이 50,000ms
-        smtp.starttls.enable: true
-
-custom:
-  jwt:
-    secretKey: ${SECRET_KEY}
 
 fileUpload:
   upload:

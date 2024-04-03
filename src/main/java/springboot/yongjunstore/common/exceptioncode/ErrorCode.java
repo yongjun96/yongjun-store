@@ -15,8 +15,9 @@ public enum ErrorCode {
     // MEMBER
     MEMBER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "M001", "사용자를 찾지 못했습니다."),
     MEMBER_EMAIL_EXISTS(400, HttpStatus.BAD_REQUEST, "M002", "이미 존재하는 이메일입니다."),
-    MEMBER_PASSWORD_ERROR(404, HttpStatus.BAD_REQUEST, "M003", "비밀번호가 틀렸습니다."),
-    MEMBER_EMAIL_NOT_FOUND(404, HttpStatus.BAD_REQUEST, "M004", "존재하지 않는 이메일입니다."),
+    MEMBER_PASSWORD_ERROR(400, HttpStatus.BAD_REQUEST, "M003", "비밀번호가 틀렸습니다."),
+    MEMBER_EMAIL_NOT_FOUND(404, HttpStatus.NOT_FOUND, "M004", "존재하지 않는 이메일입니다."),
+    MEMBER_PASSWORD_UNCHECKED(400, HttpStatus.BAD_REQUEST, "M005", "비밀번호가 일치하지 않습니다."),
 
     // JWT
     JWT_UNSUPPORTED_JWT_EXCEPTION(401, HttpStatus.BAD_REQUEST, "T001", "원하는 토큰과 다른 형식의 토큰입니다."),
@@ -33,7 +34,12 @@ public enum ErrorCode {
     IMAGE_FILE_NOT_UPLOAD(401, HttpStatus.BAD_REQUEST, "F002", "이미지 파일이 업로드되지 못했습니다."),
 
     // RoomPost
-    ROOM_POST_NOT_FOUND(404, HttpStatus.NOT_FOUND, "R001", "RoomPost를 찾을 수 없습니다.");
+    ROOM_POST_NOT_FOUND(404, HttpStatus.NOT_FOUND, "R001", "RoomPost를 찾을 수 없습니다."),
+
+    // GoogleEmail
+    GOOGLE_EMAIL_MESSAGE_EXCEPTION(400, HttpStatus.BAD_REQUEST, "G001", "메세지 생성에 실패했습니다."),
+    GOOGLE_EMAIL_AUTH_NUMBER_ERROR(400, HttpStatus.BAD_REQUEST, "G002", "인증번호가 틀렸습니다."),
+    GOOGLE_EMAIL_AUTH_NUMBER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "G003", "인증번호가 만료되었거나, 발급되지 않았습니다. 재발급 받아주세요.");
 
     private final int statusCode;
     private final HttpStatus status;

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.request.MemberLoginRequest;
+import springboot.yongjunstore.request.PasswordEditRequest;
 import springboot.yongjunstore.request.SignUpRequest;
 import springboot.yongjunstore.config.service.AuthService;
 
@@ -31,14 +32,17 @@ public class AuthController {
        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @PatchMapping("/passwordEdit")
+    public ResponseEntity passwordEdit(@RequestBody PasswordEditRequest passwordEditRequest){
+
+        authService.passwordEdit(passwordEditRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @GetMapping("/admin")
     public String adminLoginTest(){
         return "정상적으로 로그인 됨.";
-    }
-
-    @GetMapping("/oauth2/authorization/google")
-    public String googleLogin(){
-        return "./member/admin";
     }
 
 }

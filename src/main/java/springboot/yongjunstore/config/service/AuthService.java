@@ -15,6 +15,7 @@ import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.MemberLoginRequest;
+import springboot.yongjunstore.request.PasswordEditRequest;
 import springboot.yongjunstore.request.SignUpRequest;
 
 import java.util.Optional;
@@ -76,5 +77,24 @@ public class AuthService {
                 .build();
 
         memberRepository.save(member);
+    }
+
+    @Transactional
+    public void passwordEdit(PasswordEditRequest passwordEditRequest) {
+
+        Member findMember = memberRepository.findByEmail(passwordEditRequest.getEmail())
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
+        if(passwordEditRequest.getPasswordCheck()
+                .equals(passwordEditRequest.getPassword())){
+
+            String encodePassword = passwordEncoder.encode(passwordEditRequest.getPassword());
+
+            memberRepository.updateMemberPassword(findMember.getEmail(), encodePassword);
+        }else {
+
+            // 비밀번호가 일치하지 않는 경우.
+            throw new GlobalException(ErrorCode.MEMBER_PASSWORD_UNCHECKED);
+        }
     }
 }
