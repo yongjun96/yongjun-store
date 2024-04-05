@@ -61,4 +61,4 @@ fileUpload:
 custom:
   url:
     backend-url: ${LOCAL_BACKEND_URL}
-    frontend-url: http://localhost:5173
+    frontend-url: ${LOCAL_FRONTEND_URL}

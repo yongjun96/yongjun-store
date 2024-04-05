@@ -1,6 +1,7 @@
 package springboot.yongjunstore.domain.room;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class RoomPost extends BaseTimeEntity {
     @Column(name = "room_post_id")
     private Long id;
 
+    @NotNull
     private String title;
 
     private String roomName; // 방 이름

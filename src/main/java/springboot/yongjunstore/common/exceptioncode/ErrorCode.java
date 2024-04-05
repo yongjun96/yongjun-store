@@ -33,6 +33,7 @@ public enum ErrorCode {
     // fileUpload
     IMAGE_FILE_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F001", "이미지 파일이 아닙니다."),
     IMAGE_FILE_NOT_UPLOAD(401, HttpStatus.BAD_REQUEST, "F002", "이미지 파일이 업로드되지 못했습니다."),
+    IMAGE_FILE_EXTENSION_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F003", "이미지의 확장자를 찾을 수 없습니다."),
 
     // RoomPost
     ROOM_POST_NOT_FOUND(404, HttpStatus.NOT_FOUND, "R001", "RoomPost를 찾을 수 없습니다."),
@@ -40,8 +41,8 @@ public enum ErrorCode {
     // GoogleEmail
     GOOGLE_EMAIL_MESSAGE_EXCEPTION(400, HttpStatus.BAD_REQUEST, "G001", "메세지 생성에 실패했습니다."),
     GOOGLE_EMAIL_AUTH_NUMBER_ERROR(400, HttpStatus.BAD_REQUEST, "G002", "인증번호가 틀렸습니다."),
-    GOOGLE_EMAIL_AUTH_NUMBER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "G003", "인증번호가 만료되었거나, 발급되지 않았습니다. 재발급 받아주세요.");
-
+    GOOGLE_EMAIL_AUTH_NUMBER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "G003", "인증번호가 만료되었거나, 발급되지 않았습니다. 재발급 받아주세요."),
+    GOOGLE_INVALID_AUTH_NUMBER_FORMAT(400, HttpStatus.BAD_REQUEST, "G004", "인증 번호가 올바른 형식이 아닙니다.");
     private final int statusCode;
     private final HttpStatus status;
     private final String code;

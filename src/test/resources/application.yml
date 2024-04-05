@@ -20,9 +20,13 @@ spring:
 custom:
   jwt:
     secretKey: ${SECRET_KEY}
+  url:
+    backend-url: ${LOCAL_BACKEND_URL}
+    frontend-url: ${LOCAL_FRONTEND_URL}
 
 
 fileUpload:
   upload:
     local:
       path: 'src/main/resources/static'
+

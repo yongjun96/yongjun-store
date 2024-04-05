@@ -62,7 +62,7 @@ public class FileService {
                 extension = "."+fileName.substring(lastIndex + 1);
                 System.out.println("확장자: " + extension);
             } else {
-                System.out.println("확장자를 찾을 수 없습니다.");
+               throw new GlobalException(ErrorCode.IMAGE_FILE_EXTENSION_NOT_FOUND);
             }
 
             // 날짜 폴더 생성
@@ -97,6 +97,7 @@ public class FileService {
                  imagesRepository.save(images);
 
             } catch (IOException e) {
+                e.printStackTrace();
                 throw new GlobalException(ErrorCode.IMAGE_FILE_NOT_UPLOAD);
             }
         }

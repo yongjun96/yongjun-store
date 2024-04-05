@@ -12,6 +12,7 @@ import springboot.yongjunstore.request.SendEmail;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.NoSuchElementException;
 
 
 @Service
@@ -60,6 +61,11 @@ public class MailService {
     @Transactional
     public void authNumCheck(AuthCheckRequest authCheckRequest) {
 
+        if(!isValidAuthNumber(String.valueOf(authCheckRequest.getAuthNumber()))){
+            // 인증 번호가 올바른 형식이 아닌 경우.
+            throw new GlobalException(ErrorCode.GOOGLE_INVALID_AUTH_NUMBER_FORMAT);
+        }
+
         try {
             String authNum = redisUtils.getData(authCheckRequest.getEmail());
 
@@ -68,21 +74,22 @@ public class MailService {
 
                 redisUtils.deleteData(authCheckRequest.getEmail());
             } else{
-
                 // 인증번호가 틀린 경우.
                 throw new GlobalException(ErrorCode.GOOGLE_EMAIL_AUTH_NUMBER_ERROR);
             }
 
-        }catch (Exception e){
+        }catch (NoSuchElementException e){
 
             e.printStackTrace();
-
             // 만료되었거나 발급되지 않은 경우.
             throw new GlobalException(ErrorCode.GOOGLE_EMAIL_AUTH_NUMBER_NOT_FOUND);
         }
 
     }
 
-
+    public boolean isValidAuthNumber(String authNumber) {
+        // 인증번호가 6자리의 숫자로 이루어진 문자열인지 검증
+        return authNumber.matches("\\d{6}");
+    }
 
 }

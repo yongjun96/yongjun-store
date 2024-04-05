@@ -1,36 +1,37 @@
 package springboot.yongjunstore.config.service;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.jwt.JwtDto;
-import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.MemberLoginRequest;
+import springboot.yongjunstore.request.PasswordEditRequest;
 import springboot.yongjunstore.request.SignUpRequest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
 class AuthServiceTest {
 
     @Autowired private MemberRepository memberRepository;
-    @Autowired private AuthenticationManager authenticationManager;
-    @Autowired private JwtProvider jwtProvider;
     @Autowired private BCryptPasswordEncoder passwordEncoder;
-    @Autowired private RefreshTokenService refreshTokenService;
+    @Autowired private AuthService authService;
 
 
-    @AfterEach
-    public void afterEach() {
+    @BeforeEach
+    public void beforeEach() {
         memberRepository.deleteAll();
     }
 
@@ -49,20 +50,20 @@ class AuthServiceTest {
 
         memberRepository.save(member);
 
-        AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
         MemberLoginRequest loginDto = MemberLoginRequest.builder()
                 .email("yongjun@gmail.com")
                 .password("qwer!1234")
                 .build();
 
+
         //when
         JwtDto result = authService.login(loginDto);
 
         //then
-        Assertions.assertThat(result.getAccessToken()).isNotNull();
-        Assertions.assertThat(result.getRefreshToken()).isNotNull();
-        Assertions.assertThat(result.getGrantType()).isNotNull();
+        assertThat(result.getAccessToken()).isNotNull();
+        assertThat(result.getRefreshToken()).isNotNull();
+        assertThat(result.getGrantType()).isNotNull();
     }
 
     @Test
@@ -70,7 +71,6 @@ class AuthServiceTest {
     void emailLoginFail() {
 
         //given
-        AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
         MemberLoginRequest loginDto = MemberLoginRequest.builder()
                 .email("yongjun@gmail.com")
@@ -97,7 +97,6 @@ class AuthServiceTest {
 
         memberRepository.save(member);
 
-        AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
 
         MemberLoginRequest loginDto = MemberLoginRequest.builder()
                 .email("yongjun@gmail.com")
@@ -124,17 +123,16 @@ class AuthServiceTest {
                 .build();
 
         //when
-        AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
         authService.signup(signUpRequest);
 
         Member findMember = memberRepository.findByEmail("yongjun@gmail.com")
                 .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
 
         //then
-        Assertions.assertThat(signUpRequest.getEmail()).isEqualTo(findMember.getEmail());
+        assertThat(signUpRequest.getEmail()).isEqualTo(findMember.getEmail());
         passwordEncoder.matches(signUpRequest.getPassword(), findMember.getPassword());
-        Assertions.assertThat(signUpRequest.getRole()).isEqualTo(findMember.getRole());
-        Assertions.assertThat(signUpRequest.getName()).isEqualTo(findMember.getName());
+        assertThat(signUpRequest.getRole()).isEqualTo(findMember.getRole());
+        assertThat(signUpRequest.getName()).isEqualTo(findMember.getName());
     }
 
     @Test
@@ -159,11 +157,73 @@ class AuthServiceTest {
                 .build();
 
         //when
-        AuthService authService = new AuthService(authenticationManager, jwtProvider, memberRepository, passwordEncoder, refreshTokenService);
-
         Assertions.assertThatThrownBy( () -> authService.signup(signUpRequest))
                 .isInstanceOf(GlobalException.class)
                 .hasMessageContaining(ErrorCode.MEMBER_EMAIL_EXISTS.getMessage());
+    }
+
+    @Transactional
+    @Rollback // 테스트 완료 후 롤백 지정
+    @Test
+    @DisplayName("패스워드 변경 성공 : 패스워드 체크 일치")
+    void passwordEdit() {
+
+        //given
+        Member member = Member.builder()
+                .email("yongjun@gmail.com")
+                .password("qwer!1234")
+                .role(Role.ADMIN)
+                .name("김용준")
+                .build();
+
+        memberRepository.save(member);
+
+        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
+                .email("yongjun@gmail.com")
+                .password("asdf!1234")
+                .passwordCheck("asdf!1234")
+                .build();
+
+
+        // when
+        authService.passwordEdit(passwordEditRequest);
+
+        //then
+        Member findMember = memberRepository.findByEmail("yongjun@gmail.com")
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
+        assertThat(findMember.getPassword()).isNotNull();
+
+    }
+
+    @Transactional
+    @Rollback // 테스트 완료 후 롤백 지정
+    @Test
+    @DisplayName("패스워드 변경 실패 : 패스워드 체크 불일치")
+    void passwordEditUnChecked() {
+
+        //given
+        Member member = Member.builder()
+                .email("yongjun@gmail.com")
+                .password("qwer!1234")
+                .role(Role.ADMIN)
+                .name("김용준")
+                .build();
+
+        memberRepository.save(member);
+
+        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
+                .email("yongjun@gmail.com")
+                .password("asdf!1235")
+                .passwordCheck("asdf!1234")
+                .build();
+
+
+        // when
+        Assertions.assertThatThrownBy( () -> authService.passwordEdit(passwordEditRequest))
+                .isInstanceOf(GlobalException.class)
+                .hasMessageContaining(ErrorCode.MEMBER_PASSWORD_UNCHECKED.getMessage());
+
     }
 
 }

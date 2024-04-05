@@ -87,7 +87,7 @@ class RefreshTokenServiceTest {
         RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(jwtDto.getRefreshToken());
 
         //then
-        assertThat(refreshToken.getEmail()).isEqualTo(findMember.getEmail());
+        assertThat(refreshToken.getMember().getId()).isEqualTo(findMember.getId());
         assertThat(refreshToken.getRefreshToken()).isEqualTo(jwtDto.getRefreshToken());
     }
 
@@ -109,7 +109,7 @@ class RefreshTokenServiceTest {
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .refreshToken(jwtDto.getRefreshToken())
-                .email(member.getEmail())
+                .member(findMember)
                 .build();
 
         refreshTokenRepository.save(refreshToken);
@@ -121,7 +121,7 @@ class RefreshTokenServiceTest {
         RefreshToken findRefreshToken = refreshTokenRepository.findByRefreshToken(jwtDto.getRefreshToken());
 
         //then
-        assertThat(findRefreshToken.getEmail()).isEqualTo(findMember.getEmail());
+        assertThat(findRefreshToken.getMember().getId()).isEqualTo(findMember.getId());
         assertThat(findRefreshToken.getRefreshToken()).isEqualTo(jwtDto.getRefreshToken());
     }
 
@@ -157,7 +157,7 @@ class RefreshTokenServiceTest {
                 .provider("google")
                 .build();
 
-        memberRepository.save(member);
+        Member saveMember = memberRepository.save(member);
 
         Long accessTime = 3000000L;
         Long refreshTime = 6000000L;
@@ -189,7 +189,7 @@ class RefreshTokenServiceTest {
 
         RefreshToken saveRefreshToken = RefreshToken.builder()
                 .refreshToken(createJwtDto.getRefreshToken())
-                .email(member.getEmail())
+                .member(saveMember)
                 .build();
 
         refreshTokenRepository.save(saveRefreshToken);
@@ -217,7 +217,7 @@ class RefreshTokenServiceTest {
                 .provider("google")
                 .build();
 
-        memberRepository.save(member);
+        Member saveMember = memberRepository.save(member);
 
         Long accessTime = 1L;
         Long refreshTime = 1L;
@@ -249,7 +249,7 @@ class RefreshTokenServiceTest {
 
         RefreshToken saveRefreshToken = RefreshToken.builder()
                 .refreshToken(createJwtDto.getRefreshToken())
-                .email(member.getEmail())
+                .member(saveMember)
                 .build();
 
         refreshTokenRepository.save(saveRefreshToken);

@@ -131,7 +131,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.grantType", Matchers.notNullValue()))
                 .andDo(print());
 
-        assertThat(refreshTokenRepository.findByEmail(member.getEmail()).get().getRefreshToken()).isNotNull();
+        assertThat(refreshTokenRepository.findByMember(member).get().getRefreshToken()).isNotNull();
     }
 
 }
