@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
@@ -27,19 +27,16 @@ import springboot.yongjunstore.response.RoomPostResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@TestPropertySource(properties = {"fileUpload.upload.local.path=/uploads"})
 class RoomPostServiceTest {
 
     @Autowired private RoomPostRepository roomPostRepository;
     @Autowired private MemberRepository memberRepository;
-    @Autowired private FileService fileService;
     @Autowired private RoomPostService roomPostService;
     @Autowired private ImagesRepository imagesRepository;
     @Autowired private BCryptPasswordEncoder passwordEncoder;
