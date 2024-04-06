@@ -7,12 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.RedisUtils;
+import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.AuthCheckRequest;
 import springboot.yongjunstore.request.SendEmail;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.NoSuchElementException;
 
 
 @Service
@@ -21,6 +21,7 @@ public class MailService {
 
     private final JavaMailSender javaMailSender;
     private final RedisUtils redisUtils;
+    private final MemberRepository memberRepository;
 
 
     // 인증번호 랜덤 생성
@@ -28,8 +29,13 @@ public class MailService {
         return (int)(Math.random() * (90000)) + 100000;
     }
 
+
     @Transactional
     public void sendMail(SendEmail sendEmail) {
+
+        memberRepository.findByEmail(sendEmail.getEmail())
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
         String authNumber = String.valueOf(createNumber());
         MimeMessage message = javaMailSender.createMimeMessage();
 
@@ -44,16 +50,16 @@ public class MailService {
             body += "<h3>" + "비밀번호 변경을 위해 입력해 주세요." + "</h3>";
 
 
-            message.setText(body,"UTF-8", "html");
+            message.setText(body, "UTF-8", "html");
 
-            javaMailSender.send(message);
-
-        } catch (MessagingException e) {
-            e.printStackTrace();
+        }catch (MessagingException e){
+            //메일 생성에 실패한 경우
             throw new GlobalException(ErrorCode.GOOGLE_EMAIL_MESSAGE_EXCEPTION);
         }
 
-        // 유효 시간(5분)동안 {email, authKey} 저장
+        javaMailSender.send(message);
+
+        // 유효 시간(5분)동안 email, authNumber 저장
         redisUtils.setDataExpire(sendEmail.getEmail(), authNumber, 60 * 5L);
 
     }
@@ -61,30 +67,26 @@ public class MailService {
     @Transactional
     public void authNumCheck(AuthCheckRequest authCheckRequest) {
 
-        if(!isValidAuthNumber(String.valueOf(authCheckRequest.getAuthNumber()))){
+        if (!isValidAuthNumber(String.valueOf(authCheckRequest.getAuthNumber()))) {
             // 인증 번호가 올바른 형식이 아닌 경우.
             throw new GlobalException(ErrorCode.GOOGLE_INVALID_AUTH_NUMBER_FORMAT);
         }
 
-        try {
-            String authNum = redisUtils.getData(authCheckRequest.getEmail());
+        String authNum = redisUtils.getData(authCheckRequest.getEmail());
 
-            // 인증되면 인증번호 제거
-            if(Integer.parseInt(authNum) == authCheckRequest.getAuthNumber()){
-
-                redisUtils.deleteData(authCheckRequest.getEmail());
-            } else{
-                // 인증번호가 틀린 경우.
-                throw new GlobalException(ErrorCode.GOOGLE_EMAIL_AUTH_NUMBER_ERROR);
-            }
-
-        }catch (NoSuchElementException e){
-
-            e.printStackTrace();
-            // 만료되었거나 발급되지 않은 경우.
+        if (authNum == null) {
+            // null인 경우
             throw new GlobalException(ErrorCode.GOOGLE_EMAIL_AUTH_NUMBER_NOT_FOUND);
         }
 
+        // 인증되면 인증번호 제거
+        if (authNum.equals(String.valueOf(authCheckRequest.getAuthNumber()))) {
+
+            redisUtils.deleteData(authCheckRequest.getEmail());
+        } else {
+            // 인증번호가 틀린 경우.
+            throw new GlobalException(ErrorCode.GOOGLE_EMAIL_AUTH_NUMBER_ERROR);
+        }
     }
 
     public boolean isValidAuthNumber(String authNumber) {

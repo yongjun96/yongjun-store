@@ -37,4 +37,12 @@ public class RedisUtils {
         redisTemplate.delete(key);
     }
 
+    //전체 삭제
+    public void deleteAllKeys() {
+        redisTemplate.execute(connection -> {
+            connection.flushDb();
+            return "OK";
+        }, true);
+    }
+
 }

@@ -52,5 +52,4 @@ public class EmailConfig {
 
         return javaMailProperties;
     }
-
 }

@@ -1,76 +1,86 @@
 package springboot.yongjunstore.service;
 
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ActiveProfiles;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.RedisUtils;
-import springboot.yongjunstore.domain.room.Images;
+import springboot.yongjunstore.domain.Member;
+import springboot.yongjunstore.domain.Role;
+import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.AuthCheckRequest;
 import springboot.yongjunstore.request.SendEmail;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import java.util.NoSuchElementException;
-
-import static com.mysema.commons.lang.Assert.assertThat;
-import static com.mysema.commons.lang.Assert.notEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class MailServiceTest {
 
-    @InjectMocks
+    private GreenMail greenMail;
+
+    @Autowired
     private MailService mailService;
 
-    @MockBean
-    private JavaMailSender javaMailSender;
-
-    @MockBean
+    @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Mockito 초기화
-        mailService = new MailService(javaMailSender, redisUtils);
+        redisUtils.deleteAllKeys();
+        memberRepository.deleteAll();
     }
 
     @Test
     @DisplayName("메일 발송 성공")
-    void sendMail() {
+    void sendMail() throws MessagingException {
         // given
-        SendEmail sendEmail = new SendEmail();
-        sendEmail.setEmail("test@example.com");
 
-        MimeMessage mimeMessage = mock(MimeMessage.class);
-        when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        greenMail = new GreenMail(ServerSetup.SMTP);
+        greenMail.start();
+
+
+        Member member = Member.builder()
+                .name("김용준")
+                .password("qwer!1234")
+                .role(Role.ADMIN)
+                .email("practice960426@gmail.com")
+                .build();
+
+        memberRepository.save(member);
+
+
+        SendEmail sendEmail = new SendEmail();
+        sendEmail.setEmail("practice960426@gmail.com");
 
         // When
         mailService.sendMail(sendEmail);
 
         // Then
-        verify(javaMailSender).send(mimeMessage);
-        verify(redisUtils).setDataExpire(eq(sendEmail.getEmail()), anyString(), eq(60 * 5L));
+        assertThat(redisUtils.getData(member.getEmail())).isNotNull();
+
+
+        // 전송된 메일 확인
+        MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
+        Assertions.assertThat(receivedMessages.length).isEqualTo(1);
+        Assertions.assertThat(receivedMessages[0].getSubject()).isEqualTo("비밀번호 변경 인증 메일입니다.");
+
+        greenMail.stop();
     }
 
     @Test
@@ -78,17 +88,20 @@ class MailServiceTest {
     void authNumCheck() {
 
         // given
-        AuthCheckRequest authCheckRequest = mock(AuthCheckRequest.class);
-        when(authCheckRequest.getEmail()).thenReturn("test@test.com");
-        when(authCheckRequest.getAuthNumber()).thenReturn(123456);
+        int authNumber = (int)(Math.random() * (90000)) + 100000;
 
-        when(redisUtils.getData(authCheckRequest.getEmail())).thenReturn(String.valueOf(123456));
+        AuthCheckRequest authCheckRequest = new AuthCheckRequest();
+        authCheckRequest.setEmail("practice960426@gmail.com");
+        authCheckRequest.setAuthNumber(authNumber);
+
+        redisUtils.setDataExpire(authCheckRequest.getEmail(), String.valueOf(authNumber), 60 * 5L);
+
 
         // when
         mailService.authNumCheck(authCheckRequest);
 
         // then
-        verify(redisUtils, times(1)).deleteData(any());
+        assertThat(redisUtils.getData(authCheckRequest.getEmail())).isNull();
     }
 
 
@@ -97,11 +110,14 @@ class MailServiceTest {
     void authNumCheckAuthNumberFail() {
 
         // given
+        int authNumber = (int)(Math.random() * (90000)) + 100000;
+
         AuthCheckRequest authCheckRequest = new AuthCheckRequest();
         authCheckRequest.setAuthNumber(123456);
-        authCheckRequest.setEmail("test@test.com");
+        authCheckRequest.setEmail("practice960426@gmail.com");
 
-        when(redisUtils.getData(authCheckRequest.getEmail())).thenReturn(String.valueOf(741852));
+        redisUtils.setDataExpire(authCheckRequest.getEmail(), String.valueOf(authNumber), 60 *5L);
+
 
         // when
         assertThatThrownBy(() -> mailService.authNumCheck(authCheckRequest))
@@ -116,10 +132,8 @@ class MailServiceTest {
 
         // given
         AuthCheckRequest authCheckRequest = new AuthCheckRequest();
-        authCheckRequest.setAuthNumber(999);
-        authCheckRequest.setEmail("test@test.com");
-
-        when(redisUtils.getData(authCheckRequest.getEmail())).thenReturn(String.valueOf(741852));
+        authCheckRequest.setAuthNumber(9991245);
+        authCheckRequest.setEmail("practice960426@gmail.com");
 
         // when
         assertThatThrownBy(() -> mailService.authNumCheck(authCheckRequest))
@@ -135,9 +149,7 @@ class MailServiceTest {
         // given
         AuthCheckRequest authCheckRequest = new AuthCheckRequest();
         authCheckRequest.setAuthNumber(123456);
-        authCheckRequest.setEmail("test@test.com");
-
-        when(redisUtils.getData(authCheckRequest.getEmail())).thenThrow(NoSuchElementException.class);
+        authCheckRequest.setEmail("practice960426@gmail.com");
 
         // when
         assertThatThrownBy(() -> mailService.authNumCheck(authCheckRequest))
