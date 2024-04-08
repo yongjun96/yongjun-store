@@ -1,6 +1,7 @@
 package springboot.yongjunstore.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,10 +14,6 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
-
-    Optional<Member> findByName(String name);
-
-    Optional<Member> findByEmailAndPassword(String email, String password);
 
     Optional<Member> findById(Long id);
 

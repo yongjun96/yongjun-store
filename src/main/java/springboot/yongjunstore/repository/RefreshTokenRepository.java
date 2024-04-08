@@ -1,6 +1,8 @@
 package springboot.yongjunstore.repository;
 
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.RefreshToken;

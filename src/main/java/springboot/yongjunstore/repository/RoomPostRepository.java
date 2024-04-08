@@ -1,6 +1,7 @@
 package springboot.yongjunstore.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,8 +16,6 @@ import java.util.Optional;
 public interface RoomPostRepository extends JpaRepository<RoomPost, Long>, RoomPostRepositoryCustom {
 
     Optional<RoomPost> findById(Long id);
-
-    List<RoomPost> findByMemberEmail(String email);
 
     @Modifying
     @Query("DELETE FROM RoomPost rp WHERE rp.member.email = :email")

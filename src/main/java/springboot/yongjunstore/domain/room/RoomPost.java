@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.base.BaseTimeEntity;
-import springboot.yongjunstore.request.RoomPostRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,5 +80,9 @@ public class RoomPost extends BaseTimeEntity {
 
     public void addMember(Member member){
         this.member = member;
+    }
+
+    public void addImagesList(List<Images> imagesList){
+        this.imagesList = imagesList;
     }
 }

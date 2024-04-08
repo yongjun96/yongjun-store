@@ -68,7 +68,15 @@ public class RoomPostService {
 
         RoomPost findRoomPost = roomPostRepository.SelectRoomPostPosts(roomPostId);
 
+        if (findRoomPost == null) {
+            throw new GlobalException(ErrorCode.ROOM_POST_NOT_FOUND);
+        }
+
         List<Images> imagesList = imagesRepository.findByRoomPostId(roomPostId);
+
+        if(imagesList.size() == 0){
+            throw new GlobalException(ErrorCode.IMAGE_FILE_NOT_FOUND);
+        }
 
         List<ImagesResponse> imagesResponse = imagesList.stream()
                 .map((i) -> new ImagesResponse(i))
@@ -79,6 +87,10 @@ public class RoomPostService {
 
 
     public Page<RoomPostResponse> searchRoomPostList(String searchOption, String searchContent , Pageable pageable) {
+
+        if(searchOption.isEmpty() || searchOption == null){
+            throw new GlobalException(ErrorCode.ROOM_POST_SEARCH_OPTION_NOT_FOUND);
+        }
 
         Page<RoomPost> roomPostList = roomPostRepository.searchRoomPostList(searchOption, searchContent, pageable);
 

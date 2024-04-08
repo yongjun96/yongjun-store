@@ -157,9 +157,23 @@ class MailControllerTest {
     }
 
 
+    @Test
+    @DisplayName("인증번호 인증 실패 : 인증 번호가 틀린 경우")
+    void authNumCheckError() throws Exception {
 
+        //given
+        AuthCheckRequest authCheckRequest = new AuthCheckRequest();
+        authCheckRequest.setAuthNumber(123456);
+        authCheckRequest.setEmail("yongjun@gmail.com");
 
+        redisUtils.setDataExpire("yongjun@gmail.com", "456789", 60 * 5L);
 
-
-
+        //expected
+        mockMvc.perform(post("/authCheck")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authCheckRequest))
+                )
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
 }

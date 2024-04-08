@@ -1,6 +1,7 @@
 package springboot.yongjunstore.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,12 +75,6 @@ public class MemberService {
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
 
-        try {
-            memberRepository.delete(findMember);
-        }catch (Exception e){
-
-            e.printStackTrace();
-            throw new GlobalException(ErrorCode.MEMBER_DELETE_FAIL);
-        }
+        memberRepository.delete(findMember);
     }
 }

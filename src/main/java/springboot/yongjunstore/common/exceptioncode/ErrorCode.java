@@ -29,14 +29,16 @@ public enum ErrorCode {
 
     // OAuth2.0
     OAUTH_EMAIL_EXISTS(400, HttpStatus.BAD_REQUEST, "O001", "이미 일반 회원으로 등록된 이메일입니다."),
+    OAUTH_EMAIL_DELETED(400, HttpStatus.BAD_REQUEST, "O002", "탈퇴된 회원입니다. 탈퇴한 시간으로 부터 1분 뒤, 다시 가입해주세요."),
 
     // fileUpload
-    IMAGE_FILE_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F001", "이미지 파일이 아닙니다."),
+    IMAGE_FILE_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F001", "이미지 파일을 찾지 못했습니다."),
     IMAGE_FILE_NOT_UPLOAD(401, HttpStatus.BAD_REQUEST, "F002", "이미지 파일이 업로드되지 못했습니다."),
     IMAGE_FILE_EXTENSION_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F003", "이미지의 확장자를 찾을 수 없습니다."),
 
     // RoomPost
     ROOM_POST_NOT_FOUND(404, HttpStatus.NOT_FOUND, "R001", "RoomPost를 찾을 수 없습니다."),
+    ROOM_POST_SEARCH_OPTION_NOT_FOUND(404, HttpStatus.NOT_FOUND, "R002", "searchOption(검색 옵션)을 찾을 수 없습니다."),
 
     // GoogleEmail
     GOOGLE_EMAIL_MESSAGE_EXCEPTION(400, HttpStatus.BAD_REQUEST, "G001", "메세지 생성에 실패했습니다."),

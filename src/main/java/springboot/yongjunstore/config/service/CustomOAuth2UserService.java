@@ -12,11 +12,13 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.CustomOAuth2User;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -48,14 +50,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 
         if (findMember.isEmpty()) {
-            // 회원이 존재하지 않을 경우
+            // 회원이 존재하지 않을 경우 (삭제된 회원 포함)
             customOAuth2User.addAttribute("exist", false);
 
             return new DefaultOAuth2User(
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_MEMBER")),
                     customOAuth2User.getAttributes(), "email");
         }else{
-            //회원이 존재할 경우
+            //회원이 존재할 경우 (삭제된 회원 포함)
+
 
             // Oauth2.0 가입 회원이 아닌 경우
             if(findMember.get().getProvider() == null && findMember.get().getProviderId() == null){

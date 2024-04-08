@@ -1,9 +1,13 @@
 package springboot.yongjunstore.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.*;
-import org.springframework.validation.annotation.Validated;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import springboot.yongjunstore.domain.base.BaseTimeEntity;
 import springboot.yongjunstore.domain.room.RoomPost;
 
