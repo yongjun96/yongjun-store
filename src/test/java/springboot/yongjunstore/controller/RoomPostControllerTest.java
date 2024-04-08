@@ -310,8 +310,6 @@ class RoomPostControllerTest {
             roomPostRepository.save(saveRoomPost);
         }
 
-
-
         //expected
         mockMvc.perform(MockMvcRequestBuilders.get("/roomPost/posts")
                         .param("searchOption", searchOption)
@@ -327,6 +325,72 @@ class RoomPostControllerTest {
                 .andExpect(jsonPath("$.content[2].title").value(roomPost.getTitle()))
                 .andExpect(jsonPath("$.content[3].title").value(roomPost.getTitle()))
                 .andExpect(jsonPath("$.content[4].title").value(roomPost.getTitle()))
+                .andDo(print());
+    }
+
+
+    @Test
+    @DisplayName("글 리스트 조회 실패 : searchOption이 없는 경우")
+    void searchRoomPostListSearchOptionNotFound() throws Exception {
+
+        // given
+        String searchOption = ""; // 검색 옵션
+        String searchContent = ""; // 검색 내용
+
+        Member member = Member.builder()
+                .name("김용준")
+                .password(passwordEncoder.encode("qwer!1234"))
+                .role(Role.ADMIN)
+                .email("yongjun@gmail.com")
+                .build();
+
+        Member saveMember = memberRepository.save(member);
+
+        RoomPost roomPost = null;
+
+        for (int i= 0; i<5; i++) {
+
+            roomPost = RoomPost.builder()
+                    .title("제목")
+                    .roomOwner("방주인")
+                    .roomName("방이름")
+                    .detail("상세설명")
+                    .depositPrice("100")
+                    .description("부설명")
+                    .roomStatus(RoomStatus.임대)
+                    .deposit(Deposit.전세)
+                    .content("내용입니다. 10글자 이상입니다...")
+                    .member(saveMember)
+                    .monthlyPrice("10000")
+                    .squareFootage("4")
+                    .address("주소")
+                    .build();
+
+            RoomPost saveRoomPost = roomPostRepository.save(roomPost);
+
+            Images images = Images.builder()
+                    .roomPost(saveRoomPost)
+                    .path("테스트 경로")
+                    .name("테스트 이름")
+                    .build();
+
+            List<Images> imagesList = new ArrayList<>();
+            imagesList.add(images);
+
+            saveRoomPost.addImagesList(imagesList);
+
+            roomPostRepository.save(saveRoomPost);
+        }
+
+        //expected
+        mockMvc.perform(MockMvcRequestBuilders.get("/roomPost/posts")
+                        .param("searchOption", searchOption)
+                        .param("searchContent", searchContent)
+                        .param("page", "0")
+                        .param("size", "10")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 

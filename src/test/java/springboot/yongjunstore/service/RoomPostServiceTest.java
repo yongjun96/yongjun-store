@@ -17,6 +17,7 @@ import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.domain.room.Deposit;
+import springboot.yongjunstore.domain.room.Images;
 import springboot.yongjunstore.domain.room.RoomPost;
 import springboot.yongjunstore.domain.room.RoomStatus;
 import springboot.yongjunstore.repository.ImagesRepository;
@@ -164,6 +165,19 @@ class RoomPostServiceTest {
 
         RoomPost saveRoomPost = roomPostRepository.save(roomPost);
 
+        Images images = Images.builder()
+                .roomPost(saveRoomPost)
+                .path("테스트 경로")
+                .name("테스트 이름")
+                .build();
+
+        List<Images> imagesList = new ArrayList<>();
+        imagesList.add(images);
+
+        saveRoomPost.addImagesList(imagesList);
+
+        roomPostRepository.save(saveRoomPost);
+
 
         // when
         RoomPostResponse roomPostResponse = roomPostService.getRoomPost(roomPost.getId());
@@ -179,7 +193,7 @@ class RoomPostServiceTest {
     void searchRoomPostList(){
 
         // given
-        String searchOption = "";
+        String searchOption = "title";
         String searchContent = "";
         Pageable pageable = mock(Pageable.class);
         pageable.getPageSize();
