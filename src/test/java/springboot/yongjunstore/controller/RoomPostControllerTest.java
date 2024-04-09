@@ -393,5 +393,4 @@ class RoomPostControllerTest {
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }
-
 }

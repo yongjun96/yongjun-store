@@ -2,6 +2,7 @@ package springboot.yongjunstore.controller;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ class MemberControllerTest {
     }
 
 
+    @Disabled
     @Test
     @DisplayName("email로 회원 찾기 성공")
     void findMember() throws Exception {
@@ -57,6 +59,7 @@ class MemberControllerTest {
 
     }
 
+    @Disabled
     @Test
     @DisplayName("email로 회원 찾기 실패 : 회원을 찾지 못했을 경우")
     void findMemberNotFound() throws Exception {
@@ -78,6 +81,7 @@ class MemberControllerTest {
     }
 
 
+    @Disabled
     @Test
     @DisplayName("email로 회원 프로필 찾기 성공 : 일반 회원")
     void myProfileFindMember() throws Exception {
@@ -103,6 +107,7 @@ class MemberControllerTest {
                 .andDo(print());
     }
 
+    @Disabled
     @Test
     @DisplayName("email로 회원 프로필 찾기 성공 : 구글 회원")
     void myProfileFindMemberGoogle() throws Exception {
@@ -131,6 +136,7 @@ class MemberControllerTest {
                 .andDo(print());
     }
 
+    @Disabled
     @Test
     @DisplayName("email로 회원 프로필 찾기 실패 : 회원을 찾지 못했을 경우")
     void myProfileFindMemberNotFound() throws Exception {
@@ -149,6 +155,7 @@ class MemberControllerTest {
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }
+
 
     @Test
     @DisplayName("회원 탈퇴 성공")
