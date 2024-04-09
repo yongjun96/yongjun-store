@@ -126,8 +126,8 @@ openapi3 {
         { url = "http://localhost:8080" },
         { url = "https://서버url" }
     ]
-    title = "SAMPLE API 문서"
-    description = "Spring REST Docs with SwaggerUI."
+    title = "방장 API 문서"
+    description = "version 0.0.1"
     version = "0.0.1"
     outputFileNamePrefix = 'SAMPLE - 0.0.1'
     format = 'json'

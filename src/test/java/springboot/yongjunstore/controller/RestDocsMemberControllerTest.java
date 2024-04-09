@@ -214,8 +214,8 @@ class RestDocsMemberControllerTest {
                                 fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
                                 fieldWithPath("role").type(JsonFieldType.STRING).description("회원 권한"),
-                                fieldWithPath("provider").type(JsonFieldType.NULL).description("구글 회원 확인"),
-                                fieldWithPath("providerId").type(JsonFieldType.NULL).description("구글 회원 ID")
+                                fieldWithPath("provider").type(JsonFieldType.NULL).description("구글 회원 확인").ignored(),
+                                fieldWithPath("providerId").type(JsonFieldType.NULL).description("구글 회원 ID").ignored()
                         )
                 )
 
