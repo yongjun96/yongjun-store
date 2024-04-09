@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Null;
+import lombok.Builder;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +31,7 @@ import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
 
 import javax.crypto.SecretKey;
+import javax.lang.model.type.NullType;
 import java.util.Base64;
 import java.util.Date;
 
@@ -209,12 +214,104 @@ class RestDocsMemberControllerTest {
                                 fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
                                 fieldWithPath("role").type(JsonFieldType.STRING).description("회원 권한"),
-                                fieldWithPath("provider").type(null).description("구글 회원 확인"),
-                                fieldWithPath("providerId").type(null).description("구글 회원 ID")
+                                fieldWithPath("provider").type(JsonFieldType.NULL).description("구글 회원 확인"),
+                                fieldWithPath("providerId").type(JsonFieldType.NULL).description("구글 회원 ID")
                         )
                 )
 
         );
+    }
+
+
+    @Test
+    @DisplayName("email로 회원 프로필 찾기 실패 : 회원을 찾지 못했을 경우")
+    void myProfileFindMemberNotFound() throws Exception {
+
+        // given
+        createMember(email, role);
+
+        JwtDto jwt = jwtDto();
+
+        //expected
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/member/find/myProfile/{email}", "test@test.test")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken()))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andDo(MockMvcRestDocumentationWrapper.document("프로필 찾기 실패",
+                                resourceDetails().description("회원 프로필 찾기"),
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰").getAttributes()),
+                                responseFields(
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("Http코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태코드"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("에러코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러메시지")
+                                )
+                        )
+
+                );
+    }
+
+
+    @Test
+    @DisplayName("회원 탈퇴 성공")
+    void deleteMemberAndRoomPostAndImages() throws Exception {
+
+        // given
+        Member member = createMember(email, role);
+
+        JwtDto jwt = jwtDto();
+
+        //expected
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/member/delete/{email}", member.getEmail())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(MockMvcRestDocumentationWrapper.document("회원 탈퇴 성공",
+                                resourceDetails().description("회원 탈퇴"),
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰").getAttributes())
+                        )
+
+                );
+
+        Assertions.assertThat(memberRepository.count()).isEqualTo(0);
+    }
+
+
+    @Test
+    @DisplayName("회원 탈퇴 실패 : 회원이 존재하지 않는 경우")
+    void deleteMemberAndRoomPostAndImagesMemberNotFound() throws Exception {
+
+        // given
+        Member member = createMember(email, role);
+
+        JwtDto jwt = jwtDto();
+
+        //expected
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/member/delete/{email}", "test@test.test")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken()))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andDo(MockMvcRestDocumentationWrapper.document("회원 탈퇴 실패",
+                                resourceDetails().description("회원 탈퇴"),
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰").getAttributes()),
+                                responseFields(
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("Http코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태코드"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("에러코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러메시지")
+                                )
+                        )
+
+                );
     }
 
 
