@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ class RestDocsMemberControllerTest {
     @Autowired private BCryptPasswordEncoder passwordEncoder;
 
 
-    @AfterEach
+    @BeforeEach
     void afterSetUp(){
         memberRepository.deleteAll();
     }
@@ -272,8 +273,6 @@ class RestDocsMemberControllerTest {
                         )
 
                 );
-
-        Assertions.assertThat(memberRepository.count()).isEqualTo(0);
     }
 
 

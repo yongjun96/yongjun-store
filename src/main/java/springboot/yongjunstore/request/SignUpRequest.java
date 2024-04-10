@@ -9,8 +9,8 @@ import springboot.yongjunstore.domain.Role;
 @ToString
 public class SignUpRequest {
 
-    @NotBlank(message = "email은 필수값 입니다.")
-    @Email
+    @NotBlank
+    @Email(message = "email 양식을 지켜야 합니다.")
     private String email;
 
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$", message = "최소 8자 이상, 하나 이상의 소문자, 숫자, 특수문자를 포함해야 합니다.")
