@@ -6,10 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springboot.yongjunstore.config.jwt.JwtDto;
-import springboot.yongjunstore.request.MemberLoginRequest;
-import springboot.yongjunstore.request.PasswordEditRequest;
-import springboot.yongjunstore.request.SignUpRequest;
 import springboot.yongjunstore.config.service.AuthService;
+import springboot.yongjunstore.request.MemberLoginRequest;
+import springboot.yongjunstore.request.SignUpRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,13 +31,6 @@ public class AuthController {
        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PatchMapping("/passwordEdit")
-    public ResponseEntity passwordEdit(@RequestBody PasswordEditRequest passwordEditRequest){
-
-        authService.passwordEdit(passwordEditRequest);
-
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
 
     @GetMapping("/admin")
     public String adminLoginTest(){

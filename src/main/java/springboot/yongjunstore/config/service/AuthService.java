@@ -2,10 +2,13 @@ package springboot.yongjunstore.config.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springboot.yongjunstore.common.exception.GlobalException;
@@ -13,17 +16,17 @@ import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
+import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.MemberLoginRequest;
-import springboot.yongjunstore.request.PasswordEditRequest;
 import springboot.yongjunstore.request.SignUpRequest;
 
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -31,6 +34,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
+
 
     @Transactional
     public JwtDto login(MemberLoginRequest memberLoginDto) {
@@ -77,24 +81,5 @@ public class AuthService {
                 .build();
 
         memberRepository.save(member);
-    }
-
-    @Transactional
-    public void passwordEdit(PasswordEditRequest passwordEditRequest) {
-
-        Member findMember = memberRepository.findByEmail(passwordEditRequest.getEmail())
-                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
-
-        if(passwordEditRequest.getPasswordCheck()
-                .equals(passwordEditRequest.getPassword())){
-
-            String encodePassword = passwordEncoder.encode(passwordEditRequest.getPassword());
-
-            memberRepository.updateMemberPassword(findMember.getEmail(), encodePassword);
-        }else {
-
-            // 비밀번호가 일치하지 않는 경우.
-            throw new GlobalException(ErrorCode.MEMBER_PASSWORD_UNCHECKED);
-        }
     }
 }

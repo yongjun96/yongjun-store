@@ -6,21 +6,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
-import springboot.yongjunstore.request.CustomOAuth2User;
+import springboot.yongjunstore.request.PasswordEditRequest;
 import springboot.yongjunstore.response.MemberResponse;
 import springboot.yongjunstore.response.MyProfileResponse;
-
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,65 +33,6 @@ class MemberServiceTest {
         memberRepository.deleteAll();
     }
 
-
-    @Test
-    @DisplayName("구글 회원가입 성공")
-    void googleSignup() {
-
-        // given
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_MEMBER");
-
-        CustomOAuth2User customOAuth2User = getCustomOAuth2User(authority, "yongjun@email.com");
-
-
-        OAuth2User oAuth2User = new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_MEMBER")),
-                customOAuth2User.getAttributes(), "email");
-
-
-        // when
-        memberService.googleSignup(oAuth2User);
-
-        String email = memberRepository.findByEmail(oAuth2User.getAttribute("email")).get().getEmail();
-
-
-        // then
-        assertThat(memberRepository.count()).isEqualTo(1);
-        assertThat(email).isEqualTo(oAuth2User.getAttribute("email"));
-
-    }
-
-
-    @Test
-    @DisplayName("구글 회원가입 실패 : 회원이 존재하는 경우")
-    void googleSignupFail() {
-
-        // given
-        Member member = Member.builder()
-                .email("yongjun@gmail.com")
-                .password(passwordEncoder.encode("qwer!1234"))
-                .role(Role.ADMIN)
-                .name("김용준")
-                .build();
-
-        memberRepository.save(member);
-
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_MEMBER");
-
-        CustomOAuth2User customOAuth2User = getCustomOAuth2User(authority, "yongjun@email.com");
-
-
-        OAuth2User oAuth2User = new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_MEMBER")),
-                customOAuth2User.getAttributes(), "email");
-
-
-        // when
-        Assertions.assertThatThrownBy(() -> memberService.googleSignup(oAuth2User))
-                .isInstanceOf(GlobalException.class)
-                .hasMessageContaining(ErrorCode.MEMBER_EMAIL_EXISTS.getMessage());
-
-    }
 
 
     @Test
@@ -229,21 +166,68 @@ class MemberServiceTest {
     }
 
 
+    @Transactional
+    @Rollback // 테스트 완료 후 롤백 지정
+    @Test
+    @DisplayName("패스워드 변경 성공 : 패스워드 체크 일치")
+    void passwordEdit() {
 
-    private static CustomOAuth2User getCustomOAuth2User(GrantedAuthority authority, String email) {
+        //given
+        Member member = Member.builder()
+                .email("yongjun@gmail.com")
+                .password("qwer!1234")
+                .role(Role.ADMIN)
+                .name("김용준")
+                .build();
 
-        OAuth2User defaultoAuth2User = new DefaultOAuth2User(
-                Collections.singleton(authority), // 권한 목록
-                Collections.singletonMap("email", email), // 사용자 정보
-                "email"
-        );
+        memberRepository.save(member);
 
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(defaultoAuth2User);
-        customOAuth2User.addAttribute("email", "yongjun@gmail.com");
-        customOAuth2User.addAttribute("provider", "google");
-        customOAuth2User.addAttribute("name", "김용준");
-        customOAuth2User.addAttribute("sub", "subTest");
-        return customOAuth2User;
+        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
+                .email("yongjun@gmail.com")
+                .password("asdf!1234")
+                .passwordCheck("asdf!1234")
+                .build();
+
+
+        // when
+        memberService.passwordEdit(passwordEditRequest);
+
+        //then
+        Member findMember = memberRepository.findByEmail("yongjun@gmail.com")
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
+        assertThat(findMember.getPassword()).isNotNull();
+
+    }
+
+    @Transactional
+    @Rollback // 테스트 완료 후 롤백 지정
+    @Test
+    @DisplayName("패스워드 변경 실패 : 패스워드 체크 불일치")
+    void passwordEditUnChecked() {
+
+        //given
+        Member member = Member.builder()
+                .email("yongjun@gmail.com")
+                .password("qwer!1234")
+                .role(Role.ADMIN)
+                .name("김용준")
+                .build();
+
+        memberRepository.save(member);
+
+        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
+                .email("yongjun@gmail.com")
+                .password("asdf!1235")
+                .passwordCheck("asdf!1234")
+                .build();
+
+
+        // when
+        Assertions.assertThatThrownBy( () -> memberService.passwordEdit(passwordEditRequest))
+                .isInstanceOf(GlobalException.class)
+                .hasMessageContaining(ErrorCode.MEMBER_PASSWORD_UNCHECKED.getMessage());
+
     }
 
 }

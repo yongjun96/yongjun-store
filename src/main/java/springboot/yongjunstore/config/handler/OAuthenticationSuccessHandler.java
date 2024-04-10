@@ -10,29 +10,37 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import springboot.yongjunstore.common.exception.GlobalException;
+import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.config.service.RefreshTokenService;
-import springboot.yongjunstore.service.MemberService;
+import springboot.yongjunstore.domain.Member;
+import springboot.yongjunstore.domain.Role;
+import springboot.yongjunstore.repository.MemberRepository;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @Slf4j
 public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
-    private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
     private final String frontEndUrl;
+    private final MemberRepository memberRepository;
+
 
     public OAuthenticationSuccessHandler(@Value("${custom.url.frontend-url}") String frontEndUrl,
                                          JwtProvider jwtProvider,
-                                         MemberService memberService,
+                                         MemberRepository memberRepository,
                                          RefreshTokenService refreshTokenService) {
+
+        this.memberRepository = memberRepository;
         this.frontEndUrl = frontEndUrl;
         this.jwtProvider = jwtProvider;
-        this.memberService = memberService;
         this.refreshTokenService = refreshTokenService;
     }
 
@@ -65,14 +73,43 @@ public class OAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucces
 
         //회원이 존재하지 않을 경우 DB에 회원가입 시키고 토큰 발급
         if (!isExist) {
-            memberService.googleSignup(oAuth2User);
+
+            googleSignup(oAuth2User);
         }
 
         // refreshToken 저장
         refreshTokenService.saveRefreshToken(token);
 
-        // 클라이언트로 리디렉션하여 토큰 정보를 전달합니다.
+        // 클라이언트로 리디렉션하여 토큰 정보를 전달
         response.sendRedirect(frontEndUrl+"?accessToken=" + token.getAccessToken());
+    }
+
+
+    @Transactional
+    public void googleSignup(OAuth2User oAuth2User) {
+
+        // ex). MEMBER
+        String role = oAuth2User.getAuthorities().stream().
+                findFirst() // 첫번째 Role을 찾아온다.
+                .orElseThrow(IllegalAccessError::new) // 존재하지 않을 시 예외를 던진다.
+                .toString().substring(5).trim(); // ROLE_ 부분 자르고 가져온다.
+
+
+        Optional<Member> optionalUser = memberRepository.findByEmail(oAuth2User.getAttribute("email"));
+
+        if(optionalUser.isPresent()){
+            throw new GlobalException(ErrorCode.MEMBER_EMAIL_EXISTS);
+        }
+
+        Member member = Member.builder()
+                .name(oAuth2User.getAttribute("name"))
+                .email(oAuth2User.getAttribute("email"))
+                .provider(oAuth2User.getAttribute("provider")) // ex). google
+                .providerId(oAuth2User.getAttribute("sub"))
+                .role(Role.valueOf(role))
+                .build();
+
+        memberRepository.save(member);
     }
 
 }

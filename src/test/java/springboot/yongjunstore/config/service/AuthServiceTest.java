@@ -6,20 +6,26 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
+import springboot.yongjunstore.config.handler.OAuthenticationSuccessHandler;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
+import springboot.yongjunstore.request.CustomOAuth2User;
 import springboot.yongjunstore.request.MemberLoginRequest;
-import springboot.yongjunstore.request.PasswordEditRequest;
 import springboot.yongjunstore.request.SignUpRequest;
 
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 
 @SpringBootTest
@@ -28,6 +34,7 @@ class AuthServiceTest {
     @Autowired private MemberRepository memberRepository;
     @Autowired private BCryptPasswordEncoder passwordEncoder;
     @Autowired private AuthService authService;
+    @Autowired private OAuthenticationSuccessHandler oAuthenticationSuccessHandler;
 
 
     @BeforeEach
@@ -161,69 +168,4 @@ class AuthServiceTest {
                 .isInstanceOf(GlobalException.class)
                 .hasMessageContaining(ErrorCode.MEMBER_EMAIL_EXISTS.getMessage());
     }
-
-    @Transactional
-    @Rollback // 테스트 완료 후 롤백 지정
-    @Test
-    @DisplayName("패스워드 변경 성공 : 패스워드 체크 일치")
-    void passwordEdit() {
-
-        //given
-        Member member = Member.builder()
-                .email("yongjun@gmail.com")
-                .password("qwer!1234")
-                .role(Role.ADMIN)
-                .name("김용준")
-                .build();
-
-        memberRepository.save(member);
-
-        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
-                .email("yongjun@gmail.com")
-                .password("asdf!1234")
-                .passwordCheck("asdf!1234")
-                .build();
-
-
-        // when
-        authService.passwordEdit(passwordEditRequest);
-
-        //then
-        Member findMember = memberRepository.findByEmail("yongjun@gmail.com")
-                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
-
-        assertThat(findMember.getPassword()).isNotNull();
-
-    }
-
-    @Transactional
-    @Rollback // 테스트 완료 후 롤백 지정
-    @Test
-    @DisplayName("패스워드 변경 실패 : 패스워드 체크 불일치")
-    void passwordEditUnChecked() {
-
-        //given
-        Member member = Member.builder()
-                .email("yongjun@gmail.com")
-                .password("qwer!1234")
-                .role(Role.ADMIN)
-                .name("김용준")
-                .build();
-
-        memberRepository.save(member);
-
-        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
-                .email("yongjun@gmail.com")
-                .password("asdf!1235")
-                .passwordCheck("asdf!1234")
-                .build();
-
-
-        // when
-        Assertions.assertThatThrownBy( () -> authService.passwordEdit(passwordEditRequest))
-                .isInstanceOf(GlobalException.class)
-                .hasMessageContaining(ErrorCode.MEMBER_PASSWORD_UNCHECKED.getMessage());
-
-    }
-
 }

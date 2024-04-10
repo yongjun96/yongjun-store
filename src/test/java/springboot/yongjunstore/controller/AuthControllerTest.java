@@ -18,11 +18,9 @@ import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.repository.RefreshTokenRepository;
 import springboot.yongjunstore.request.MemberLoginRequest;
-import springboot.yongjunstore.request.PasswordEditRequest;
 import springboot.yongjunstore.request.SignUpRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -161,92 +159,6 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberLoginDto))
                 )
-                .andExpect(status().isBadRequest())
-                .andDo(print());
-
-        assertThat(refreshTokenRepository.count()).isEqualTo(0);
-    }
-
-
-    @Test
-    @DisplayName("비밀번호 체크 성공")
-    void passwordEdit() throws Exception {
-
-        //given
-        Member member = Member.builder()
-                .name("김용준")
-                .password(passwordEncoder.encode("qwer!1234"))
-                .role(Role.ADMIN)
-                .email("yongjun@gmail.com")
-                .build();
-
-        memberRepository.save(member);
-
-        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
-                .email("yongjun@gmail.com")
-                .passwordCheck("qwer!1234")
-                .password("qwer!1234")
-                .build();
-
-        //expected
-        mockMvc.perform(patch("/auth/passwordEdit")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(passwordEditRequest)
-                ))
-                .andExpect(status().isOk())
-                .andDo(print());
-
-        assertThat(refreshTokenRepository.count()).isEqualTo(0);
-    }
-
-    @Test
-    @DisplayName("비밀번호 체크 실패 : 회원이 존재하지 않는 경우")
-    void passwordEditMemberNotFound() throws Exception {
-
-        //given
-        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
-                .email("yongjun@gmail.com")
-                .passwordCheck("qwer!1234")
-                .password("qwer!1234")
-                .build();
-
-        //expected
-        mockMvc.perform(patch("/auth/passwordEdit")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(passwordEditRequest)
-                        ))
-                .andExpect(status().isNotFound())
-                .andDo(print());
-
-        assertThat(refreshTokenRepository.count()).isEqualTo(0);
-    }
-
-
-    @Test
-    @DisplayName("비밀번호 체크 실패 : 비밀번호가 일치하지 않는 경우")
-    void passwordEditUnChecked() throws Exception {
-
-        //given
-        Member member = Member.builder()
-                .name("김용준")
-                .password(passwordEncoder.encode("qwer!1234"))
-                .role(Role.ADMIN)
-                .email("yongjun@gmail.com")
-                .build();
-
-        memberRepository.save(member);
-
-        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
-                .email("yongjun@gmail.com")
-                .passwordCheck("qwer!1234")
-                .password("qwer!4567")
-                .build();
-
-        //expected
-        mockMvc.perform(patch("/auth/passwordEdit")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(passwordEditRequest)
-                        ))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
 

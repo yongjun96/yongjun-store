@@ -33,37 +33,35 @@ import springboot.yongjunstore.config.service.CustomOAuth2UserService;
 import springboot.yongjunstore.config.service.RefreshTokenService;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.repository.MemberRepository;
-import springboot.yongjunstore.service.MemberService;
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class securityConfig {
+public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
-    private final MemberRepository memberRepository;
-    private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
-
+    private final MemberRepository memberRepository;
     @Value("${custom.url.frontend-url}")
     private String frontEndUrl;
 
+
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer(){
+    public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
                 .requestMatchers("/favicon.ico")
                 .requestMatchers("/error");
-                //.requestMatchers(toH2Console());
+        //.requestMatchers(toH2Console());
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/auth/admin").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
-                        .requestMatchers("/member/find/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
+                        .requestMatchers("/member/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
                         .anyRequest().permitAll()
                 )
 
@@ -74,10 +72,10 @@ public class securityConfig {
 
                 .oauth2Login(oauth2 ->
                         oauth2.userInfoEndpoint(userInfoEndpoint ->
-                                    userInfoEndpoint.userService(new CustomOAuth2UserService(memberRepository, defaultOAuth2UserService()))
-                    )
-                    .failureHandler(new OAuthenticationFailureHandler(frontEndUrl))
-                    .successHandler(new OAuthenticationSuccessHandler(frontEndUrl, jwtProvider, memberService, refreshTokenService))
+                                        userInfoEndpoint.userService(new CustomOAuth2UserService(memberRepository, defaultOAuth2UserService()))
+                                )
+                                .failureHandler(new OAuthenticationFailureHandler(frontEndUrl))
+                                .successHandler(new OAuthenticationSuccessHandler(frontEndUrl, jwtProvider, memberRepository, refreshTokenService))
                 )
 
 
@@ -101,12 +99,12 @@ public class securityConfig {
     }
 
     @Bean
-    public DefaultOAuth2UserService defaultOAuth2UserService(){
+    public DefaultOAuth2UserService defaultOAuth2UserService() {
         return new DefaultOAuth2UserService();
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

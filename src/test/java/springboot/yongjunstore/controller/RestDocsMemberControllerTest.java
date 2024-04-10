@@ -5,12 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.Null;
-import lombok.Builder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +20,13 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.repository.MemberRepository;
+import springboot.yongjunstore.request.PasswordEditRequest;
 
 import javax.crypto.SecretKey;
-import javax.lang.model.type.NullType;
 import java.util.Base64;
 import java.util.Date;
 
@@ -39,8 +34,7 @@ import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.resour
 import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -308,6 +302,90 @@ class RestDocsMemberControllerTest {
                                 fieldWithPath("status").type(JsonFieldType.STRING).description("상태코드"),
                                 fieldWithPath("code").type(JsonFieldType.STRING).description("에러코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("에러메시지")
+                                )
+                        )
+
+                );
+    }
+
+
+    @Test
+    @DisplayName("비밀번호 변경 성공 : 패스워드 체크 일치")
+    void passwordEdit() throws Exception {
+
+        // given
+        createMember(email, role);
+
+        JwtDto jwt = jwtDto();
+
+        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
+                .email(email)
+                .password("asdf!1234")
+                .passwordCheck("asdf!1234")
+                .build();
+
+        //expected
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/member/passwordEdit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
+                        .content(objectMapper.writeValueAsString(passwordEditRequest)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(MockMvcRestDocumentationWrapper.document("비밀번호 변경 성공",
+                                resourceDetails().description("비밀번호 변경"),
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰").getAttributes()),
+                                requestFields(
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("변경할 비밀번호"),
+                                        fieldWithPath("passwordCheck").type(JsonFieldType.STRING).description("비밀번호 확인")
+
+                                )
+                        )
+
+                );
+    }
+
+
+    @Test
+    @DisplayName("비밀번호 변경 실패 : 패스워드 불일치")
+    void passwordEditUnChecked() throws Exception {
+
+        // given
+        createMember(email, role);
+
+        JwtDto jwt = jwtDto();
+
+        PasswordEditRequest passwordEditRequest = PasswordEditRequest.builder()
+                .email(email)
+                .password("asdf!1234")
+                .passwordCheck("zxcv!1234")
+                .build();
+
+        //expected
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/member/passwordEdit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
+                        .content(objectMapper.writeValueAsString(passwordEditRequest)))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andDo(MockMvcRestDocumentationWrapper.document("비밀번호 불일치",
+                                resourceDetails().description("비밀번호 변경"),
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰").getAttributes()),
+                                requestFields(
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("변경할 비밀번호"),
+                                        fieldWithPath("passwordCheck").type(JsonFieldType.STRING).description("비밀번호 확인")
+
+                                ),
+                                responseFields(
+                                        fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("Http코드"),
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description("상태코드"),
+                                        fieldWithPath("code").type(JsonFieldType.STRING).description("에러코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("에러메시지")
                                 )
                         )
 
