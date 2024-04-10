@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,13 +33,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource(properties = {"fileUpload.upload.local.path=/uploads"})
 class RoomPostControllerTest {
 
     @Autowired private MemberRepository memberRepository;
     @Autowired private RoomPostRepository roomPostRepository;
     @Autowired private MockMvc mockMvc;
     @Autowired private BCryptPasswordEncoder passwordEncoder;
-    @Autowired private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp(){
