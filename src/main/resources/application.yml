@@ -20,10 +20,6 @@ custom:
   jwt:
     secretKey: ${SECRET_KEY}
 
-springdoc:
-  swagger-ui:
-    url: /docs/SAMPLE - 0.0.1.json
-    path: /docs/swagger
 
 
 
