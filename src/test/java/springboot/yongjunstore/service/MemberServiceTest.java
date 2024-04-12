@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
@@ -21,6 +22,7 @@ import springboot.yongjunstore.response.MyProfileResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class MemberServiceTest {
 

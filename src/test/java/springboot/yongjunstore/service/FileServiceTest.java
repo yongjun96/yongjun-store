@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.yongjunstore.common.exception.GlobalException;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 @SpringBootTest
 // 해당 properties의 세팅 값을 /uploads 지정해서 사용
 @TestPropertySource(properties = {"fileUpload.upload.local.path=/uploads"})

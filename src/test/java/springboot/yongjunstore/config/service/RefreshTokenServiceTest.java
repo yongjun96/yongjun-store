@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.test.context.ActiveProfiles;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.jwt.JwtProvider;
 import springboot.yongjunstore.domain.Member;
@@ -21,6 +22,7 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class RefreshTokenServiceTest {
 

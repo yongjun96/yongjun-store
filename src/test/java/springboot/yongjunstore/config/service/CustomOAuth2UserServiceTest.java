@@ -11,6 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.test.context.ActiveProfiles;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.request.CustomOAuth2User;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class CustomOAuth2UserServiceTest {
 

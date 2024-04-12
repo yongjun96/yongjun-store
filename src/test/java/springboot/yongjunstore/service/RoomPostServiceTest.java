@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.yongjunstore.common.exception.GlobalException;
@@ -32,6 +33,7 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @TestPropertySource(properties = {"fileUpload.upload.local.path=/uploads"})
 class RoomPostServiceTest {

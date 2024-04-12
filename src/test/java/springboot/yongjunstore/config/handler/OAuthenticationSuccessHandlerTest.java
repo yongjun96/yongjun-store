@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.test.context.ActiveProfiles;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
@@ -22,6 +23,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class OAuthenticationSuccessHandlerTest {
 

@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.test.context.ActiveProfiles;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
@@ -31,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 class JwtProviderTest {
