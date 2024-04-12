@@ -1,0 +1,3 @@
+[submodule "yongjun-store-submodule"]
+    path = yongjun-store-submodule
+    url = https://github.com/yongjun96/yongjun-store-submodule.git
