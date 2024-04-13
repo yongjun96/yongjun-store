@@ -47,13 +47,13 @@ public class SecurityConfig {
     private String frontEndUrl;
 
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring()
-                .requestMatchers("/favicon.ico")
-                .requestMatchers("/error");
-        //.requestMatchers(toH2Console());
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return web -> web.ignoring().
+//                //.requestMatchers("/favicon.ico")
+//                //.requestMatchers("/error");
+//        //.requestMatchers(toH2Console());
+//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
