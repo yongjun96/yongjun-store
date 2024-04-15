@@ -33,6 +33,17 @@ public class RoomPostController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @PostMapping(value = "/createS3")
+    public ResponseEntity roomPostCreateS3(@Valid @ModelAttribute RoomPostRequest roomPostRequest,
+                                         @RequestPart(value = "uploadImages") List<MultipartFile> uploadImages){
+
+        roomPostService.createRoomS3(roomPostRequest, uploadImages);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+
 
     @GetMapping("/posts/{roomPostId}")
     public ResponseEntity searchRoomPost(@PathVariable("roomPostId") Long roomPostId){

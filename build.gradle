@@ -80,6 +80,9 @@ dependencies {
     // actuator health Check
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    // Spring Cloud AWS : S3 사용
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     annotationProcessor 'org.projectlombok:lombok'

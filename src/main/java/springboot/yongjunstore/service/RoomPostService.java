@@ -64,6 +64,37 @@ public class RoomPostService {
 
 
     @Transactional
+    public void createRoomS3(RoomPostRequest roomDto, List<MultipartFile> uploadImages){
+
+        Member findMember = memberRepository.findById(roomDto.getMemberId())
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
+        RoomPost roomPost = RoomPost.builder()
+                .title(roomDto.getTitle())
+                .roomOwner(roomDto.getRoomOwner())
+                .content(roomDto.getContent())
+                .description(roomDto.getDescription())
+                .detail(roomDto.getDetail())
+                .roomName(roomDto.getRoomName())
+                .monthlyPrice(roomDto.getMonthlyPrice())
+                .deposit(roomDto.getDeposit())
+                .depositPrice(roomDto.getDepositPrice())
+                .squareFootage(roomDto.getSquareFootage())
+                .address(roomDto.getAddress())
+                .roomStatus(roomDto.getRoomStatus())
+                .member(findMember)
+                .build();
+
+        RoomPost saveRoom = roomPostRepository.save(roomPost);
+
+        RoomPost findRoomPost = roomPostRepository.findById(saveRoom.getId())
+                .orElseThrow(() -> new GlobalException(ErrorCode.ROOM_POST_NOT_FOUND));
+
+        fileService.uploadS3Images(uploadImages, findRoomPost);
+    }
+
+
+    @Transactional
     public RoomPostResponse getRoomPost(Long roomPostId){
 
         RoomPost findRoomPost = roomPostRepository.SelectRoomPostPosts(roomPostId);
