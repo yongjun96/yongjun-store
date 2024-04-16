@@ -23,9 +23,9 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
       with:
         registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        region: ${{ secrets.AWS_REGION }}
+        mask-password: true
+        registry-type: 'regional'
+        skip-logout: false
       
     - name: Push Docker image to Amazon ECR
       run: |
