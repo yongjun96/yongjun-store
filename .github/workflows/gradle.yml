@@ -22,11 +22,13 @@ jobs:
     - name: Amazon ECR 접근
       uses: aws-actions/amazon-ecr-login@v2
       with:
-        region: ap-northeast-2
         registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
         mask-password: true
         registry-type: private
         skip-logout: false
+      
+    - name: Set AWS region
+      run: echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
       
     - name: Push Docker image to Amazon ECR
       run: |
@@ -39,7 +41,6 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         port: ${{ secrets.EC2_SSH_PORT }}
-        region: ap-northeast-2
         script: |
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
           scp docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/path/to/remote/docker-compose.yml
