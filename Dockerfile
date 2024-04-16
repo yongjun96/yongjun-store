@@ -24,6 +24,7 @@ WORKDIR /app
 COPY gradlew build.gradle settings.gradle ./
 COPY gradle ./gradle
 COPY src/main ./src/main
+RUN chmod +x gradlew     # 실행 권한 부여
 RUN ./gradlew bootJar
 
 # final stage
