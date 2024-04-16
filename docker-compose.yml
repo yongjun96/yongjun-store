@@ -20,5 +20,5 @@ services:
       - redis
 
 networks:
-  my-network:
+  syongjun-tore-network:
     driver: bridge
