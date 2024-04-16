@@ -1,0 +1,39 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+      
+    - name: Build Docker image
+      run: docker-compose -f docker-compose.yml build
+      
+    - name: Log in to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v2
+      
+    - name: Push Docker image to Amazon ECR
+      run: |
+        docker-compose -f docker-compose.yml push
+        
+    - name: SSH into EC2 and deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        port: ${{ secrets.EC2_SSH_PORT }}
+        script: |
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          scp docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/path/to/remote/docker-compose.yml
+          ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} -p ${{ secrets.EC2_SSH_PORT }} "docker-compose -f /path/to/remote/docker-compose.yml down && docker-compose -f /path/to/remote/docker-compose.yml up -d"
