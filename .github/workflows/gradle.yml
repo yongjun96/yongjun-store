@@ -22,6 +22,7 @@ jobs:
     - name: Log in to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v2
       with:
+        region: ${{ secrets.AWS_REGION }}
         registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
         mask-password: true
         registry-type: private
