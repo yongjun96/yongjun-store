@@ -19,16 +19,8 @@ jobs:
     - name: Build Docker image
       run: docker-compose -f docker-compose.yml build
       
-    - name: Set AWS region
-      run: echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
-      
-    - name: Amazon ECR 접근
-      uses: aws-actions/amazon-ecr-login@v2
-      with:
-        registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
-        mask-password: true
-        registry-type: private
-        skip-logout: false
+    - name: Login to AWS ECR
+      run: aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
       
     - name: Push Docker image to Amazon ECR
       run: |
