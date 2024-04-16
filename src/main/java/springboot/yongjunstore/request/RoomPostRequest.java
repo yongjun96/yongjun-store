@@ -39,7 +39,7 @@ public class RoomPostRequest {
     @Pattern(regexp = "^[0-9]+$", message = "숫자만 입력가능합니다. 1평 단위")
     private String squareFootage; // 방 평수(면적)
 
-    @Pattern(regexp = ".{10,}", message = "10자 이상 입력해주세요.")
+    @NotBlank(message = "내용을 입력해 주세요.")
     private String content; // 글 내용
 
     @NotBlank(message = "주소는 필수값 입니다.")

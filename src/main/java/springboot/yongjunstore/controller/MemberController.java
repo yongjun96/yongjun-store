@@ -1,6 +1,8 @@
 package springboot.yongjunstore.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +46,7 @@ public class MemberController {
     }
 
     @PatchMapping("/passwordEdit")
-    public ResponseEntity passwordEdit(@RequestBody PasswordEditRequest passwordEditRequest){
+    public ResponseEntity passwordEdit(@RequestBody @Valid PasswordEditRequest passwordEditRequest){
 
         memberService.passwordEdit(passwordEditRequest);
 
