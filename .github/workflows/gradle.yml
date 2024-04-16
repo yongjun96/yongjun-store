@@ -24,7 +24,7 @@ jobs:
       with:
         registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
         mask-password: true
-        registry-type: 'regional'
+        registry-type: private
         skip-logout: false
       
     - name: Push Docker image to Amazon ECR
