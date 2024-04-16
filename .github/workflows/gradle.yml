@@ -21,8 +21,6 @@ jobs:
       
     - name: Log in to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v2
-      with:
-        region: ap-northeast-2
       
     - name: Push Docker image to Amazon ECR
       run: |
@@ -35,6 +33,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         port: ${{ secrets.EC2_SSH_PORT }}
+        region: ap-northeast-2
         script: |
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
           scp docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/path/to/remote/docker-compose.yml
