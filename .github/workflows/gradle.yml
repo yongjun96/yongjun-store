@@ -19,6 +19,9 @@ jobs:
     - name: Build Docker image
       run: docker-compose -f docker-compose.yml build
       
+    - name: Set AWS region
+      run: echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
+      
     - name: Amazon ECR 접근
       uses: aws-actions/amazon-ecr-login@v2
       with:
@@ -26,9 +29,6 @@ jobs:
         mask-password: true
         registry-type: private
         skip-logout: false
-      
-    - name: Set AWS region
-      run: echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
       
     - name: Push Docker image to Amazon ECR
       run: |
