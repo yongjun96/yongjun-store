@@ -8,7 +8,7 @@ services:
     networks:
       - syongjun-tore-network  # 두개의 이미지를 같은 네트워크를 사용하도록 세팅
   yongjun-store:
-    image: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/yongjun-store:latest
+    image: 058264155035.dkr.ecr.ap-northeast-2.amazonaws.com/yongjun-store:latest
     build:
       context: .
       dockerfile: ./Dockerfile
