@@ -19,10 +19,10 @@ jobs:
     - name: Build Docker image
       run: docker-compose -f docker-compose.yml build
       
-    - name: Log in to Amazon ECR
+    - name: Amazon ECR 접근
       uses: aws-actions/amazon-ecr-login@v2
       with:
-        aws-region: ap-northeast-2
+        region: ap-northeast-2
         registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
         mask-password: true
         registry-type: private
