@@ -5,7 +5,6 @@ on:
     branches:
       - main
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,8 +30,7 @@ jobs:
         docker-compose -f docker-compose.yml push
         
     - name: SSH into EC2 and deploy
-      uses: appleboy/ssh-action@v2
-      # uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
