@@ -5,6 +5,7 @@ on:
     branches:
       - main
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,7 +29,8 @@ jobs:
     - name: Push Docker image to Amazon ECR
       run: |
         docker-compose -f docker-compose.yml push
-        
+
+
     - name: SSH into EC2 and deploy
       uses: appleboy/ssh-action@master
       with:
@@ -38,5 +40,17 @@ jobs:
         port: ${{ secrets.EC2_SSH_PORT }}
         script: |
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-          scp docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/path/to/remote/docker-compose.yml
-          ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} -p ${{ secrets.EC2_SSH_PORT }} "docker-compose -f /path/to/remote/docker-compose.yml down && docker-compose -f /path/to/remote/docker-compose.yml up -d"
+          ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} -p ${{ secrets.EC2_SSH_PORT }} "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com"
+          ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} -p ${{ secrets.EC2_SSH_PORT }} "docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/your_image_name:latest"
+          ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} -p ${{ secrets.EC2_SSH_PORT }} "docker-compose -f /docker-compose.yml down && docker-compose -f /docker-compose.yml up -d"
+    # - name: SSH into EC2 and deploy
+    #   uses: appleboy/ssh-action@master
+    #   with:
+    #     host: ${{ secrets.EC2_HOST }}
+    #     username: ${{ secrets.EC2_USERNAME }}
+    #     key: ${{ secrets.EC2_PRIVATE_KEY }}
+    #     port: ${{ secrets.EC2_SSH_PORT }}
+    #     script: |
+    #       ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+    #       scp docker-compose.yml ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/docker-compose.yml
+    #       ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} -p ${{ secrets.EC2_SSH_PORT }} "docker-compose -f /docker-compose.yml down && docker-compose -f /docker-compose.yml up -d"
