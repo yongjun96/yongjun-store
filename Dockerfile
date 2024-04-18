@@ -24,12 +24,13 @@ WORKDIR /app
 COPY gradlew build.gradle settings.gradle ./
 COPY gradle ./gradle
 COPY src/main ./src/main
-COPY src/main/resources/yongjun-store-submodule app/yongjun-store-submodule
 
 RUN chmod +x gradlew
 RUN ./gradlew bootJar
 
 FROM openjdk:17-alpine
+
+WORKDIR /app
 
 # 빌더 스테이지에서 빌드된 JAR 파일 복사
 COPY --from=builder /app/build/libs/yongjun-store-*.jar /app.jar
