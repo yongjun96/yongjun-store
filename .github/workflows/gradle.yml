@@ -20,7 +20,7 @@ jobs:
 
 
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v3.2.3
+      uses: gradle/gradle-build-action@v3.0.17
       with:
         arguments: build
 
