@@ -1,19 +1,12 @@
 FROM openjdk:17-alpine AS builder
 
-# 서브모듈 초기화
-RUN git submodule update --init --recursive
+RUN chmod +x gradlew
+# gradle 이 로컬에 설치되지 않아도 gradle을 사용할 수 있게 해줌
+RUN ./gradlew bootJar
 
 COPY gradlew build.gradle settings.gradle ./
 COPY gradle ./gradle
 COPY src/main ./src/main
-
-COPY src/main/resources/yongjun-store-submodule/application.yml ./src/main/resources/yongjun-store-submodule/application.yml
-COPY src/main/resources/yongjun-store-submodule/application-prod.yml ./src/main/resources/yongjun-store-submodule/application-prod.yml
-COPY src/main/resources/yongjun-store-submodule/application-test.yml ./src/main/resources/yongjun-store-submodule/application-test.yml
-
-RUN chmod +x gradlew
-# gradle 이 로컬에 설치되지 않아도 gradle을 사용할 수 있게 해줌
-RUN ./gradlew bootJar
 
 FROM openjdk:17-alpine
 
