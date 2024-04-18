@@ -10,8 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: GitHub Action에서 현재 Repository를 체크아웃
+    - name: GitHub Action에서 현재 Repository를 체크아웃 및 서브모듈 사용
       uses: actions/checkout@v2
+      with:
+        submodules: true
+        token: ${{ secrets.SUBMODULE_TOKEN }}
 
 
     - name: Docker Buildx, 다중 플랫폼 이미지를 생성하고 관리하기 위해 필요한 Docker 환경을 설정
