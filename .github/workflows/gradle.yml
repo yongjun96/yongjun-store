@@ -17,15 +17,12 @@ jobs:
         token: ${{ secrets.SUBMODULE_TOKEN }}
 
 
-    - name: 확인 - 서브모듈 체크아웃
-      run: |
-        ls src/main/resources/yongjun-store-submodule
-        if [ $? -eq 0 ]; then
-          echo "서브모듈이 정상적으로 체크아웃되었습니다."
-        else
-          echo "서브모듈이 체크아웃되지 않았습니다."
-          exit 1
-        fi
+    - name: git 설치 및 업데이트
+      run: apk update && apk add git
+
+
+    - name: 서브모듈 초기화
+      run: git submodule update --init --recursive
 
 
     - name: Docker Buildx, 다중 플랫폼 이미지를 생성하고 관리하기 위해 필요한 Docker 환경을 설정
