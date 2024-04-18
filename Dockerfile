@@ -19,8 +19,6 @@
 # builder stage
 FROM openjdk:17-alpine AS builder
 
-WORKDIR /app
-
 COPY gradlew build.gradle settings.gradle ./
 COPY gradle ./gradle
 COPY src/main ./src/main
@@ -32,8 +30,6 @@ RUN ./gradlew bootJar
 COPY ./yongjun-store-0.0.1-SNAPSHOT.jar /app.jar
 
 FROM openjdk:17-alpine
-
-WORKDIR /app
 
 COPY --from=builder /app.jar /yongjun-store-app.jar
 
