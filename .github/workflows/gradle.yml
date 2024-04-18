@@ -16,16 +16,13 @@ jobs:
         submodules: true
         token: ${{ secrets.SUBMODULE_TOKEN }}
         java-version: '17'
-        distribution: 'adopt'
-        gradle-version: '7.0.2'
+        distribution: 'temurin'
 
 
-    - name: gradle이 없어도 사용할 수 있도록 세팅
-      run: chmod +x gradlew
-
-
-    - name: gradle로 빌드
-      run: ./gradlew bootJar
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v3.2.3
+      with:
+        arguments: build
 
 
     - name: Docker Buildx, 다중 플랫폼 이미지를 생성하고 관리하기 위해 필요한 Docker 환경을 설정
