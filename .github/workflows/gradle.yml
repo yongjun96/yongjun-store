@@ -24,10 +24,19 @@ jobs:
         distribution: 'temurin'
 
 
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+
+
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.4.2
       with:
         arguments: build
+
+
+
+    - name: Build with Gradle
+      run: ./gradlew build
 
 
     - name: Docker Buildx, 다중 플랫폼 이미지를 생성하고 관리하기 위해 필요한 Docker 환경을 설정
