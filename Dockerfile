@@ -19,7 +19,6 @@
 # builder stage
 FROM openjdk:17-alpine AS builder
 
-WORKDIR /app
 COPY gradlew build.gradle settings.gradle ./
 COPY gradle ./gradle
 COPY src/main ./src/main
