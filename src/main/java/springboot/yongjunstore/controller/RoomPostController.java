@@ -62,6 +62,12 @@ public class RoomPostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(roomPostResponseList);
     }
+
+    @GetMapping("/test")
+    public String test(){
+
+        return "test 반영되었나 확인";
+    }
 }
 
 
