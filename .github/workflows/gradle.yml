@@ -18,7 +18,7 @@ jobs:
 
 
     - name: git 설치 및 업데이트
-      run: apk update && apk add git
+      run: apt-get update && apt-get install -y git
 
 
     - name: 서브모듈 초기화
