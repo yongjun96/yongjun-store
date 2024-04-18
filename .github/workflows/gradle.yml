@@ -17,7 +17,7 @@ jobs:
         token: ${{ secrets.SUBMODULE_TOKEN }}
         java-version: '17'
         distribution: 'adopt'
-        gradle-version: '8.5'
+        gradle-version: '7.0.2'
 
 
     - name: gradle이 없어도 사용할 수 있도록 세팅
