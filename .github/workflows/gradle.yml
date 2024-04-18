@@ -19,7 +19,7 @@ jobs:
 
     - name: 확인 - 서브모듈 체크아웃
       run: |
-        ls your-submodule-directory-name
+        ls yongjun-store-submodule
         if [ $? -eq 0 ]; then
           echo "서브모듈이 정상적으로 체크아웃되었습니다."
         else
