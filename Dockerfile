@@ -1,6 +1,6 @@
 FROM openjdk:17-alpine AS builder
 
-RUN apt-get update && apt-get install -y git
+RUN apk update && apk add git
 RUN git submodule update --init --recursive
 
 COPY gradlew build.gradle settings.gradle ./
