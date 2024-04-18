@@ -31,6 +31,6 @@ COPY /yongjun-store-0.0.1-SNAPSHOT.jar /app.jar
 
 FROM openjdk:17-alpine
 
-#COPY --from=builder /app.jar /app.jar
+COPY --from=builder /app.jar /app.jar
 
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
