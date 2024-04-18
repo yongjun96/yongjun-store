@@ -15,6 +15,8 @@ jobs:
       with:
         submodules: true
         token: ${{ secrets.SUBMODULE_TOKEN }}
+        java-version: '17'
+        distribution: 'temurin'
 
 
     - name: gradle이 없어도 사용할 수 있도록 세팅
