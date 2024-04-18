@@ -24,6 +24,7 @@ WORKDIR /app
 COPY gradlew build.gradle settings.gradle ./
 COPY gradle ./gradle
 COPY src/main ./src/main
+COPY src/main/resources/yongjun-store-submodule ./src/main/resources/yongjun-store-submodule
 
 RUN chmod +x gradlew
 RUN ./gradlew bootJar
