@@ -31,8 +31,8 @@ RUN ./gradlew bootJar
 # 빌드된 JAR 파일을 애플리케이션 디렉토리로 복사
 COPY ./yongjun-store-0.0.1-SNAPSHOT.jar /app.jar
 
-#FROM openjdk:17-alpine
-#
+FROM openjdk:17-alpine
+
 #COPY --from=builder /app.jar /app.jar
 
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "./app.jar"]
