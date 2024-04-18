@@ -28,7 +28,7 @@ RUN chmod +x gradlew
 RUN ./gradlew bootJar
 
 # 빌드된 JAR 파일을 애플리케이션 디렉토리로 복사
-COPY /build/libs/yongjun-store-*-SNAPSHOT.jar /app.jar
+COPY build/libs/yongjun-store-0.0.1-SNAPSHOT.jar /app.jar
 
 FROM openjdk:17-alpine
 
