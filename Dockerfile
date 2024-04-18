@@ -4,13 +4,13 @@ COPY gradlew build.gradle settings.gradle ./
 COPY gradle ./gradle
 COPY src/main ./src/main
 
-#RUN chmod +x gradlew
+RUN chmod +x gradlew
 # gradle 이 로컬에 설치되지 않아도 gradle을 사용할 수 있게 해줌
-#RUN ./gradlew bootJar
+RUN ./gradlew bootJar
 
 FROM openjdk:17-alpine
 
-COPY --from=builder /build/libs/yongjun-store-*.jar /app.jar
+COPY --from=builder /build/libs/yongjun-store-0.0.1-SNAPSHOT.jar /app.jar
 
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
 
