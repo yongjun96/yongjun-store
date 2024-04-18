@@ -13,7 +13,7 @@ jobs:
     - name: GitHub Action에서 현재 Repository를 체크아웃 및 서브모듈 사용
       uses: actions/checkout@v2
       with:
-        submodules: true
+        submodules: 'recursive'
         token: ${{ secrets.SUBMODULE_TOKEN }}
 
 
