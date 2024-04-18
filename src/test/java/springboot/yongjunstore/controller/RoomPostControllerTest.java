@@ -112,7 +112,6 @@ class RoomPostControllerTest {
                 .description("부설명")
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
-                .content("내용")
                 .monthlyPrice("10000")
                 .squareFootage("4")
                 .address("주소")
@@ -134,7 +133,7 @@ class RoomPostControllerTest {
                         .file(file2)
                         .flashAttr("roomPostRequest", roomPostRequest))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.content").value("10자 이상 입력해주세요.")) // 길이 정규식 테스트
+                .andExpect(jsonPath("$.content").value("내용을 입력해 주세요.")) // 길이 정규식 테스트
                 .andExpect(jsonPath("$.roomName").value("방 이름은 필수값 입니다.")) // 필수 값 테스트
                 .andExpect(jsonPath("$.depositPrice").value("숫자만 입력가능합니다. 1만원 단위")) // 숫자 정규식 테스트
                 .andExpect(jsonPath("$.memberId").value("/member/find/{email}을 호출하지 못해 id를 받아 오지못했습니다.")) // memberId가 없는 경우
