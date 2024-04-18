@@ -17,8 +17,8 @@ jobs:
         token: ${{ secrets.SUBMODULE_TOKEN }}
 
 
-    - name: git 설치 및 업데이트
-      run: sudo apt-get update && apt-get install -y git
+#    - name: git 설치 및 업데이트
+#      run: sudo apt-get update && apt-get install -y git
 
 
     - name: 서브모듈 초기화
