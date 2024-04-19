@@ -6,7 +6,7 @@ COPY src/main ./src/main
 
 RUN chmod +x gradlew
 # gradle 이 로컬에 설치되지 않아도 gradle을 사용할 수 있게 해줌
-RUN ./gradlew build
+RUN ./gradlew clean build
 
 FROM openjdk:17-alpine
 
