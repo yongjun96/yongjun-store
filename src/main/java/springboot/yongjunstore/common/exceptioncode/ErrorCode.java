@@ -45,6 +45,8 @@ public enum ErrorCode {
     GOOGLE_EMAIL_AUTH_NUMBER_ERROR(400, HttpStatus.BAD_REQUEST, "G002", "인증번호가 틀렸습니다."),
     GOOGLE_EMAIL_AUTH_NUMBER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "G003", "인증번호가 만료되었거나, 발급되지 않았습니다. 재발급 받아주세요."),
     GOOGLE_INVALID_AUTH_NUMBER_FORMAT(400, HttpStatus.BAD_REQUEST, "G004", "인증 번호가 올바른 형식이 아닙니다.");
+
+
     private final int statusCode;
     private final HttpStatus status;
     private final String code;

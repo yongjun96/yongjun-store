@@ -1,5 +1,7 @@
 package springboot.yongjunstore.common.exception;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,12 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "사용자 요청 오류입니다."),
+            @ApiResponse(responseCode = "401", description = "인증되지 못했습니다."),
+            @ApiResponse(responseCode = "403", description = "접근 권한이 없습니다."),
+            @ApiResponse(responseCode = "404", description = "접근 권한이 없습니다."),
+    })
     @ExceptionHandler(value = GlobalException.class)
     public ResponseEntity<ErrorCodeResponse> ExceptionHandler(GlobalException e){
 

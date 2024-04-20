@@ -17,10 +17,6 @@ jobs:
         token: ${{ secrets.SUBMODULE_TOKEN }}
 
 
-    - name: 서브모듈 초기화
-      run: sudo git submodule update --init --recursive
-
-
     - name: Docker Buildx, 다중 플랫폼 이미지를 생성하고 관리하기 위해 필요한 Docker 환경을 설정
       uses: docker/setup-buildx-action@v1
 
