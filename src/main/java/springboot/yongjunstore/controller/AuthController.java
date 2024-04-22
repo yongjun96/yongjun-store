@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springboot.yongjunstore.common.annotation.SwaggerErrorCodes;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.common.exceptioncode.ErrorCodeResponse;
 import springboot.yongjunstore.config.jwt.JwtDto;
@@ -32,13 +33,15 @@ public class AuthController {
     @Operation(summary = "일반 회원 로그인", description = "일반 회원의 로그인을 제공합니다. 로그인 성공 시, 토큰 발급")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtDto.class))
-            ),
-            @ApiResponse(responseCode = "400", description = "비밀번호가 틀렸습니다.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorCodeResponse.class))
-            ),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 이메일입니다.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorCodeResponse.class)))
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = JwtDto.class))
+            )
+    })
+    @SwaggerErrorCodes({
+            ErrorCode.MEMBER_PASSWORD_ERROR,
+            ErrorCode.MEMBER_EMAIL_NOT_FOUND,
+            ErrorCode.SERVER_FORBIDDEN,
+            ErrorCode.SERVER_UNAUTHORIZED
     })
     @PostMapping("/login")
     public JwtDto login(@RequestBody MemberLoginRequest memberLoginDto) {
@@ -46,6 +49,10 @@ public class AuthController {
         return jwtDto;
     }
 
+
+    @Operation(summary = "일반 회원가입 성공", description = "일반 회원의 가입을 제공합니다.")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content))
+    @SwaggerErrorCodes({ErrorCode.MEMBER_EMAIL_EXISTS})
     @PostMapping("/signup")
     public ResponseEntity signup(@Valid @RequestBody SignUpRequest signUpRequest) {
 
