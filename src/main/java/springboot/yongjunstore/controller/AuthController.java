@@ -1,10 +1,7 @@
 package springboot.yongjunstore.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springboot.yongjunstore.common.annotation.SwaggerErrorCodes;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
-import springboot.yongjunstore.common.exceptioncode.ErrorCodeResponse;
 import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.config.service.AuthService;
 import springboot.yongjunstore.request.MemberLoginRequest;
@@ -39,9 +35,7 @@ public class AuthController {
     })
     @SwaggerErrorCodes({
             ErrorCode.MEMBER_PASSWORD_ERROR,
-            ErrorCode.MEMBER_EMAIL_NOT_FOUND,
-            ErrorCode.SERVER_FORBIDDEN,
-            ErrorCode.SERVER_UNAUTHORIZED
+            ErrorCode.MEMBER_EMAIL_NOT_FOUND
     })
     @PostMapping("/login")
     public JwtDto login(@RequestBody MemberLoginRequest memberLoginDto) {
@@ -52,19 +46,13 @@ public class AuthController {
 
     @Operation(summary = "일반 회원가입 성공", description = "일반 회원의 가입을 제공합니다.")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content))
-    @SwaggerErrorCodes({ErrorCode.MEMBER_EMAIL_EXISTS})
+    @SwaggerErrorCodes(ErrorCode.MEMBER_EMAIL_EXISTS)
     @PostMapping("/signup")
     public ResponseEntity signup(@Valid @RequestBody SignUpRequest signUpRequest) {
 
         authService.signup(signUpRequest);
 
        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-
-    @GetMapping("/admin")
-    public String adminLoginTest(){
-        return "정상적으로 로그인 됨.";
     }
 
 }

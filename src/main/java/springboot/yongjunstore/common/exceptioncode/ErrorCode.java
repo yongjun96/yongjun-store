@@ -33,7 +33,7 @@ public enum ErrorCode {
 
     // fileUpload
     IMAGE_FILE_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F001", "이미지 파일을 찾지 못했습니다."),
-    IMAGE_FILE_NOT_UPLOAD(401, HttpStatus.BAD_REQUEST, "F002", "이미지 파일이 업로드되지 못했습니다."),
+    IMAGE_FILE_NOT_UPLOAD(400, HttpStatus.BAD_REQUEST, "F002", "이미지 파일이 업로드되지 못했습니다."),
     IMAGE_FILE_EXTENSION_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F003", "이미지의 확장자를 찾을 수 없습니다."),
 
     // RoomPost

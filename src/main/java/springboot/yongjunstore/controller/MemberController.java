@@ -1,5 +1,6 @@
 package springboot.yongjunstore.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -12,6 +13,7 @@ import springboot.yongjunstore.response.MemberResponse;
 import springboot.yongjunstore.response.MyProfileResponse;
 import springboot.yongjunstore.service.MemberService;
 
+@SecurityRequirement(name = "JWT")
 @RestController
 @Slf4j
 @RequiredArgsConstructor

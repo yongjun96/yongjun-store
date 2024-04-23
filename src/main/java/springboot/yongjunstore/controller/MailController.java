@@ -1,5 +1,11 @@
 package springboot.yongjunstore.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,19 +13,33 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springboot.yongjunstore.common.annotation.SwaggerErrorCodes;
+import springboot.yongjunstore.common.exceptioncode.ErrorCode;
+import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.request.AuthCheckRequest;
 import springboot.yongjunstore.request.SendEmail;
 import springboot.yongjunstore.service.MailService;
 
+@SecurityRequirement(name = "JWT")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/mail")
 public class MailController {
 
     private final MailService mailService;
 
     // 인증 이메일 전송
+    @Operation(summary = "인증 메일 전송", description = "회원의 비밀번호 변경 시 인증 메일 전송을 제공합니다.")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "메일 전송 성공", content = @Content))
+    @SwaggerErrorCodes({
+            ErrorCode.MEMBER_NOT_FOUND,
+            ErrorCode.GOOGLE_EMAIL_MESSAGE_EXCEPTION,
+            ErrorCode.SERVER_FORBIDDEN,
+            ErrorCode.SERVER_UNAUTHORIZED
+    })
     @PostMapping("/mailSend")
     public ResponseEntity mailSend(@RequestBody @Valid SendEmail sendEmail) {
 
@@ -29,7 +49,16 @@ public class MailController {
     }
 
     // 인증번호 체크
-    @PostMapping("/authCheck")
+    @Operation(summary = "인증 번호 체크", description = "전송된 이메일의 인증 번호를 체크하는 기능을 제공합니다.")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "인증 번호 체크 성공", content = @Content))
+    @SwaggerErrorCodes({
+            ErrorCode.GOOGLE_INVALID_AUTH_NUMBER_FORMAT,
+            ErrorCode.GOOGLE_EMAIL_AUTH_NUMBER_NOT_FOUND,
+            ErrorCode.GOOGLE_EMAIL_AUTH_NUMBER_ERROR,
+            ErrorCode.SERVER_FORBIDDEN,
+            ErrorCode.SERVER_UNAUTHORIZED
+    })
+    @PostMapping("/authNumCheck")
     public ResponseEntity authNumCheck(@RequestBody AuthCheckRequest authCheckRequest){
 
         mailService.authNumCheck(authCheckRequest);

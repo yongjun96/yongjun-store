@@ -1,5 +1,6 @@
 package springboot.yongjunstore.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -9,10 +10,13 @@ import springboot.yongjunstore.domain.Member;
 @ToString
 public class MemberResponse {
 
+    @Schema(description = "방 주인 ID", example = "1")
     private Long id;
 
+    @Schema(description = "이메일", example = "practice960426@gmail.com")
     private String email;
 
+    @Schema(description = "이름", example = "홍길동")
     private String name;
 
     @Builder

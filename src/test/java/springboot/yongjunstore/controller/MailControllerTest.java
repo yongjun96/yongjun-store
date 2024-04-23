@@ -67,7 +67,7 @@ class MailControllerTest {
         sendEmail.setEmail(member.getEmail());
 
         //expected
-        mockMvc.perform(post("/mailSend")
+        mockMvc.perform(post("/mail/mailSend")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sendEmail))
                 )
@@ -91,7 +91,7 @@ class MailControllerTest {
         sendEmail.setEmail("yongjun@gmail.com");
 
         //expected
-        mockMvc.perform(post("/mailSend")
+        mockMvc.perform(post("/mail/mailSend")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sendEmail))
                 )
@@ -109,7 +109,7 @@ class MailControllerTest {
 
 
         //expected
-        mockMvc.perform(post("/mailSend")
+        mockMvc.perform(post("/mail/mailSend")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sendEmail))
                 )
@@ -130,7 +130,7 @@ class MailControllerTest {
         redisUtils.setDataExpire("yongjun@gmail.com", "123456", 60 * 5L);
 
         //expected
-        mockMvc.perform(post("/authCheck")
+        mockMvc.perform(post("/mail/authCheck")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authCheckRequest))
                 )
@@ -148,7 +148,7 @@ class MailControllerTest {
         authCheckRequest.setAuthNumber(1234564532);
 
         //expected
-        mockMvc.perform(post("/authCheck")
+        mockMvc.perform(post("/mail/authCheck")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authCheckRequest))
                 )
@@ -169,7 +169,7 @@ class MailControllerTest {
         redisUtils.setDataExpire("yongjun@gmail.com", "456789", 60 * 5L);
 
         //expected
-        mockMvc.perform(post("/authCheck")
+        mockMvc.perform(post("/mail/authCheck")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authCheckRequest))
                 )

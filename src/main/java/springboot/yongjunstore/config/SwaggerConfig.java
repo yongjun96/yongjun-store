@@ -32,7 +32,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
         String jwt = "JWT";
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
+        //SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
                 .name(jwt)
                 .type(SecurityScheme.Type.HTTP)
@@ -42,7 +42,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(new Components())
                 .info(apiInfo())
-                .addSecurityItem(securityRequirement)
+                //.addSecurityItem(securityRequirement)
                 .components(components);
     }
     private Info apiInfo() {
