@@ -50,14 +50,6 @@ public class SecurityConfig {
     private String backEndUrl;
 
 
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        return web -> web.ignoring().
-//                //.requestMatchers("/favicon.ico")
-//                //.requestMatchers("/error");
-//        //.requestMatchers(toH2Console());
-//    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -66,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers("/mail/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
                         .requestMatchers("/member/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
                         //.requestMatchers("/roomPost/create*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
+                        .requestMatchers("/h2-console/*").permitAll()
                         .requestMatchers("/swagger-ui/index.html", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().permitAll()
                 )

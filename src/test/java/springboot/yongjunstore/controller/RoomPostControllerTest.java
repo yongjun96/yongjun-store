@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -42,6 +43,7 @@ class RoomPostControllerTest {
     @Autowired private RoomPostRepository roomPostRepository;
     @Autowired private MockMvc mockMvc;
     @Autowired private BCryptPasswordEncoder passwordEncoder;
+    @Autowired private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp(){
@@ -93,8 +95,7 @@ class RoomPostControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/roomPost/create")
                         .file(file1)
                         .file(file2)
-                        // 나머지 필드에 대해서도 param()을 사용하여 값을 전달
-                        .flashAttr("roomPostRequest", roomPostRequest))
+                        .part(new MockPart("roomPostRequest", objectMapper.writeValueAsBytes(roomPostRequest)))) // roomPostRequest를 멀티파트 요청으로 추가
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -106,9 +107,9 @@ class RoomPostControllerTest {
         // given
         RoomPostRequest roomPostRequest = RoomPostRequest.builder()
                 .title("제목")
+                .depositPrice("한글")
                 .roomOwner("방주인")
                 .detail("상세설명")
-                .depositPrice("한글")
                 .description("부설명")
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
@@ -131,7 +132,7 @@ class RoomPostControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/roomPost/create")
                         .file(file1)
                         .file(file2)
-                        .flashAttr("roomPostRequest", roomPostRequest))
+                        .part(new MockPart("roomPostRequest", objectMapper.writeValueAsBytes(roomPostRequest)))) // roomPostRequest를 멀티파트 요청으로 추가
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.content").value("내용을 입력해 주세요.")) // 길이 정규식 테스트
                 .andExpect(jsonPath("$.roomName").value("방 이름은 필수값 입니다.")) // 필수 값 테스트
