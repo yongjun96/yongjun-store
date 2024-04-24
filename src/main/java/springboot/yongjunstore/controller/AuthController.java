@@ -10,7 +10,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import springboot.yongjunstore.common.annotation.SwaggerErrorCodes;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.config.jwt.JwtDto;
@@ -18,7 +21,7 @@ import springboot.yongjunstore.config.service.AuthService;
 import springboot.yongjunstore.request.MemberLoginRequest;
 import springboot.yongjunstore.request.SignUpRequest;
 
-@Tag(name = "authController", description = "일반 회원 가입과 로그인 관련 명세를 제공합니다.")
+@Tag(name = "AuthController", description = "일반 회원 가입과 로그인 관련 명세를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")

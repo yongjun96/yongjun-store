@@ -50,7 +50,7 @@ class MemberControllerTest {
 
 
     @BeforeEach
-    void afterSetUp(){
+    void beforeSetUp(){
         memberRepository.deleteAll();
     }
 

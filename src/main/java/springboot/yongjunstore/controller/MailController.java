@@ -2,10 +2,10 @@ package springboot.yongjunstore.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springboot.yongjunstore.common.annotation.SwaggerErrorCodes;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
-import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.request.AuthCheckRequest;
 import springboot.yongjunstore.request.SendEmail;
 import springboot.yongjunstore.service.MailService;
 
 @SecurityRequirement(name = "JWT")
+@Tag(name = "MailController", description = "회원 인증을 위한 메일 인증 관련 명세를 제공합니다.")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
