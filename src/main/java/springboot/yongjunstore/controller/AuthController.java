@@ -47,8 +47,8 @@ public class AuthController {
     }
 
 
-    @Operation(summary = "일반 회원가입 성공", description = "일반 회원의 가입을 제공합니다.")
-    @ApiResponses(@ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content))
+    @Operation(summary = "일반 회원 가입", description = "일반 회원의 가입을 제공합니다.")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "회원 가입 성공", content = @Content))
     @SwaggerErrorCodes(ErrorCode.MEMBER_EMAIL_EXISTS)
     @PostMapping("/signup")
     public ResponseEntity signup(@Valid @RequestBody SignUpRequest signUpRequest) {

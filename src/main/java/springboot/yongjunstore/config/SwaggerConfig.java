@@ -11,7 +11,9 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.HandlerMethod;
@@ -29,20 +31,26 @@ import java.util.stream.Collectors;
 @Configuration
 public class SwaggerConfig {
 
+    @Value("${custom.url.backend-url}")
+    private String backEndUrl;
+
     @Bean
     public OpenAPI openAPI() {
         String jwt = "JWT";
-        //SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
                 .name(jwt)
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
                 .bearerFormat("JWT")
         );
+        Server server = new Server()
+                .url(backEndUrl)
+                .description("Production Server");
+
         return new OpenAPI()
                 .components(new Components())
                 .info(apiInfo())
-                //.addSecurityItem(securityRequirement)
+                .addServersItem(server)
                 .components(components);
     }
     private Info apiInfo() {
