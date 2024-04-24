@@ -47,12 +47,14 @@ public class RoomPostController {
             ErrorCode.IMAGE_FILE_NOT_FOUND,
             ErrorCode.IMAGE_FILE_EXTENSION_NOT_FOUND,
             ErrorCode.IMAGE_FILE_NOT_UPLOAD,
+            ErrorCode.SERVER_FORBIDDEN,
+            ErrorCode.SERVER_UNAUTHORIZED
     })
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity roomPostCreate(
-            @Parameter(description = "글 생성에 필요한 정보", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
-            @Valid @ModelAttribute RoomPostRequest roomPostRequest,
-            @Parameter(description = "업로드할 이미지 파일 목록", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
+            @Parameter(description = "글 생성에 필요한 정보")
+            @Valid @RequestPart(value = "roomPostRequest") RoomPostRequest roomPostRequest,
+            @Parameter(description = "업로드할 이미지 파일 목록")
             @RequestPart(value = "uploadImages") List<MultipartFile> uploadImages){
 
         roomPostService.createRoom(roomPostRequest, uploadImages);
@@ -73,6 +75,8 @@ public class RoomPostController {
             ErrorCode.IMAGE_FILE_NOT_FOUND,
             ErrorCode.IMAGE_FILE_EXTENSION_NOT_FOUND,
             ErrorCode.IMAGE_FILE_NOT_UPLOAD,
+            ErrorCode.SERVER_FORBIDDEN,
+            ErrorCode.SERVER_UNAUTHORIZED
     })
     @PostMapping(value = "/createS3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity roomPostCreateS3(
@@ -118,8 +122,13 @@ public class RoomPostController {
     })
     @SwaggerErrorCodes(ErrorCode.ROOM_POST_SEARCH_OPTION_NOT_FOUND)
     @GetMapping("/posts")
-    public ResponseEntity searchRoomPostList(@RequestParam("searchOption") String searchOption,
-                                             @RequestParam("searchContent") String searchContent,
+    public ResponseEntity searchRoomPostList(
+            @Parameter(name = "searchOption", example = "title")
+            @RequestParam("searchOption") String searchOption,
+
+            @Parameter(name = "searchContent")
+            @RequestParam(value = "searchContent", defaultValue = "", required = false) String searchContent,
+
                                              Pageable pageable){
 
         Page<RoomPostResponse> roomPostResponseList = roomPostService.searchRoomPostList(searchOption, searchContent, pageable);
