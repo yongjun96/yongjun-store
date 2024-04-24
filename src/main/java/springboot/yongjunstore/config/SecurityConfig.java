@@ -43,8 +43,12 @@ public class SecurityConfig {
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
     private final MemberRepository memberRepository;
+
     @Value("${custom.url.frontend-url}")
     private String frontEndUrl;
+
+    @Value("${custom.url.backend-url}")
+    private String backEndUrl;
 
 
 //    @Bean
@@ -124,6 +128,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin(frontEndUrl);
+        config.addAllowedOrigin(backEndUrl);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
