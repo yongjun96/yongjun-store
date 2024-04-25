@@ -57,7 +57,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/mail/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
                         .requestMatchers("/member/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
-                        .requestMatchers("/room-post/create*", "/room-post/soft-delete/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
+                        .requestMatchers("/room-post/create*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
+                        .requestMatchers("/room-post/soft-delete/*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
                         .requestMatchers("/h2-console/*").permitAll()
                         .requestMatchers("/swagger-ui/index.html", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().permitAll()

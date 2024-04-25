@@ -16,6 +16,7 @@ import springboot.yongjunstore.domain.room.RoomPost;
 import springboot.yongjunstore.repository.ImagesRepository;
 import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.repository.RoomPostRepository;
+import springboot.yongjunstore.request.DeleteRoomPostRequest;
 import springboot.yongjunstore.request.RoomPostRequest;
 import springboot.yongjunstore.response.ImagesResponse;
 import springboot.yongjunstore.response.RoomPostResponse;
@@ -140,16 +141,17 @@ public class RoomPostService {
     }
 
 
-    public void deleteRoomPost(Long roomPostId, Long memberId) {
+    @Transactional
+    public void deleteRoomPost(DeleteRoomPostRequest deleteRoomPostRequest) {
 
-        RoomPost roomPost = roomPostRepository.findById(roomPostId)
+        RoomPost roomPost = roomPostRepository.findById(deleteRoomPostRequest.getRoomPostId())
                 .orElseThrow(() -> new GlobalException(ErrorCode.ROOM_POST_NOT_FOUND));
 
         // 글을 쓴 회원과 삭제를 요청한 회원 ID가 같은 경우 || ADMIN 인 경우 삭제
-        if(roomPost.getMember().getId() == memberId || roomPost.getMember().getRole().equals(Role.ADMIN)){
+        if(roomPost.getMember().getId() == deleteRoomPostRequest.getMemberId() || roomPost.getMember().getRole().equals(Role.ADMIN)){
 
             if(!roomPost.getRoomStatus().equals("종료")){
-                roomPostRepository.deleteByRoomPostId(roomPostId);
+                roomPostRepository.deleteByRoomPostId(deleteRoomPostRequest.getRoomPostId());
 
             }else{
                 // 이미 개시 중지된 글인 경우

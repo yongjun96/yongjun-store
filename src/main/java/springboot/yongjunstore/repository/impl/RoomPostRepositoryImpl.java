@@ -64,7 +64,7 @@ public class RoomPostRepositoryImpl implements RoomPostRepositoryCustom {
         if(searchOption.equals("email")){
             return StringUtils.hasText(searchContent) ?
                     roomPost.member.email.contains(searchContent)
-                        .and(roomPost.roomStatus.ne(RoomStatus.종료)) : null;
+                        .and(roomPost.roomStatus.ne(RoomStatus.종료)) : roomPost.roomStatus.ne(RoomStatus.종료);
         }
 
         //내용 + 제목
@@ -72,24 +72,24 @@ public class RoomPostRepositoryImpl implements RoomPostRepositoryCustom {
             return StringUtils.hasText(searchContent) ?
                     roomPost.content.contains(searchContent)
                     .or(roomPost.title.contains(searchContent))
-                        .and(roomPost.roomStatus.ne(RoomStatus.종료)): null;
+                        .and(roomPost.roomStatus.ne(RoomStatus.종료)): roomPost.roomStatus.ne(RoomStatus.종료);
         }
 
         //제목
         else if(searchOption.equals("title")){
             return StringUtils.hasText(searchContent) ?
                     roomPost.title.contains(searchContent)
-                        .and(roomPost.roomStatus.ne(RoomStatus.종료)) : null;
+                        .and(roomPost.roomStatus.ne(RoomStatus.종료)) : roomPost.roomStatus.ne(RoomStatus.종료);
         }
 
         // 주소
         else if(searchOption.equals("address")){
             return StringUtils.hasText(searchContent) ?
                     roomPost.address.contains(searchContent)
-                        .and(roomPost.roomStatus.ne(RoomStatus.종료)): null;
+                        .and(roomPost.roomStatus.ne(RoomStatus.종료)): roomPost.roomStatus.ne(RoomStatus.종료);
         }
         else {
-            return null;
+            return roomPost.roomStatus.ne(RoomStatus.종료);
         }
     }
 }

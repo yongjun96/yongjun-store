@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.yongjunstore.common.annotation.SwaggerErrorCodes;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
-import springboot.yongjunstore.request.PasswordEditRequest;
+import springboot.yongjunstore.request.DeleteRoomPostRequest;
 import springboot.yongjunstore.request.RoomPostRequest;
 import springboot.yongjunstore.response.RoomPostResponse;
 import springboot.yongjunstore.service.RoomPostService;
@@ -146,10 +146,10 @@ public class RoomPostController {
             ErrorCode.SERVER_FORBIDDEN,
             ErrorCode.SERVER_UNAUTHORIZED
     })
-    @PatchMapping("/soft-delete/{roomPostId}/member/{memberId}")
-    public ResponseEntity deleteRoomPost(@PathVariable("roomPostId") Long roomPostId, @PathVariable("memberId") Long memberId){
+    @PatchMapping("/soft-delete")
+    public ResponseEntity deleteRoomPost(@RequestBody DeleteRoomPostRequest deleteRoomPostRequest){
 
-        roomPostService.deleteRoomPost(roomPostId, memberId);
+        roomPostService.deleteRoomPost(deleteRoomPostRequest);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
