@@ -39,6 +39,8 @@ public enum ErrorCode {
     // RoomPost
     ROOM_POST_NOT_FOUND(404, HttpStatus.NOT_FOUND, "R001", "RoomPost를 찾을 수 없습니다."),
     ROOM_POST_SEARCH_OPTION_NOT_FOUND(404, HttpStatus.NOT_FOUND, "R002", "searchOption(검색 옵션)을 찾을 수 없습니다."),
+    ROOM_POST_ALREADY_TERMINATED(400, HttpStatus.BAD_REQUEST, "R003", "이미 개시 중지된 글입니다."),
+    ROOM_POST_DELETE_ROLE_EXISTS(400, HttpStatus.BAD_REQUEST, "R004", "삭제 권한이 없는 글입니다."),
 
     // GoogleEmail
     GOOGLE_EMAIL_MESSAGE_EXCEPTION(400, HttpStatus.BAD_REQUEST, "G001", "메세지 생성에 실패했습니다."),

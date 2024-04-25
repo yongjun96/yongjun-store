@@ -10,7 +10,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import springboot.yongjunstore.config.RedisUtils;
 import springboot.yongjunstore.config.jwt.JwtDto;
@@ -31,7 +29,6 @@ import springboot.yongjunstore.request.SendEmail;
 
 import javax.crypto.SecretKey;
 import javax.mail.internet.MimeMessage;
-
 import java.util.Base64;
 import java.util.Date;
 
@@ -87,7 +84,7 @@ class MailControllerTest {
         sendEmail.setEmail(member.getEmail());
 
         //expected
-        mockMvc.perform(post("/mail/mailSend")
+        mockMvc.perform(post("/mail/mail-send")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
                         .content(objectMapper.writeValueAsString(sendEmail))
@@ -116,7 +113,7 @@ class MailControllerTest {
         JwtDto jwt = jwtDto();
 
         //expected
-        mockMvc.perform(post("/mail/mailSend")
+        mockMvc.perform(post("/mail/mail-send")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
                         .content(objectMapper.writeValueAsString(sendEmail))
@@ -139,7 +136,7 @@ class MailControllerTest {
 
 
         //expected
-        mockMvc.perform(post("/mail/mailSend")
+        mockMvc.perform(post("/mail/mail-send")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
                         .content(objectMapper.writeValueAsString(sendEmail))
@@ -165,7 +162,7 @@ class MailControllerTest {
         redisUtils.setDataExpire(email, "123456", 60 * 5L);
 
         //expected
-        mockMvc.perform(post("/mail/authNumCheck")
+        mockMvc.perform(post("/mail/auth-num-check")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
                         .content(objectMapper.writeValueAsString(authCheckRequest))
@@ -188,7 +185,7 @@ class MailControllerTest {
         authCheckRequest.setAuthNumber(1234564532);
 
         //expected
-        mockMvc.perform(post("/mail/authNumCheck")
+        mockMvc.perform(post("/mail/auth-num-check")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
                         .content(objectMapper.writeValueAsString(authCheckRequest))
@@ -214,7 +211,7 @@ class MailControllerTest {
         redisUtils.setDataExpire(email, "456789", 60 * 5L);
 
         //expected
-        mockMvc.perform(post("/mail/authNumCheck")
+        mockMvc.perform(post("/mail/auth-num-check")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
                         .content(objectMapper.writeValueAsString(authCheckRequest))

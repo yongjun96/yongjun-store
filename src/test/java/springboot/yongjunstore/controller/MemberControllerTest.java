@@ -114,7 +114,7 @@ class MemberControllerTest {
         JwtDto jwt = jwtDto();
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/member/find/myProfile/{email}", member.getEmail())
+        mockMvc.perform(MockMvcRequestBuilders.get("/member/find/my-profile/{email}", member.getEmail())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken()))
                 .andExpect(status().isOk())
@@ -138,7 +138,7 @@ class MemberControllerTest {
         JwtDto jwt = jwtDto();
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/member/find/myProfile/{email}", member.getEmail())
+        mockMvc.perform(MockMvcRequestBuilders.get("/member/find/my-profile/{email}", member.getEmail())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken()))
                 .andExpect(status().isOk())
@@ -160,7 +160,7 @@ class MemberControllerTest {
         JwtDto jwt = jwtDto();
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/member/find/myProfile/{email}", "test@test.test")
+        mockMvc.perform(MockMvcRequestBuilders.get("/member/find/my-profile/{email}", "test@test.test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken()))
                 .andExpect(status().isNotFound())
@@ -220,7 +220,7 @@ class MemberControllerTest {
                 .build();
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.patch("/member/passwordEdit")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/member/password-edit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
                         .content(objectMapper.writeValueAsString(passwordEditRequest)))
@@ -245,7 +245,7 @@ class MemberControllerTest {
                 .build();
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.patch("/member/passwordEdit")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/member/password-edit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken())
                         .content(objectMapper.writeValueAsString(passwordEditRequest)))

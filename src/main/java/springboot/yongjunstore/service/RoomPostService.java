@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import springboot.yongjunstore.common.exception.GlobalException;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.Member;
+import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.domain.room.Images;
 import springboot.yongjunstore.domain.room.RoomPost;
 import springboot.yongjunstore.repository.ImagesRepository;
@@ -138,4 +139,28 @@ public class RoomPostService {
         return new PageImpl<>(roomPostResponses, roomPostList.getPageable(), roomPostList.getTotalElements());
     }
 
+
+    public void deleteRoomPost(Long roomPostId, Long memberId) {
+
+        RoomPost roomPost = roomPostRepository.findById(roomPostId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.ROOM_POST_NOT_FOUND));
+
+        // 글을 쓴 회원과 삭제를 요청한 회원 ID가 같은 경우 || ADMIN 인 경우 삭제
+        if(roomPost.getMember().getId() == memberId || roomPost.getMember().getRole().equals(Role.ADMIN)){
+
+            if(!roomPost.getRoomStatus().equals("종료")){
+                roomPostRepository.deleteByRoomPostId(roomPostId);
+
+            }else{
+                // 이미 개시 중지된 글인 경우
+                throw new GlobalException(ErrorCode.ROOM_POST_ALREADY_TERMINATED);
+            }
+
+        }else{
+            //삭제 권한이 없는 경우
+            throw new GlobalException(ErrorCode.ROOM_POST_DELETE_ROLE_EXISTS);
+        }
+
+
+    }
 }

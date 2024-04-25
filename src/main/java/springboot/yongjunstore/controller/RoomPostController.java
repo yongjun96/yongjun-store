@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.yongjunstore.common.annotation.SwaggerErrorCodes;
 import springboot.yongjunstore.common.exceptioncode.ErrorCode;
+import springboot.yongjunstore.request.PasswordEditRequest;
 import springboot.yongjunstore.request.RoomPostRequest;
 import springboot.yongjunstore.response.RoomPostResponse;
 import springboot.yongjunstore.service.RoomPostService;
@@ -30,7 +31,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/roomPost")
+@RequestMapping("/room-post")
 public class RoomPostController {
 
     private final RoomPostService roomPostService;
@@ -66,9 +67,7 @@ public class RoomPostController {
 
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "글 생성 (S3 사용)", description = "글 생성을 위해 S3에 업로드할 파일을 포함한 요청을 제공합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "글 생성 성공", content = @Content)
-    })
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "글 생성 성공", content = @Content))
     @SwaggerErrorCodes({
             ErrorCode.MEMBER_NOT_FOUND,
             ErrorCode.ROOM_POST_NOT_FOUND,
@@ -78,11 +77,11 @@ public class RoomPostController {
             ErrorCode.SERVER_FORBIDDEN,
             ErrorCode.SERVER_UNAUTHORIZED
     })
-    @PostMapping(value = "/createS3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/create-s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity roomPostCreateS3(
-            @Parameter(description = "글 생성에 필요한 정보", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+            @Parameter(description = "글 생성에 필요한 정보")
             @Valid @ModelAttribute RoomPostRequest roomPostRequest,
-            @Parameter(description = "업로드할 이미지 파일 목록", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
+            @Parameter(description = "업로드할 이미지 파일 목록")
             @RequestPart(value = "uploadImages") List<MultipartFile> uploadImages){
 
         roomPostService.createRoomS3(roomPostRequest, uploadImages);
@@ -134,6 +133,25 @@ public class RoomPostController {
         Page<RoomPostResponse> roomPostResponseList = roomPostService.searchRoomPostList(searchOption, searchContent, pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(roomPostResponseList);
+    }
+
+
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "글 삭제", description = "회원이 등록한 방을 삭제하는 기능을 제공합니다.")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "글 삭제 성공", content = @Content))
+    @SwaggerErrorCodes({
+            ErrorCode.ROOM_POST_NOT_FOUND,
+            ErrorCode.ROOM_POST_ALREADY_TERMINATED,
+            ErrorCode.ROOM_POST_DELETE_ROLE_EXISTS,
+            ErrorCode.SERVER_FORBIDDEN,
+            ErrorCode.SERVER_UNAUTHORIZED
+    })
+    @PatchMapping("/soft-delete/{roomPostId}/member/{memberId}")
+    public ResponseEntity deleteRoomPost(@PathVariable("roomPostId") Long roomPostId, @PathVariable("memberId") Long memberId){
+
+        roomPostService.deleteRoomPost(roomPostId, memberId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

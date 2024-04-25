@@ -1,12 +1,17 @@
 package springboot.yongjunstore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
@@ -16,6 +21,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
+import springboot.yongjunstore.config.jwt.JwtDto;
 import springboot.yongjunstore.domain.Member;
 import springboot.yongjunstore.domain.Role;
 import springboot.yongjunstore.domain.room.Deposit;
@@ -26,7 +32,10 @@ import springboot.yongjunstore.repository.MemberRepository;
 import springboot.yongjunstore.repository.RoomPostRepository;
 import springboot.yongjunstore.request.RoomPostRequest;
 
+import javax.crypto.SecretKey;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -38,6 +47,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {"fileUpload.upload.local.path=/uploads"})
 class RoomPostControllerTest {
+
+    @Value("${custom.jwt.secretKey}")
+    private String secretKey;
+
+    private String email = "test@test.com";
+    private Role role = Role.MEMBER;
 
     @Autowired private MemberRepository memberRepository;
     @Autowired private RoomPostRepository roomPostRepository;
@@ -56,14 +71,9 @@ class RoomPostControllerTest {
     void roomPostCreate() throws Exception {
 
         // given
-        Member member = Member.builder()
-                .name("김용준")
-                .password(passwordEncoder.encode("qwer!1234"))
-                .role(Role.ADMIN)
-                .email("yongjun@gmail.com")
-                .build();
+        Member member = createMember(email, role);
 
-        Member saveMember = memberRepository.save(member);
+        JwtDto jwt = jwtDto();
 
         RoomPostRequest roomPostRequest = RoomPostRequest.builder()
                 .title("제목")
@@ -75,7 +85,7 @@ class RoomPostControllerTest {
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .content("내용입니다. 10글자 이상입니다...")
-                .memberId(saveMember.getId())
+                .memberId(member.getId())
                 .monthlyPrice("10000")
                 .squareFootage("4")
                 .address("주소")
@@ -92,10 +102,11 @@ class RoomPostControllerTest {
 
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/roomPost/create")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/room-post/create")
                         .file(file1)
                         .file(file2)
-                        .part(new MockPart("roomPostRequest", objectMapper.writeValueAsBytes(roomPostRequest)))) // roomPostRequest를 멀티파트 요청으로 추가
+                        .part(new MockPart("roomPostRequest", objectMapper.writeValueAsBytes(roomPostRequest))) // roomPostRequest를 멀티파트 요청으로 추가
+                        .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken()))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -105,6 +116,10 @@ class RoomPostControllerTest {
     void roomPostCreateTitleBadRequest() throws Exception {
 
         // given
+        createMember(email, role);
+
+        JwtDto jwt = jwtDto();
+
         RoomPostRequest roomPostRequest = RoomPostRequest.builder()
                 .title("제목")
                 .depositPrice("한글")
@@ -129,10 +144,11 @@ class RoomPostControllerTest {
 
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/roomPost/create")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/room-post/create")
                         .file(file1)
                         .file(file2)
-                        .part(new MockPart("roomPostRequest", objectMapper.writeValueAsBytes(roomPostRequest)))) // roomPostRequest를 멀티파트 요청으로 추가
+                        .part(new MockPart("roomPostRequest", objectMapper.writeValueAsBytes(roomPostRequest))) // roomPostRequest를 멀티파트 요청으로 추가
+                        .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.content").value("내용을 입력해 주세요.")) // 길이 정규식 테스트
                 .andExpect(jsonPath("$.roomName").value("방 이름은 필수값 입니다.")) // 필수 값 테스트
@@ -147,15 +163,7 @@ class RoomPostControllerTest {
     void getRoomPost() throws Exception {
 
         // given
-        Member member = Member.builder()
-                .name("김용준")
-                .password(passwordEncoder.encode("qwer!1234"))
-                .role(Role.ADMIN)
-                .email("yongjun@gmail.com")
-                .build();
-
-        Member saveMember = memberRepository.save(member);
-
+        Member member = createMember(email, role);
 
         RoomPost roomPost = RoomPost.builder()
                 .title("제목")
@@ -167,7 +175,7 @@ class RoomPostControllerTest {
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .content("내용입니다. 10글자 이상입니다...")
-                .member(saveMember)
+                .member(member)
                 .monthlyPrice("10000")
                 .squareFootage("4")
                 .address("주소")
@@ -190,13 +198,13 @@ class RoomPostControllerTest {
 
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/roomPost/posts/{roomPostId}", lastSaveRoomPost.getId())
+        mockMvc.perform(MockMvcRequestBuilders.get("/room-post/posts/{roomPostId}", lastSaveRoomPost.getId())
                         .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(saveRoomPost.getId()))
-                .andExpect(jsonPath("$.member.id").value(saveMember.getId()))
-                .andExpect(jsonPath("$.member.email").value(saveMember.getEmail()))
+                .andExpect(jsonPath("$.member.id").value(member.getId()))
+                .andExpect(jsonPath("$.member.email").value(member.getEmail()))
                 .andExpect(jsonPath("$.title").value(saveRoomPost.getTitle()))
                 .andDo(print());
     }
@@ -207,14 +215,7 @@ class RoomPostControllerTest {
     void getRoomPostImageNotFound() throws Exception {
 
         // given
-        Member member = Member.builder()
-                .name("김용준")
-                .password(passwordEncoder.encode("qwer!1234"))
-                .role(Role.ADMIN)
-                .email("yongjun@gmail.com")
-                .build();
-
-        Member saveMember = memberRepository.save(member);
+        Member member = createMember(email, role);
 
         RoomPost roomPost = RoomPost.builder()
                 .title("제목")
@@ -226,7 +227,7 @@ class RoomPostControllerTest {
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .content("내용입니다. 10글자 이상입니다...")
-                .member(saveMember)
+                .member(member)
                 .monthlyPrice("10000")
                 .squareFootage("4")
                 .address("주소")
@@ -236,7 +237,7 @@ class RoomPostControllerTest {
 
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/roomPost/posts/{roomPostId}", saveRoomPost.getId())
+        mockMvc.perform(MockMvcRequestBuilders.get("/room-post/posts/{roomPostId}", saveRoomPost.getId())
                         .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isNotFound())
@@ -252,7 +253,7 @@ class RoomPostControllerTest {
         Long roomPostId = 1L;
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/roomPost/posts/{roomPostId}", roomPostId)
+        mockMvc.perform(MockMvcRequestBuilders.get("/room-post/posts/{roomPostId}", roomPostId)
                         .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isNotFound())
@@ -268,14 +269,7 @@ class RoomPostControllerTest {
         String searchOption = "title"; // 검색 옵션
         String searchContent = ""; // 검색 내용
 
-        Member member = Member.builder()
-                .name("김용준")
-                .password(passwordEncoder.encode("qwer!1234"))
-                .role(Role.ADMIN)
-                .email("yongjun@gmail.com")
-                .build();
-
-        Member saveMember = memberRepository.save(member);
+        Member member = createMember(email, role);
 
         RoomPost roomPost = null;
         
@@ -291,7 +285,7 @@ class RoomPostControllerTest {
                     .roomStatus(RoomStatus.임대)
                     .deposit(Deposit.전세)
                     .content("내용입니다. 10글자 이상입니다...")
-                    .member(saveMember)
+                    .member(member)
                     .monthlyPrice("10000")
                     .squareFootage("4")
                     .address("주소")
@@ -314,7 +308,7 @@ class RoomPostControllerTest {
         }
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/roomPost/posts")
+        mockMvc.perform(MockMvcRequestBuilders.get("/room-post/posts")
                         .param("searchOption", searchOption)
                         .param("searchContent", searchContent)
                         .param("page", "0")
@@ -340,14 +334,7 @@ class RoomPostControllerTest {
         String searchOption = ""; // 검색 옵션
         String searchContent = ""; // 검색 내용
 
-        Member member = Member.builder()
-                .name("김용준")
-                .password(passwordEncoder.encode("qwer!1234"))
-                .role(Role.ADMIN)
-                .email("yongjun@gmail.com")
-                .build();
-
-        Member saveMember = memberRepository.save(member);
+        Member member = createMember(email, role);
 
         RoomPost roomPost = null;
 
@@ -363,7 +350,7 @@ class RoomPostControllerTest {
                     .roomStatus(RoomStatus.임대)
                     .deposit(Deposit.전세)
                     .content("내용입니다. 10글자 이상입니다...")
-                    .member(saveMember)
+                    .member(member)
                     .monthlyPrice("10000")
                     .squareFootage("4")
                     .address("주소")
@@ -386,7 +373,7 @@ class RoomPostControllerTest {
         }
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/roomPost/posts")
+        mockMvc.perform(MockMvcRequestBuilders.get("/room-post/posts")
                         .param("searchOption", searchOption)
                         .param("searchContent", searchContent)
                         .param("page", "0")
@@ -395,5 +382,53 @@ class RoomPostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(print());
+    }
+
+
+
+    private Member createMember(String email, Role role){
+
+        Member member = Member.builder()
+                .name("홍길동")
+                .password(passwordEncoder.encode("qwer!1234"))
+                .role(role)
+                .email(email)
+                .build();
+
+        return memberRepository.save(member);
+    }
+
+    private JwtDto jwtDto(){
+
+        long accessTime = 3600000L;       // accessToken 1시간
+        long refreshTime = 2592000000L;   // refreshToken 30일
+
+
+        String keyBase64Encoded = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        SecretKey secretKey = Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
+
+        long now = (new Date()).getTime();
+
+        // AccessToken
+        Date accessTokenExpiresIn = new Date(now + accessTime);
+
+        String accessToken = Jwts.builder()
+                .setSubject(email)
+                .claim("role", "ROLE_"+role)
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+
+        // RefreshToken
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + refreshTime))
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+
+        return JwtDto.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }

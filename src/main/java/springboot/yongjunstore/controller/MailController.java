@@ -40,7 +40,7 @@ public class MailController {
             ErrorCode.SERVER_FORBIDDEN,
             ErrorCode.SERVER_UNAUTHORIZED
     })
-    @PostMapping("/mailSend")
+    @PostMapping("/mail-send")
     public ResponseEntity mailSend(@RequestBody @Valid SendEmail sendEmail) {
 
         mailService.sendMail(sendEmail);
@@ -58,7 +58,7 @@ public class MailController {
             ErrorCode.SERVER_FORBIDDEN,
             ErrorCode.SERVER_UNAUTHORIZED
     })
-    @PostMapping("/authNumCheck")
+    @PostMapping("/auth-num-check")
     public ResponseEntity authNumCheck(@RequestBody AuthCheckRequest authCheckRequest){
 
         mailService.authNumCheck(authCheckRequest);

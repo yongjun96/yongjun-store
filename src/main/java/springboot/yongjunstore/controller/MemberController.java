@@ -65,7 +65,7 @@ public class MemberController {
             ErrorCode.SERVER_FORBIDDEN,
             ErrorCode.SERVER_UNAUTHORIZED
     })
-    @GetMapping("/find/myProfile/{email}")
+    @GetMapping("/find/my-profile/{email}")
     public ResponseEntity myProfileFindMember(@PathVariable("email") String email){
 
         MyProfileResponse findMember = memberService.myProfileFindMember(email);
@@ -99,7 +99,7 @@ public class MemberController {
             ErrorCode.SERVER_FORBIDDEN,
             ErrorCode.SERVER_UNAUTHORIZED
     })
-    @PatchMapping("/passwordEdit")
+    @PatchMapping("/password-edit")
     public ResponseEntity passwordEdit(@RequestBody @Valid PasswordEditRequest passwordEditRequest){
 
         memberService.passwordEdit(passwordEditRequest);

@@ -10,6 +10,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import springboot.yongjunstore.domain.room.RoomPost;
+import springboot.yongjunstore.domain.room.RoomStatus;
 import springboot.yongjunstore.repository.custom.RoomPostRepositoryCustom;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class RoomPostRepositoryImpl implements RoomPostRepositoryCustom {
         return jpaQueryFactory
                 .selectFrom(roomPost)
                 .join(roomPost.member, member).fetchJoin()
-                .where(roomPost.id.eq(roomPostId))
+                .where(roomPost.id.eq(roomPostId).and(roomPost.roomStatus.ne(RoomStatus.종료)))
                 .fetchOne();
     }
 
@@ -61,24 +62,31 @@ public class RoomPostRepositoryImpl implements RoomPostRepositoryCustom {
 
         //작성자 email
         if(searchOption.equals("email")){
-            return StringUtils.hasText(searchContent) ? roomPost.member.email.contains(searchContent) : null;
+            return StringUtils.hasText(searchContent) ?
+                    roomPost.member.email.contains(searchContent)
+                        .and(roomPost.roomStatus.ne(RoomStatus.종료)) : null;
         }
 
         //내용 + 제목
         else if (searchOption.equals("titleContent")){
             return StringUtils.hasText(searchContent) ?
                     roomPost.content.contains(searchContent)
-                    .or(roomPost.title.contains(searchContent)) : null;
+                    .or(roomPost.title.contains(searchContent))
+                        .and(roomPost.roomStatus.ne(RoomStatus.종료)): null;
         }
 
         //제목
         else if(searchOption.equals("title")){
-            return StringUtils.hasText(searchContent) ? roomPost.title.contains(searchContent) : null;
+            return StringUtils.hasText(searchContent) ?
+                    roomPost.title.contains(searchContent)
+                        .and(roomPost.roomStatus.ne(RoomStatus.종료)) : null;
         }
 
         // 주소
         else if(searchOption.equals("address")){
-            return StringUtils.hasText(searchContent) ? roomPost.address.contains(searchContent) : null;
+            return StringUtils.hasText(searchContent) ?
+                    roomPost.address.contains(searchContent)
+                        .and(roomPost.roomStatus.ne(RoomStatus.종료)): null;
         }
         else {
             return null;
