@@ -1,7 +1,20 @@
 # 프로젝트 방장
 
 - `방을 거래하는 장터`라는 의미의 이름입니다 😀
+- 회원이라면 누구나 `집주인`으로 글을 작성할 수 있고 `새입자`로써 방을 확일 할 수 있습니다. 
+
+<br>
+
+---
+
+## 개발 기간
+
+- 2024-03-08 ~ 진행중
 - 주기적으로 업데이트 하며 느리더라도 꾸준히 작업을 이어갈 예정입니다.
+
+<br>
+
+---
 
 <br>
 
@@ -13,9 +26,10 @@
 
 <br>
 
-#### Blog
+### 그 외
 
 - [yongjun-Blog 바로가기](https://yongjun96.github.io)
+- [yongjun-store-vue 바로가기](https://github.com/yongjun96/yogjun-store-vue)
 
 <br>
 
@@ -91,6 +105,12 @@
 <br>
 
 - `yongjun-store-vue`와 `yongjun-store`를 포함한 전체적인 방장 아키텍처입니다.
+
+<br>
+
+![아키텍처](src/main/resources/templates/백엔드%20아키텍처.png)
+
+- `yongjun-store`의 `백엔드 API` 아키텍처입니다.
 
 
 
