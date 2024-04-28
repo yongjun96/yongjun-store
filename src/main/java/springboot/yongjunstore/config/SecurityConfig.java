@@ -55,11 +55,11 @@ public class SecurityConfig {
 
         return http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/mail/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
-                        .requestMatchers("/member/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
-                        .requestMatchers("/room-post/create*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
-                        .requestMatchers("/room-post/soft-delete/*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER')"))
-                        .requestMatchers("/h2-console/*").permitAll()
+                        .requestMatchers("/mail/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER') or hasRole('ROLE_ADMIN')"))
+                        .requestMatchers("/member/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER') or hasRole('ROLE_ADMIN')"))
+                        .requestMatchers("/room-post/create*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER') or hasRole('ROLE_ADMIN')"))
+                        .requestMatchers("/room-post/soft-delete/*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER') or hasRole('ROLE_ADMIN')"))
+                        .requestMatchers("/h2-console/*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_ADMIN')"))
                         .requestMatchers("/swagger-ui/index.html", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().permitAll()
                 )

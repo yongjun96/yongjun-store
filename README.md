@@ -65,7 +65,6 @@
 - SSL/TLS : `ELB(Elastic Load Balancer)`
 - RDS : `MySql 8.0`
 - 정적 저장소 : `S3`
-- CDN : `CloudFront`
 - Repository : `ECR`
 
 <br>
