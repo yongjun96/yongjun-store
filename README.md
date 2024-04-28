@@ -20,16 +20,16 @@
 
 ### 서비스 확인하기
 
-- [AIP 도메인(healthCheck) 확인해 보기](https://api.yongjun.store/health)  
-- [Swagger 확인해 보기](https://api.yongjun.store/swagger-ui/index.html)  
-- [방장 바로가기](https://yongjun.store/)
+- <a href="https://api.yongjun.store/health" target="_blank">AIP 도메인(healthCheck) 확인해 보기</a>
+- <a href="https://api.yongjun.store/swagger-ui/index.html" target="_blank">Swagger 확인해 보기</a>
+- <a href="https://yongjun.store/" target="_blank">방장 바로가기</a>
 
 <br>
 
 ### 그 외
 
-- [yongjun-Blog 바로가기](https://yongjun96.github.io)
-- [yongjun-store-vue 바로가기](https://github.com/yongjun96/yogjun-store-vue)
+- <a href="https://yongjun96.github.io" target="_blank">yongjun-Blog 바로가기</a>
+- <a href="https://github.com/yongjun96/yogjun-store-vue" target="_blank">yongjun-store-vue 바로가기</a>
 
 <br>
 
@@ -84,6 +84,7 @@
 ### ERD 구성 👀
 
 <br>
+
 
 ![ERD](src/main/resources/templates/yongjun-store-erd.PNG)
 
