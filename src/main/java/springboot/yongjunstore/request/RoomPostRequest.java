@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import springboot.yongjunstore.domain.room.Deposit;
 import springboot.yongjunstore.domain.room.RoomStatus;
@@ -18,14 +19,16 @@ public class RoomPostRequest {
 
     @Schema(description = "제목", example = "제목입니다.")
     @NotBlank(message = "제목은 필수값입니다.")
+    @Size(min = 1, max = 255)
     private String title;
 
     @Schema(description = "방 이름", example = "방 이름입니다.")
     @NotBlank(message = "방 이름은 필수값 입니다.")
+    @Size(min = 1, max = 255)
     private String roomName; // 방 이름
 
     @Schema(description = "보증금 및 전세 가격", example = "10000")
-    @Pattern(regexp = "^[0-9]+$", message = "숫자만 입력가능합니다. 1만원 단위")
+    @Pattern(regexp = "^[0-9]{1,13}$", message = "1만원 단위이며 억 단위를 넘을 수 없습니다.")
     private String monthlyPrice; // 방 윌세
 
     @Schema(description = "보증금 및 전세", example = "전세")
@@ -33,7 +36,7 @@ public class RoomPostRequest {
     private Deposit deposit; // 보증금 및 전세
 
     @Schema(description = "보증금 및 전세 가격", example = "10000")
-    @Pattern(regexp = "^[0-9]+$", message = "숫자만 입력가능합니다. 1만원 단위")
+    @Pattern(regexp = "^[0-9]{1,13}$", message = "1만원 단위이며 억 단위를 넘을 수 없습니다.")
     private String depositPrice; // 보증금 및 전세 가격
 
     @Schema(description = "설명", example = "설명입니다.")
@@ -47,7 +50,7 @@ public class RoomPostRequest {
     private String detail; // 방 세부 사항
 
     @Schema(description = "평수(면적)", example = "5")
-    @Pattern(regexp = "^[0-9]+$", message = "숫자만 입력가능합니다. 1평 단위")
+    @Pattern(regexp = "^[0-9]{1,5}$", message = "1평 단위이며 1만평을 넘을 수 없습니다.")
     private String squareFootage; // 방 평수(면적)
 
     @Schema(description = "내용", example = "내용입니다.")

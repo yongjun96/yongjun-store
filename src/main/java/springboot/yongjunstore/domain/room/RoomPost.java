@@ -34,17 +34,24 @@ public class RoomPost extends BaseTimeEntity {
 
     private String depositPrice; // 보증금 및 전세 가격
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description; // 방 설명
 
     private String roomOwner; // 방 주인
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String detail; // 방 세부 사항
 
     private String squareFootage; // 방 평수(면적)
 
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String content; // 글 내용
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String address; // 방 주소
 
     @Enumerated(EnumType.STRING)
