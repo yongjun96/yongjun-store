@@ -49,7 +49,9 @@ public class RoomPostController {
             ErrorCode.IMAGE_FILE_EXTENSION_NOT_FOUND,
             ErrorCode.IMAGE_FILE_NOT_UPLOAD,
             ErrorCode.SERVER_FORBIDDEN,
-            ErrorCode.SERVER_UNAUTHORIZED
+            ErrorCode.SERVER_UNAUTHORIZED,
+            ErrorCode.IMAGE_FILE_MAX_UPLOAD_SIZE,
+            ErrorCode.SERVER_FILE_SIZE_LIMIT
     })
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity roomPostCreate(
@@ -75,12 +77,14 @@ public class RoomPostController {
             ErrorCode.IMAGE_FILE_EXTENSION_NOT_FOUND,
             ErrorCode.IMAGE_FILE_NOT_UPLOAD,
             ErrorCode.SERVER_FORBIDDEN,
-            ErrorCode.SERVER_UNAUTHORIZED
+            ErrorCode.SERVER_UNAUTHORIZED,
+            ErrorCode.IMAGE_FILE_MAX_UPLOAD_SIZE,
+            ErrorCode.SERVER_FILE_SIZE_LIMIT
     })
     @PostMapping(value = "/create-s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity roomPostCreateS3(
             @Parameter(description = "글 생성에 필요한 정보")
-            @Valid @ModelAttribute RoomPostRequest roomPostRequest,
+            @Valid @RequestPart(value = "roomPostRequest") RoomPostRequest roomPostRequest,
             @Parameter(description = "업로드할 이미지 파일 목록")
             @RequestPart(value = "uploadImages") List<MultipartFile> uploadImages){
 

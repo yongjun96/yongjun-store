@@ -46,6 +46,16 @@ dependencies {
     implementation 'org.springframework:spring-context-support:5.3.9'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
 
+
+    // Java9 부터 JAXB 수동 추가해야 함.
+    // XML 데이터를 처리 및 바인딩을 위해 사용
+    // JAXB API
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    // JAXB 런타임 구현 (예: MOXy)
+    implementation 'org.eclipse.persistence:org.eclipse.persistence.moxy:2.7.9'
+    // Java Activation Framework
+    implementation 'javax.activation:activation:1.1.1'
+
     // Gradle 가짜 메일 인증 객체
     testImplementation 'com.icegreen:greenmail:1.6.1'
 

@@ -11,6 +11,7 @@ public enum ErrorCode {
     SERVER_FORBIDDEN(403, HttpStatus.FORBIDDEN, "S002", "접근 권한이 없습니다."),
     SERVER_USER_DETAILS_USERNAME_NOT_FOUND(404, HttpStatus.NOT_FOUND, "S003", "해당 계정을 찾을 수 없습니다."),
     SERVER_UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED, "S004", "로그인이 필요합니다."),
+    SERVER_FILE_SIZE_LIMIT(500, HttpStatus.INTERNAL_SERVER_ERROR, "S005", "최대 업로드 크기 제한을 초과하였습니다."),
 
     // MEMBER
     MEMBER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "M001", "사용자를 찾지 못했습니다."),
@@ -35,6 +36,7 @@ public enum ErrorCode {
     IMAGE_FILE_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F001", "이미지 파일을 찾지 못했습니다."),
     IMAGE_FILE_NOT_UPLOAD(400, HttpStatus.BAD_REQUEST, "F002", "이미지 파일이 업로드되지 못했습니다."),
     IMAGE_FILE_EXTENSION_NOT_FOUND(404, HttpStatus.NOT_FOUND, "F003", "이미지의 확장자를 찾을 수 없습니다."),
+    IMAGE_FILE_MAX_UPLOAD_SIZE(413, HttpStatus.PAYLOAD_TOO_LARGE, "F004", "파일 업로드 크기 제한을 초과하였습니다."),
 
     // RoomPost
     ROOM_POST_NOT_FOUND(404, HttpStatus.NOT_FOUND, "R001", "RoomPost를 찾을 수 없습니다."),
