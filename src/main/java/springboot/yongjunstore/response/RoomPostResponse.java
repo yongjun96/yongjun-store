@@ -24,9 +24,6 @@ public class RoomPostResponse {
     @Schema(description = "제목", example = "제목입니다.")
     private String title; // 제목
 
-    @Schema(description = "방 이름", example = "방 이름입니다.")
-    private String roomName; // 방 이름
-
     @Schema(description = "월세", example = "10")
     private String monthlyPrice; // 방 월세
 
@@ -36,14 +33,8 @@ public class RoomPostResponse {
     @Schema(description = "보증금 및 전세 가격", example = "10000")
     private String depositPrice; // 보증금 및 전세 가격
 
-    @Schema(description = "설명", example = "설명입니다.")
-    private String description; // 방 설명
-
     @Schema(description = "주인", example = "홍길동")
     private String roomOwner; // 방 주인
-
-    @Schema(description = "세부 사항", example = "세부 사항입니다.")
-    private String detail; // 방 세부 사항
 
     @Schema(description = "평수(면적)", example = "5")
     private String squareFootage; // 방 평수(면적)
@@ -53,6 +44,9 @@ public class RoomPostResponse {
 
     @Schema(description = "주소", example = "서울시 강남구")
     private String address; // 방 주소
+
+    @Schema(description = "상세 주소", example = "강남 아파트 101동 101호")
+    private String detailAddress; // 방 상세 주소
 
     @Schema(description = "상태", example = "매매")
     private RoomStatus roomStatus; // 방 상태
@@ -67,16 +61,14 @@ public class RoomPostResponse {
     public RoomPostResponse(RoomPost roomPost, List<ImagesResponse> imagesResponseList) {
         this.id = roomPost.getId();
         this.title = roomPost.getTitle();
-        this.roomName = roomPost.getRoomName();
         this.monthlyPrice = roomPost.getMonthlyPrice();
         this.deposit = roomPost.getDeposit();
         this.depositPrice = roomPost.getDepositPrice();
-        this.description = roomPost.getDescription();
         this.roomOwner = roomPost.getRoomOwner();
-        this.detail = roomPost.getDetail();
         this.squareFootage = roomPost.getSquareFootage();
         this.content = roomPost.getContent();
         this.address = roomPost.getAddress();
+        this.detailAddress = roomPost.getDetailAddress();
         this.roomStatus = roomPost.getRoomStatus();
         this.member = new MemberResponse(roomPost.getMember());
         this.imagesList = imagesResponseList;

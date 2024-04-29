@@ -25,8 +25,6 @@ public class RoomPost extends BaseTimeEntity {
     @NotNull
     private String title; // 글 제목
 
-    private String roomName; // 방 이름
-
     private String monthlyPrice; // 방 월세
 
     @Enumerated(EnumType.STRING)
@@ -34,15 +32,8 @@ public class RoomPost extends BaseTimeEntity {
 
     private String depositPrice; // 보증금 및 전세 가격
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
-    private String description; // 방 설명
-
+    @NotNull
     private String roomOwner; // 방 주인
-
-    @Lob
-    @Column(columnDefinition = "TEXT")
-    private String detail; // 방 세부 사항
 
     private String squareFootage; // 방 평수(면적)
 
@@ -53,6 +44,8 @@ public class RoomPost extends BaseTimeEntity {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String address; // 방 주소
+
+    private String detailAddress; // 방 상세 주소
 
     @Enumerated(EnumType.STRING)
     private RoomStatus roomStatus; // 방 상태
@@ -65,21 +58,19 @@ public class RoomPost extends BaseTimeEntity {
     private List<Images> imagesList =new ArrayList<>();
 
     @Builder
-    public RoomPost(String title, String roomName, String monthlyPrice, Deposit deposit,
-                    String depositPrice, String description, String roomOwner,
-                    String detail, String squareFootage, String content,
-                    String address, RoomStatus roomStatus, Member member, List<Images> imagesList) {
+    public RoomPost(String title, String monthlyPrice, Deposit deposit,
+                    String depositPrice, String roomOwner, String squareFootage,
+                    String content, String address, String detailAddress,
+                    RoomStatus roomStatus, Member member, List<Images> imagesList) {
         this.title = title;
-        this.roomName = roomName;
         this.monthlyPrice = monthlyPrice;
         this.deposit = deposit;
-        this.description = description;
         this.depositPrice = depositPrice;
         this.roomOwner = roomOwner;
-        this.detail = detail;
         this.squareFootage = squareFootage;
         this.content = content;
         this.address = address;
+        this.detailAddress = detailAddress;
         this.roomStatus = roomStatus;
         this.member = member;
         this.imagesList = imagesList;
