@@ -45,6 +45,7 @@ public class RoomPost extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String address; // 방 주소
 
+
     private String detailAddress; // 방 상세 주소
 
     @Enumerated(EnumType.STRING)
