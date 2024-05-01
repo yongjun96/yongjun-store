@@ -78,10 +78,7 @@ class RoomPostControllerTest {
         RoomPostRequest roomPostRequest = RoomPostRequest.builder()
                 .title("제목")
                 .roomOwner("방주인")
-                .roomName("방이름")
-                .detail("상세설명")
                 .depositPrice("100")
-                .description("부설명")
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .content("내용입니다. 10글자 이상입니다...")
@@ -89,6 +86,7 @@ class RoomPostControllerTest {
                 .monthlyPrice("10000")
                 .squareFootage("4")
                 .address("주소")
+                .detailAddress("상세 주소")
                 .build();
 
         MockMultipartFile file1 = new MockMultipartFile(
@@ -122,15 +120,16 @@ class RoomPostControllerTest {
 
         RoomPostRequest roomPostRequest = RoomPostRequest.builder()
                 .title("제목")
-                .depositPrice("한글")
                 .roomOwner("방주인")
-                .detail("상세설명")
-                .description("부설명")
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .monthlyPrice("10000")
                 .squareFootage("4")
                 .address("주소")
+                .content("")
+                .depositPrice("")
+                .memberId(null)
+                .detailAddress("상세 주소")
                 .build();
 
         MockMultipartFile file1 = new MockMultipartFile(
@@ -151,8 +150,7 @@ class RoomPostControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, jwtDto().getGrantType()+" "+jwt.getAccessToken()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.content").value("내용을 입력해 주세요.")) // 길이 정규식 테스트
-                .andExpect(jsonPath("$.roomName").value("방 이름은 필수값 입니다.")) // 필수 값 테스트
-                .andExpect(jsonPath("$.depositPrice").value("숫자만 입력가능합니다. 1만원 단위")) // 숫자 정규식 테스트
+                .andExpect(jsonPath("$.depositPrice").value("1만원 단위이며 억 단위를 넘을 수 없습니다.")) // 숫자 정규식 테스트
                 .andExpect(jsonPath("$.memberId").value("/member/find/{email}을 호출하지 못해 id를 받아 오지못했습니다.")) // memberId가 없는 경우
                 .andDo(print());
     }
@@ -168,10 +166,7 @@ class RoomPostControllerTest {
         RoomPost roomPost = RoomPost.builder()
                 .title("제목")
                 .roomOwner("방주인")
-                .roomName("방이름")
-                .detail("상세설명")
                 .depositPrice("100")
-                .description("부설명")
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .content("내용입니다. 10글자 이상입니다...")
@@ -179,6 +174,7 @@ class RoomPostControllerTest {
                 .monthlyPrice("10000")
                 .squareFootage("4")
                 .address("주소")
+                .address("상세 주소")
                 .build();
 
         RoomPost saveRoomPost = roomPostRepository.save(roomPost);
@@ -220,10 +216,7 @@ class RoomPostControllerTest {
         RoomPost roomPost = RoomPost.builder()
                 .title("제목")
                 .roomOwner("방주인")
-                .roomName("방이름")
-                .detail("상세설명")
                 .depositPrice("100")
-                .description("부설명")
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .content("내용입니다. 10글자 이상입니다...")
@@ -231,6 +224,7 @@ class RoomPostControllerTest {
                 .monthlyPrice("10000")
                 .squareFootage("4")
                 .address("주소")
+                .detailAddress("상세 주소")
                 .build();
 
         RoomPost saveRoomPost = roomPostRepository.save(roomPost);
@@ -278,10 +272,7 @@ class RoomPostControllerTest {
             roomPost = RoomPost.builder()
                     .title("제목")
                     .roomOwner("방주인")
-                    .roomName("방이름")
-                    .detail("상세설명")
                     .depositPrice("100")
-                    .description("부설명")
                     .roomStatus(RoomStatus.임대)
                     .deposit(Deposit.전세)
                     .content("내용입니다. 10글자 이상입니다...")
@@ -289,6 +280,7 @@ class RoomPostControllerTest {
                     .monthlyPrice("10000")
                     .squareFootage("4")
                     .address("주소")
+                    .detailAddress("상세 주소")
                     .build();
 
             RoomPost saveRoomPost = roomPostRepository.save(roomPost);
@@ -343,10 +335,7 @@ class RoomPostControllerTest {
             roomPost = RoomPost.builder()
                     .title("제목")
                     .roomOwner("방주인")
-                    .roomName("방이름")
-                    .detail("상세설명")
                     .depositPrice("100")
-                    .description("부설명")
                     .roomStatus(RoomStatus.임대)
                     .deposit(Deposit.전세)
                     .content("내용입니다. 10글자 이상입니다...")
@@ -354,6 +343,7 @@ class RoomPostControllerTest {
                     .monthlyPrice("10000")
                     .squareFootage("4")
                     .address("주소")
+                    .detailAddress("상세 주소")
                     .build();
 
             RoomPost saveRoomPost = roomPostRepository.save(roomPost);

@@ -23,7 +23,6 @@ public class CustomOAuth2User implements OAuth2User {
         return oAuth2User.getName();
     }
 
-    // Custom methods to modify attributes if needed
     public void addAttribute(String key, Object value) {
         attributes.put(key, value);
     }

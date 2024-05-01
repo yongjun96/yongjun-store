@@ -89,10 +89,9 @@ public class SwaggerConfig {
     private void generateErrorCodeResponseExample(Operation operation, ErrorCode[] errorCodes) {
         ApiResponses responses = operation.getResponses();
 
-        // ErrorCodeHolder(에러 응답값) 객체를 만들고 에러 코드별로 그룹화
-        Map<Integer, List<ErrorCodeHolder>> statusWithExampleHolders = Arrays.stream(errorCodes)
-                .map(
-                        errorCode -> ErrorCodeHolder.builder()
+        // ErrorCodeHolder(에러 응답값) 객체를 만들고 에러 코드 별로 그룹화
+        Map<Integer, List<ErrorCodeHolder>> statusWithErrorCodeHolders = Arrays.stream(errorCodes)
+                .map(errorCode -> ErrorCodeHolder.builder()
                                 .holder(getSwaggerExample(errorCode))
                                 .code(errorCode.getStatus().value())
                                 .name(errorCode.name())
@@ -100,8 +99,8 @@ public class SwaggerConfig {
                 )
                 .collect(Collectors.groupingBy(ErrorCodeHolder::getCode));
 
-        // ExampleHolders를 ApiResponses에 추가
-        addExamplesToResponses(responses, statusWithExampleHolders);
+        // ApiResponses 에 추가
+        addExamplesToResponses(responses, statusWithErrorCodeHolders);
     }
 
 
@@ -109,40 +108,40 @@ public class SwaggerConfig {
     private void generateErrorCodeResponseExample(Operation operation, ErrorCode errorCode) {
         ApiResponses responses = operation.getResponses();
 
-        // ErrorCodeHolder 객체 생성 및 ApiResponses에 추가
-        ErrorCodeHolder exampleHolder = ErrorCodeHolder.builder()
+        // ErrorCodeHolder 객체 생성 및 ApiResponses 에 추가
+        ErrorCodeHolder errorCodeHolder = ErrorCodeHolder.builder()
                 .holder(getSwaggerExample(errorCode))
                 .name(errorCode.name())
                 .code(errorCode.getStatus().value())
                 .build();
-        addExamplesToResponses(responses, exampleHolder);
+        addExamplesToResponses(responses, errorCodeHolder);
     }
 
 
     // ErrorCodeResponse 형태의 예시 객체 생성
     private Example getSwaggerExample(ErrorCode errorCode) {
-        ErrorCodeResponse errorResponseDto = ErrorCodeResponse.builder()
+        ErrorCodeResponse errorResponse = ErrorCodeResponse.builder()
                 .errorCode(errorCode)
                 .build();
         Example example = new Example();
-        example.setValue(errorResponseDto);
+        example.setValue(errorResponse);
 
         return example;
     }
 
 
-    // ErrorCodeHolder를 ApiResponses에 추가
-    private void addExamplesToResponses(ApiResponses responses, Map<Integer, List<ErrorCodeHolder>> statusWithExampleHolders) {
-        statusWithExampleHolders.forEach(
+    // ErrorCodeHolder 를 ApiResponses 에 추가
+    private void addExamplesToResponses(ApiResponses responses, Map<Integer, List<ErrorCodeHolder>> statusWithErrorCodeHolders) {
+        statusWithErrorCodeHolders.forEach(
                 (status, v) -> {
                     Content content = new Content();
                     MediaType mediaType = new MediaType();
                     ApiResponse apiResponse = new ApiResponse();
 
-                    v.forEach(
-                            exampleHolder -> mediaType.addExamples(
-                                    exampleHolder.getName(),
-                                    exampleHolder.getHolder()
+                    v.forEach(errorCodeHolder ->
+                            mediaType.addExamples(
+                                    errorCodeHolder.getName(),
+                                    errorCodeHolder.getHolder()
                             )
                     );
                     content.addMediaType("application/json", mediaType);
@@ -153,15 +152,15 @@ public class SwaggerConfig {
     }
 
 
-    private void addExamplesToResponses(ApiResponses responses, ErrorCodeHolder exampleHolder) {
+    private void addExamplesToResponses(ApiResponses responses, ErrorCodeHolder errorCodeHolder) {
         Content content = new Content();
         MediaType mediaType = new MediaType();
         ApiResponse apiResponse = new ApiResponse();
 
-        mediaType.addExamples(exampleHolder.getName(), exampleHolder.getHolder());
+        mediaType.addExamples(errorCodeHolder.getName(), errorCodeHolder.getHolder());
         content.addMediaType("application/json", mediaType);
         apiResponse.content(content);
-        responses.addApiResponse(String.valueOf(exampleHolder.getCode()), apiResponse);
+        responses.addApiResponse(String.valueOf(errorCodeHolder.getCode()), apiResponse);
     }
 
 }

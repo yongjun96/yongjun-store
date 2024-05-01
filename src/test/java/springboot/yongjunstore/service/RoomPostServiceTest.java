@@ -77,10 +77,7 @@ class RoomPostServiceTest {
         RoomPostRequest roomPostRequest = RoomPostRequest.builder()
                 .title("제목")
                 .roomOwner("방주인")
-                .roomName("방이름")
-                .detail("상세설명")
                 .depositPrice("전세금")
-                .description("부설명")
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .content("내용입니다. 10글자 이상입니다...")
@@ -88,6 +85,7 @@ class RoomPostServiceTest {
                 .monthlyPrice("보증금")
                 .squareFootage("4")
                 .address("주소")
+                .detailAddress("상세 주소")
                 .build();
 
         // when
@@ -114,10 +112,7 @@ class RoomPostServiceTest {
         RoomPostRequest roomPostRequest = RoomPostRequest.builder()
                 .title("제목")
                 .roomOwner("방주인")
-                .roomName("방이름")
-                .detail("상세설명")
                 .depositPrice("전세금")
-                .description("부설명")
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .content("내용입니다. 10글자 이상입니다...")
@@ -125,6 +120,7 @@ class RoomPostServiceTest {
                 .monthlyPrice("보증금")
                 .squareFootage("4")
                 .address("주소")
+                .detailAddress("상세 주소")
                 .build();
 
 
@@ -152,10 +148,7 @@ class RoomPostServiceTest {
         RoomPost roomPost = RoomPost.builder()
                 .title("제목")
                 .roomOwner("방주인")
-                .roomName("방이름")
-                .detail("상세설명")
                 .depositPrice("전세금")
-                .description("부설명")
                 .roomStatus(RoomStatus.임대)
                 .deposit(Deposit.전세)
                 .content("내용입니다. 10글자 이상입니다...")
@@ -163,6 +156,7 @@ class RoomPostServiceTest {
                 .monthlyPrice("보증금")
                 .squareFootage("4")
                 .address("주소")
+                .detailAddress("상세 주소")
                 .build();
 
         RoomPost saveRoomPost = roomPostRepository.save(roomPost);

@@ -43,8 +43,8 @@ class FileServiceTest {
         // given
         RoomPost roomPost = RoomPost.builder()
                 .title("제목 입니다.")
-                .roomName("방 이름입니다.")
                 .address("주소입니다.")
+                .detailAddress("상세 주소")
                 .content("내용입니다. 내용입니다.")
                 .roomOwner("방주인")
                 .depositPrice("10000")
@@ -76,8 +76,8 @@ class FileServiceTest {
         // given
         RoomPost roomPost = RoomPost.builder()
                 .title("제목 입니다.")
-                .roomName("방 이름입니다.")
                 .address("주소입니다.")
+                .detailAddress("상세 주소")
                 .content("내용입니다. 내용입니다.")
                 .roomOwner("방주인")
                 .depositPrice("10000")
@@ -109,8 +109,8 @@ class FileServiceTest {
         // given
         RoomPost roomPost = RoomPost.builder()
                 .title("제목 입니다.")
-                .roomName("방 이름입니다.")
                 .address("주소입니다.")
+                .detailAddress("상세 주소")
                 .content("내용입니다. 내용입니다.")
                 .roomOwner("방주인")
                 .depositPrice("10000")
@@ -142,8 +142,8 @@ class FileServiceTest {
         // given
         RoomPost roomPost = RoomPost.builder()
                 .title("제목 입니다.")
-                .roomName("방 이름입니다.")
                 .address("주소입니다.")
+                .detailAddress("상세 주소")
                 .content("내용입니다. 내용입니다.")
                 .roomOwner("방주인")
                 .depositPrice("10000")

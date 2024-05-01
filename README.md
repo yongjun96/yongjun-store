@@ -9,8 +9,42 @@
 
 ## 개발 기간
 
-- 2024-03-08 ~ 진행중
+- 2024-03-08 ~ 진행 중
 - 주기적으로 업데이트 하며 느리더라도 꾸준히 작업을 이어갈 예정입니다.
+
+<br>
+
+---
+
+## 적용 해본 기술/기능
+
+- 테스트
+    - JUnit, Mockito를 사용하여 단위 테스트를 적용
+
+- 인증/인가
+    - Session방식이 아닌 JWT를 사용하여 사용자의 인증 인가 구현
+    - Spring Security를 사용해 JWT의 인증 인가를 관리
+    - Outh2.0을 이용해서 소셜(google)로그인의 인증 인가를 Spring Security로 관리
+
+- Redis
+    - MySQL과 Redis를 같이 사용하여 TTL(Time To Live) 데이터는 Redis에서 관리하도록 적용
+
+- Error/Handler
+    - Error를 객체화하고  공통화하여 ErrorResponse로 관리
+    - 핸들러를 사용해서 해당 Exception의 반환을 공통화
+
+- Swagger
+    - Swagger의 Response를 미리 정의 해둔 객체를 사용할 수 있도록 어노테이션 커스텀
+        - <a href="https://yongjun96.github.io/posts/Rest-Docs-+-Swagger%EB%AC%B8%EC%84%9C-%EC%9E%91%EC%84%B1(@ModelAttribute,-@RequestPart-%EB%8C%80%EC%9D%91-%EB%AC%B8%EC%A0%9C)/" target="_blank">epages의 restdocs-api-spec에서 Swagger로 돌아온 이유</a>
+- Infra
+    - Jenkins가 아닌 GitHub Actions를 사용해서 파이프 라인 구성
+        - <a href="https://yongjun96.github.io/posts/Github-ACtions%EC%9C%BC%EB%A1%9C-EC2-%EB%B0%B0%ED%8F%AC-%EC%9E%90%EB%8F%99%ED%99%94-%ED%95%98%EA%B8%B0/" target="_blank">GitHub Actions 배포 자동화 적용기</a>
+    - Docker와 Docker-compose를 사용해서 컨테이너 환경 구축
+    - Submodule을 사용한 민감 정보 관리
+    - Route53으로 DNS 적용
+    - Elastic Load Balancer를 이용해 SSL/TLS 적용
+    - RDS (MySql 8.0) 사용
+    - S3와 CloudFront로 정적 웹페이지 배포
 
 <br>
 

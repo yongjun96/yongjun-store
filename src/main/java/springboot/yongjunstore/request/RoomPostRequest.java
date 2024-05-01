@@ -62,4 +62,19 @@ public class RoomPostRequest {
     @NotNull(message = "/member/find/{email}을 호출하지 못해 id를 받아 오지못했습니다.")
     private Long memberId; // 방 주인 정보
 
+    @Builder
+    public RoomPostRequest(Long id, String title, String monthlyPrice, Deposit deposit, String depositPrice, String roomOwner, String squareFootage, String content, String address, String detailAddress, RoomStatus roomStatus, Long memberId) {
+        this.id = id;
+        this.title = title;
+        this.monthlyPrice = monthlyPrice;
+        this.deposit = deposit;
+        this.depositPrice = depositPrice;
+        this.roomOwner = roomOwner;
+        this.squareFootage = squareFootage;
+        this.content = content;
+        this.address = address;
+        this.detailAddress = detailAddress;
+        this.roomStatus = roomStatus;
+        this.memberId = memberId;
+    }
 }
