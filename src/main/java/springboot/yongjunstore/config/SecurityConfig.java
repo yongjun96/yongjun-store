@@ -59,6 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/member/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER') or hasRole('ROLE_ADMIN')"))
                         .requestMatchers("/room-post/create*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER') or hasRole('ROLE_ADMIN')"))
                         .requestMatchers("/room-post/soft-delete/*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER') or hasRole('ROLE_ADMIN')"))
+                        .requestMatchers("/chat-room/**").access(new WebExpressionAuthorizationManager("hasRole('ROLE_MEMBER') or hasRole('ROLE_ADMIN')"))
                         .requestMatchers("/h2-console/*").access(new WebExpressionAuthorizationManager("hasRole('ROLE_ADMIN')"))
                         .requestMatchers("/swagger-ui/index.html", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().permitAll()
