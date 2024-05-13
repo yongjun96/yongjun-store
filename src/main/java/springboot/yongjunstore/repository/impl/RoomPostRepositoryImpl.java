@@ -9,10 +9,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import springboot.yongjunstore.common.exception.GlobalException;
+import springboot.yongjunstore.common.exceptioncode.ErrorCode;
 import springboot.yongjunstore.domain.room.RoomPost;
 import springboot.yongjunstore.domain.room.RoomStatus;
 import springboot.yongjunstore.repository.custom.RoomPostRepositoryCustom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static springboot.yongjunstore.domain.QMember.member;
@@ -38,13 +41,19 @@ public class RoomPostRepositoryImpl implements RoomPostRepositoryCustom {
     @Override
     public Page<RoomPost> searchRoomPostList(String searchOption, String searchContent, Pageable pageable){
 
+        List<Long> roomPostIds = jpaQueryFactory
+                .select(roomPost.id)
+                .from(roomPost)
+                .where(containsSearch(searchOption, searchContent))
+                .orderBy(roomPost.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
         List<RoomPost> roomPostList = jpaQueryFactory
                 .selectFrom(roomPost)
                 .join(roomPost.member, member)
-                .where(containsSearch(searchOption, searchContent))
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
-                .orderBy(roomPost.createAt.desc())
+                .where(roomPost.id.in(roomPostIds))
                 .fetch();
 
         JPAQuery<Long> count = jpaQueryFactory
@@ -56,6 +65,7 @@ public class RoomPostRepositoryImpl implements RoomPostRepositoryCustom {
         return PageableExecutionUtils.getPage(roomPostList, pageable, count::fetchOne);
 
     }
+
 
 
     private BooleanExpression containsSearch(String searchOption, String searchContent){
