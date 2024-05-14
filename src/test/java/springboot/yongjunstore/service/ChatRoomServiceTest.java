@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import springboot.yongjunstore.common.exception.GlobalException;
+import springboot.yongjunstore.common.exceptioncode.ErrorCode;
+import springboot.yongjunstore.domain.ChatRoom;
 import springboot.yongjunstore.repository.ChatRoomRepository;
 import springboot.yongjunstore.request.ChatRoomCreateRequest;
 
@@ -32,8 +35,11 @@ class ChatRoomServiceTest {
 
         chatRoomService.createChatRoom(chatRoomCreateRequest);
 
+        ChatRoom chatRoom = chatRoomRepository.findByChatRoomName(chatRoomCreateRequest.getChatRoomName())
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
         Assertions.assertThat(chatRoomRepository.count()).isEqualTo(1);
-        Assertions.assertThat(chatRoomRepository.findByChatRoomName(chatRoomCreateRequest.getChatRoomName())).isEqualTo(chatRoomCreateRequest.getChatRoomName());
+        Assertions.assertThat(chatRoom.getChatRoomName()).isEqualTo("신규 채팅방");
 
     }
 
